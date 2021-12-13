@@ -1,0 +1,93 @@
+{
+  "color": [
+    {
+      "name": "white",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "blue_clear",
+      "value": "#80455DEE"
+    },
+    {
+      "name": "blue_light",
+      "value": "#30455DEE"
+    },
+    {
+      "name": "blue",
+      "value": "#455DEE"
+    },
+    {
+      "name": "black_clear",
+      "value": "#95000000"
+    },
+    {
+      "name": "black",
+      "value": "#000000"
+    },
+    {
+      "name": "black_line",
+      "value": "#50000000"
+    },
+    {
+      "name": "red",
+      "value": "#f44336"
+    },
+    {
+      "name": "red_clear",
+      "value": "#80f44336"
+    },
+    {
+      "name": "red_light",
+      "value": "#30f44336"
+    },
+    {
+      "name": "green",
+      "value": "#4caf50"
+    },
+    {
+      "name": "green_clear",
+      "value": "#804caf50"
+    },
+    {
+      "name": "green_light",
+      "value": "#304caf50"
+    },
+    {
+      "name": "yellow",
+      "value": "#ffeb3b"
+    },
+    {
+      "name": "yellow_clear",
+      "value": "#80ffeb3b"
+    },
+    {
+      "name": "yellow_light",
+      "value": "#30ffeb3b"
+    },
+    {
+      "name": "orange",
+      "value": "#ff9800"
+    },
+    {
+      "name": "orange_clear",
+      "value": "#80ff9800"
+    },
+    {
+      "name": "orange_light",
+      "value": "#30ff9800"
+    },
+    {
+      "name": "purple",
+      "value": "#9c27b0"
+    },
+    {
+      "name": "purple_clear",
+      "value": "#809c27b0"
+    },
+    {
+      "name": "purple_light",
+      "value": "#309c27b0"
+    }
+  ]
+}
+

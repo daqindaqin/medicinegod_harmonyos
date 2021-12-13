@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DependentLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:width="match_parent"
+    ohos:height="match_parent"
+    ohos:alignment="top"
+    ohos:background_element="$color:white">
+
+        <DependentLayout
+            ohos:id="$+id:things_head_of_top"
+            ohos:height="70vp"
+            ohos:width="match_parent"
+            ohos:alignment="left"
+            ohos:orientation="horizontal"
+            >
+                <Image
+                    ohos:id="$+id:things_image_head"
+                    ohos:height="45vp"
+                    ohos:width="45vp"
+                    ohos:scale_mode="stretch"
+                    ohos:image_src="$media:head"
+                    ohos:top_margin="15vp"
+                    ohos:start_margin="20vp"
+                    ohos:end_margin="5vp"
+                    ohos:bottom_margin="5vp"
+                    />
+                <Text
+                    ohos:id="$+id:things_title_in_user"
+                    ohos:height="match_content"
+                    ohos:width="match_content"
+                    ohos:text_size="20fp"
+                    ohos:text_alignment="left"
+                    ohos:text_color="$color:black_clear"
+                    ohos:text_weight="700"
+                    ohos:text="userName  (99)"
+                    ohos:margin="5vp"
+                    ohos:right_of="$id:things_image_head"
+                    ohos:top_padding="5vp"
+                    ohos:align_top="$id:things_image_head"
+                    />
+                <DirectionalLayout
+                    ohos:height="match_content"
+                    ohos:width="match_parent"
+                    ohos:right_of="$id:things_title_in_user"
+                    ohos:end_margin="20vp"
+                    ohos:alignment="right"
+                    >
+                        <TextField
+                            ohos:id="$+id:things_textField_seach"
+                            ohos:height="40fp"
+                            ohos:width="match_parent"
+                            ohos:text_size="14fp"
+                            ohos:text_alignment="left"
+                            ohos:text_color="#000000"
+                            ohos:layout_alignment="left|vertical_center"
+                            ohos:background_element="$graphic:background_textfield_search"
+                            ohos:element_right="$media:search"
+                            ohos:element_padding="5vp"
+                            ohos:padding="10vp"
+                            ohos:margin="20vp"/>
+                </DirectionalLayout>
+
+
+        </DependentLayout>
+
+
+
+        <ListContainer
+            ohos:id="$+id:things_list"
+            ohos:height="200vp"
+            ohos:width="match_parent"
+            ohos:margin="5vp"
+            ohos:rebound_effect="true"
+            ohos:below="$id:things_head_of_top"
+
+            />
+
+
+</DependentLayout>

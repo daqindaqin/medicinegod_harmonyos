@@ -1,0 +1,30 @@
+apply plugin: 'com.huawei.ohos.hap'
+apply plugin: 'com.huawei.ohos.decctest'
+//For instructions on signature configuration, see https://developer.harmonyos.com/cn/docs/documentation/doc-guides/ide_debug_device-0000001053822404#section1112183053510
+ohos {
+    compileSdkVersion 7
+    defaultConfig {
+        compatibleSdkVersion 5
+    }
+    buildTypes {
+        release {
+            proguardOpt {
+                proguardEnabled false
+                rulesFiles 'proguard-rules.pro'
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.har'])
+    testImplementation 'junit:junit:4.13.1'
+    ohosTestImplementation 'com.huawei.ohos.testkit:runner:1.0.0.200'
+    //底部导航栏
+    implementation 'com.gitee.chinasoft_ohos:bubblenavigation:0.0.2-SNAPSHOT'
+    //图像选择器
+    implementation 'io.github.dzsf:imagepicker:1.0.0'
+}
+decc {
+    supportType = ['html','xml']
+}

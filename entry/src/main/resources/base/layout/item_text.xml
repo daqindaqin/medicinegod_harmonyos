@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Text
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:background_element="$graphic:background_add_useage_util"
+    ohos:height="match_content"
+    ohos:margin="10vp"
+    ohos:padding="10vp"
+    ohos:text_alignment="center"
+    ohos:text_color="#ffffff"
+    ohos:text_size="15fp"
+    ohos:width="match_content">
+
+</Text>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_content"
+    ohos:width="match_parent"
+    ohos:margin="5vp"
+    ohos:bottom_padding="10vp"
+    ohos:background_element="$graphic:background_list_item_card"
+    >
+
+    <DirectionalLayout
+        ohos:height="match_parent"
+        ohos:width="match_content"
+        ohos:alignment="left|vertical_center"
+        ohos:orientation="horizontal">
+        <Text
+            ohos:id="$+id:text_name"
+            ohos:height="match_content"
+            ohos:width="match_parent"
+            ohos:text="Name666666666666666666666daddasfafsafadsfafadadadagjeg"
+            ohos:text_size="26fp"
+            ohos:text_color="$color:black_clear"
+            ohos:text_weight="700"
+            ohos:max_width="250vp"
+            ohos:margin="10vp"
+            ohos:scrollable="true"
+            ohos:text_alignment="left"
+            />
+        <DirectionalLayout
+            ohos:height="match_parent"
+            ohos:width="match_content"
+            ohos:alignment="right|vertical_center">
+            <Text
+                ohos:id="$+id:text_otc"
+                ohos:height="match_content"
+                ohos:width="50fp"
+                ohos:background_element="$graphic:background_text_otc_otc"
+                ohos:text="OTC"
+                ohos:text_alignment="center"
+                ohos:text_color="$color:white"
+                ohos:text_weight="700"
+                ohos:margin="5vp"
+                ohos:start_padding="10vp"
+                ohos:end_padding="10vp"
+                ohos:top_padding="2vp"
+                ohos:bottom_padding="2vp"
+                ohos:text_size="14fp"
+                />
+        </DirectionalLayout>
+    </DirectionalLayout>
+
+    <DirectionalLayout
+        ohos:height="match_parent"
+        ohos:width="match_content"
+        ohos:alignment="top|center"
+        ohos:orientation="horizontal">
+        <Image
+            ohos:id="$+id:image_png"
+            ohos:height="90vp"
+            ohos:width="160vp"
+            ohos:start_margin="10vp"
+            ohos:end_margin="10vp"
+            ohos:image_src="$media:test"
+            ohos:scale_mode="stretch"
+            />
+        <DirectionalLayout
+            ohos:height="match_parent"
+            ohos:width="match_parent"
+            ohos:orientation="vertical"
+            ohos:alignment="top|center">
+
+            <Text
+                ohos:id="$+id:text_outdate"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:end_margin="10vp"
+                ohos:max_text_lines="2"
+                ohos:multiple_lines="true"
+                ohos:start_margin="10vp"
+                ohos:text="[正常使用]                请按说明书正确使用。"
+                ohos:text_color="$color:green"
+                ohos:text_weight="700"
+                ohos:text_size="16fp"
+                ohos:top_margin="5vp"
+                />
+
+            <Text
+                ohos:id="$+id:text_usage"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:end_margin="10vp"
+                ohos:max_text_lines="1"
+                ohos:multiple_lines="true"
+                ohos:start_margin="10vp"
+                ohos:text="500g/次/天"
+                ohos:text_color="$color:black_clear"
+                ohos:text_weight="300"
+                ohos:text_size="14fp"
+                ohos:top_margin="5vp"
+                />
+
+            <Text
+                ohos:id="$+id:text_margin"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:end_margin="10vp"
+                ohos:max_text_lines="1"
+                ohos:multiple_lines="true"
+                ohos:start_margin="10vp"
+                ohos:text="剩余：2  盒"
+                ohos:text_color="$color:black_clear"
+                ohos:text_weight="300"
+                ohos:text_size="12fp"
+                ohos:top_margin="5vp"
+                />
+        </DirectionalLayout>
+
+
+    </DirectionalLayout>
+
+
+
+
+
+
+</DirectionalLayout>
