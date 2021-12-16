@@ -24,6 +24,10 @@ dependencies {
     implementation 'com.gitee.chinasoft_ohos:bubblenavigation:0.0.2-SNAPSHOT'
     //图像选择器
     implementation 'io.github.dzsf:imagepicker:1.0.0'
+    //弹窗
+    implementation 'io.openharmony.tpc.thirdlib:XPopup:1.1.3'
+
+
 }
 decc {
     supportType = ['html','xml']

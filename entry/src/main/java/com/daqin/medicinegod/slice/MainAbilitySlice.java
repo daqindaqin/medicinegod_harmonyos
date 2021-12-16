@@ -1,5 +1,6 @@
 package com.daqin.medicinegod.slice;
 
+import com.daqin.medicinegod.CommentPopup;
 import com.daqin.medicinegod.FlowLayout;
 import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.imagecrop.EditPhotoView;
@@ -10,6 +11,7 @@ import com.daqin.medicinegod.utils.ListItemProvider;
 import com.daqin.medicinegod.utils.ScreenSlidePagerProvider;
 import com.daqin.medicinegod.utils.windowsUtil;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
+import com.lxj.xpopup.XPopup;
 import com.zzti.fengyongge.imagepicker.ImagePickerInstance;
 
 import ohos.aafwk.ability.AbilitySlice;
@@ -56,7 +58,16 @@ public class MainAbilitySlice extends AbilitySlice {
         //清空添加药品的列表
         Button btn_clear = (Button)findComponentById(ResourceTable.Id_add_clear);
         btn_clear.setClickedListener(l->clearAddTextfield());
+        //otc疑问按钮
+        Text btn_otc_question = (Text)findComponentById(ResourceTable.Id_add_newOtc_question);
+        btn_otc_question.setClickedListener(l->{
+            new XPopup.Builder(getContext())
+                    .moveUpToKeyboard(false) // 如果不加这个，评论弹窗会移动到软键盘上面
+                    .enableDrag(true)
+                    .asCustom(new CommentPopup(getContext()))
+                    .show();
 
+        });
         //添加图片的图片按钮
         Image addimg=(Image)findComponentById(ResourceTable.Id_add_newImg);
         addimg.setClickedListener(new Component.ClickedListener(){
