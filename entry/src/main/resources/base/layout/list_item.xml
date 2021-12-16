@@ -34,7 +34,7 @@
                 ohos:id="$+id:text_otc"
                 ohos:height="match_content"
                 ohos:width="50fp"
-                ohos:background_element="$graphic:background_text_otc_otc"
+                ohos:background_element="$graphic:background_text_otc_otc_green"
                 ohos:text="OTC"
                 ohos:text_alignment="center"
                 ohos:text_color="$color:white"
