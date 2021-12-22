@@ -3,10 +3,6 @@ package com.daqin.medicinegod.slice;
 import com.daqin.medicinegod.CommentPopup;
 import com.daqin.medicinegod.FlowLayout;
 import com.daqin.medicinegod.ResourceTable;
-import com.daqin.medicinegod.imagecrop.EditPhotoView;
-import com.daqin.medicinegod.imagecrop.EditableImage;
-import com.daqin.medicinegod.imagecrop.handler.OnBoxChangedListener;
-import com.daqin.medicinegod.imagecrop.model.ScalableBox;
 import com.daqin.medicinegod.utils.ListItemProvider;
 import com.daqin.medicinegod.utils.ScreenSlidePagerProvider;
 import com.daqin.medicinegod.utils.windowsUtil;
@@ -24,7 +20,6 @@ import ohos.agp.utils.LayoutAlignment;
 import ohos.agp.window.dialog.ToastDialog;
 import ohos.bundle.IBundleManager;
 import ohos.global.resource.NotExistException;
-import ohos.global.resource.ResourceManager;
 import ohos.media.image.ImageSource;
 import ohos.media.image.PixelMap;
 import ohos.media.image.common.PixelFormat;
@@ -37,12 +32,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+
+
 import static java.lang.Math.abs;
 
 public class MainAbilitySlice extends AbilitySlice {
     public static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;   //自定义的一个权限请求识别码，用于处理权限回调
     private BubbleNavigationLinearView mBubbleNavigationLinearView;
     private FlowLayout mflowLayout;
+//    private List<String> labelList = new ArrayList<>();
+    static int newUsage_utils_1 = 0,newUsage_utils_2 = 0;
 
 
 
@@ -50,6 +49,9 @@ public class MainAbilitySlice extends AbilitySlice {
     public void onStart(Intent intent) {
         super.onStart(intent);
         super.setUIContent(ResourceTable.Layout_ability_main);
+//        mflowLayout = (FlowLayout) findComponentById(ResourceTable.Id_flow_layout);
+//        labelList.clear();
+
 
         intPageStart();
         initListContainer();
@@ -92,12 +94,43 @@ public class MainAbilitySlice extends AbilitySlice {
                             MainAbilitySlice.this, 1,true, 0);
                 }
             }
-
-
-
-
         });
+
+        //用法用量单位变换
+        Text btn_newUsage_utils_1 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_1);
+        btn_newUsage_utils_1.setClickedListener(l->{
+            newUsage_utils_1 += 1;
+            switch (newUsage_utils_1){
+                case 1:
+                    btn_newUsage_utils_1.setText("克");
+                    break;
+                case 2:
+                    btn_newUsage_utils_1.setText("包");
+                    newUsage_utils_1 = 0;
+                    break;
+            }
+        });
+        Text btn_newUsage_utils_2 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_2);
+        btn_newUsage_utils_2.setClickedListener(l->{
+            newUsage_utils_2 += 1;
+            switch (newUsage_utils_2){
+                case 1:
+                    btn_newUsage_utils_2.setText("时");
+                    break;
+                case 2:
+                    btn_newUsage_utils_2.setText("天");
+                    newUsage_utils_2 = 0;
+                    break;
+            }
+        });
+
+        //添加药效标签
+//        Button btn_addNewLabel = (Button)findComponentById(ResourceTable.Id_add_newLabel_addButton);
+//        btn_addNewLabel.setClickedListener(l->addNewLabel());
+
+
     }
+
 
     //清空添加药品的列表
     private void clearAddTextfield() {
@@ -221,6 +254,10 @@ public class MainAbilitySlice extends AbilitySlice {
         Picker pickerOtc = (Picker)findComponentById(ResourceTable.Id_add_newOtc);
         pickerOtc.setDisplayedData(new String[]{"OTC(非处方药)","(空)","RX(处方药)"});
         pickerOtc.setValue(1);
+
+        Picker pickerYu = (Picker)findComponentById(ResourceTable.Id_add_newYu);
+        pickerYu.setDisplayedData(new String[]{"1","2","3","4","5","6","7","8","9","10"});
+        pickerYu.setValue(0);
 
 
     }
@@ -361,33 +398,32 @@ public class MainAbilitySlice extends AbilitySlice {
                     String paths = data.getStringArrayListParam("photos").get(0);
                     //原组件是居中，这里给他选择填充
                     addimg.setScaleMode(Image.ScaleMode.STRETCH);
-                    //定义组件资源
-//                    ImageSource imageSource = null;
-//                    DataAbilityHelper helper=DataAbilityHelper.creator(getContext());
-//                    //定义文件
-//                    FileDescriptor file = null;
-//                    try {
-//                        file = helper.openFile(Uri.parse(paths), "r");
-//                    } catch (DataAbilityRemoteException e) {
-//                        e.printStackTrace();
-//                    } catch (FileNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
-//                    //创建文件对象
-//                    imageSource = ImageSource.create(file, null);
-//                    //创建位图
-//                    PixelMap pixelMap = imageSource.createPixelmap(null);
-//                    addimg.setPixelMap(pixelMap);
+//                    定义组件资源
+                    ImageSource imageSource = null;
+                    DataAbilityHelper helper=DataAbilityHelper.creator(getContext());
+                    //定义文件
+                    FileDescriptor file = null;
+                    try {
+                        file = helper.openFile(Uri.parse(paths), "r");
+                    } catch (DataAbilityRemoteException | FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    //创建文件对象
+                    imageSource = ImageSource.create(file, null);
+                    //创建位图
+                    PixelMap pixelMap = imageSource.createPixelmap(null);
+                    addimg.setPixelMap(pixelMap);
 
-                    Intent newIntent = new Intent();
-                    newIntent.setParam("startcropimage", paths);
-                    present(new ImageCropAbilitySlice(), newIntent);
+
+                    //TODO:跳转去裁剪图片
+//                    Intent newIntent = new Intent();
+//                    newIntent.setParam("startcropimage", paths);
+//                    present(new ImageCropAbilitySlice(), newIntent);
                 }
                 break;
             default:
                 addimg.setScaleMode(Image.ScaleMode.CENTER);
                 addimg.setPixelMap(ResourceTable.Media_add_imgadd);
-
                 break;
         }
         super.onAbilityResult(requestCode, resultCode, data);

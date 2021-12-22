@@ -67,6 +67,7 @@ public class FlowLayout extends ComponentContainer implements Component.Estimate
         int width = EstimateSpec.getSize(widthEstimatedConfig);
         // 得到高度的测量大小
         int height = EstimateSpec.getSize(heightEstimatedConfig);
+
         // 宽高都是精确的模式
         if (widthMode == EstimateSpec.PRECISE && heightMode == EstimateSpec.PRECISE) {
             // 此时流式布局的宽高就是调用EstimateSpec.getSize方法得到的数值
@@ -177,7 +178,6 @@ public class FlowLayout extends ComponentContainer implements Component.Estimate
                 curLineWidth += childWidth;
                 // 对比当前行的高度和子组件的高度，哪个高，哪个就是当前行的高度
                 curLineHeight = Math.max(curLineHeight, childHeight);
-
             }
             // 将子组件添加到集合
             lineComponent.add(child);
@@ -191,14 +191,14 @@ public class FlowLayout extends ComponentContainer implements Component.Estimate
                 // 判断流式布局的宽度，对比当前流式布局的宽度和当前行的宽度，哪个大，哪个就是流式布局的宽度
                 mEstimateFlowLayoutWidth = Math.max(mEstimateFlowLayoutWidth, curLineWidth);
                 // 流式布局的高度就是当前流式布局的高度加上当前行的高度
-                mEstimateFlowLayoutHeight += curLineHeight;
+                mEstimateFlowLayoutHeight += curLineHeight-200;
+                mEstimateFlowLayoutHeight -= 200;
+
                 // 将当前行的高度保存到集合
-                lineHeight.add(curLineHeight/4);
+                lineHeight.add(curLineHeight);
                 // 将当前行的所有子组件添加到集合
                 listLineComponent.add(lineComponent);
-
             }
-
         }
     }
 
@@ -334,7 +334,6 @@ public class FlowLayout extends ComponentContainer implements Component.Estimate
          * 先拿到每行的子组件，再遍历每行中具体的一个子组件
          */
         for (int i = 0; i < listLineComponent.size(); i++) {
-
             // 得到每行的子组件
             List<Component> lineComponent = listLineComponent.get(i);
             // 得到每行中具体的一个子组件
@@ -357,7 +356,7 @@ public class FlowLayout extends ComponentContainer implements Component.Estimate
                 // 子组件左上角到流式布局左边的距离 = 当前行到流式布局左边的距离 + 子组件的左边的外边距
                 l = curLineLeft + marginLeft;
                 // 子组件左上角到流式布局上边的距离 = 当前行到流式布局上边的距离 + 子组件的上边的外边距
-                t =  curLineTop + marginTop;
+                t = curLineTop + marginTop;
                 // 计算完子组件的左上以及子组件的宽高，调用arrange方法确定子组件的位置
                 component.arrange(l, t, estimatedWidth, estimatedHeight);
                 // 更新当前行到流式布局左边的距离，当前行到流式布局左边的距离 = 子组件测量后的宽度 + 子组件的左边的外边距 + 子组件的右边的外边距

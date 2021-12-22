@@ -28,16 +28,15 @@
 
     <ScrollView
         ohos:height="match_content"
-        ohos:width="match_parent"
+        ohos:width="match_content"
         ohos:rebound_effect="true"
-        ohos:padding="10vp">
+        ohos:padding="15vp">
         <DirectionalLayout
             ohos:height="match_content"
-            ohos:width="match_parent"
-            >
+            ohos:width="match_content">
             <Text
                 ohos:height="match_content"
-                ohos:width="match_content"
+                ohos:width="match_parent"
                 ohos:text="① OTC是非处方药的标志。"
                 ohos:text_size="20vp"
                 ohos:text_weight="700"

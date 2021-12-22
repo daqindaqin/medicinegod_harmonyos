@@ -8,6 +8,6 @@
     ohos:text_alignment="center"
     ohos:text_color="#ffffff"
     ohos:text_size="15fp"
-    ohos:width="match_content">
+    ohos:width="match_content" >
 
 </Text>

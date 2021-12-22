@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DependentLayout
     xmlns:ohos="http://schemas.huawei.com/res/ohos"
-    ohos:id="$+id:add_dependentlayout"
     ohos:height="match_parent"
     ohos:width="match_parent"
     ohos:alignment="top"
@@ -404,12 +403,47 @@
                 ohos:below="$id:add_newCompany"
                 />
 
+            <!-- 药品余量布局 -->
+            <Text
+                ohos:id="$+id:add_newYu_title"
+                ohos:height="match_content"
+                ohos:width="match_content"
+                ohos:below="$id:add_line8"
+                ohos:bottom_margin="10vp"
+                ohos:layout_alignment="left|vertical_center"
+                ohos:start_margin="20vp"
+                ohos:text="剩余余量(单位:盒)"
+                ohos:text_alignment="left"
+                ohos:text_color="$color:black_clear"
+                ohos:text_size="18fp"
+                ohos:text_weight="500"
+                ohos:top_margin="20vp"
+                />
+            <Picker
+                ohos:id="$+id:add_newYu"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:below="$id:add_newYu_title"
+                ohos:bottom_margin="10vp"
+                ohos:max_value="9"
+                ohos:selected_text_size="20fp"
+                ohos:selector_item_num="3"
+                ohos:wheel_mode_enabled="true"
+                />
+            <Image
+                ohos:id="$+id:add_line9"
+                ohos:height="2vp"
+                ohos:width="match_parent"
+                ohos:background_element="$color:black_line"
+                ohos:below="$id:add_newYu"
+                />
+
             <!-- 药品标签布局 -->
             <Text
                 ohos:id="$+id:add_newLabel_title"
                 ohos:height="match_content"
                 ohos:width="match_content"
-                ohos:below="$id:add_line8"
+                ohos:below="$id:add_line9"
                 ohos:bottom_margin="10vp"
                 ohos:layout_alignment="left|vertical_center"
                 ohos:start_margin="20vp"
@@ -470,17 +504,17 @@
                 ohos:alignment="top"
                 ohos:below="$+id:add_addNewlabel_DirectionalLayout"
                 ohos:background_element="$color:blue_clear">
-                <com.daqin.medicinegod.FlowLayout
-                    ohos:id="$+id:flow_layout"
-                    ohos:height="match_content"
-                    ohos:width="match_parent"
-                    ohos:layout_alignment="top"
-                    ohos:below="$+id:add_addNewlabel_labellayout"
-                    />
+<!--                <com.daqin.medicinegod.FlowLayout-->
+<!--                    ohos:id="$+id:flow_layout"-->
+<!--                    ohos:height="match_content"-->
+<!--                    ohos:width="match_parent"-->
+<!--                    ohos:layout_alignment="top"-->
+<!--                    ohos:below="$+id:add_addNewlabel_labellayout">-->
+<!--                </com.daqin.medicinegod.FlowLayout>-->
             </DirectionalLayout>
 
             <Image
-                ohos:id="$+id:add_line9"
+                ohos:id="$+id:add_line10"
                 ohos:height="2vp"
                 ohos:width="match_parent"
                 ohos:background_element="$color:black_line"
@@ -493,7 +527,7 @@
                 ohos:height="45fp"
                 ohos:width="match_parent"
                 ohos:background_element="$graphic:background_add_addok"
-                ohos:below="$+id:add_line9"
+                ohos:below="$+id:add_line10"
                 ohos:margin="25vp"
                 ohos:text="填写完成"
                 ohos:text_color="$color:white"

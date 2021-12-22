@@ -29,6 +29,10 @@
       "value": "#50000000"
     },
     {
+      "name": "black_light2",
+      "value": "#08000000"
+    },
+    {
       "name": "red",
       "value": "#f44336"
     },

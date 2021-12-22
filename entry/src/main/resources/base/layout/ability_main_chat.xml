@@ -1,55 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DependentLayout
     xmlns:ohos="http://schemas.huawei.com/res/ohos"
-    ohos:id="$+id:node_layout"
-    ohos:width="match_parent"
     ohos:height="match_parent"
-    ohos:alignment="top"
+    ohos:width="match_parent"
+    ohos:alignment="top|horizontal_center"
+    ohos:orientation="vertical"
     ohos:background_element="$color:white">
 
-        <DirectionalLayout
-            ohos:id="$+id:head_of_top"
-            ohos:height="85fp"
+        <Text
+            ohos:id="$+id:chat_title"
+            ohos:height="match_content"
             ohos:width="match_parent"
-            ohos:alignment="left"
-            ohos:orientation="horizontal">
-                <Image
-                    ohos:id="$+id:image_head"
-                    ohos:height="45vp"
-                    ohos:width="45vp"
-                    ohos:scale_mode="stretch"
-                    ohos:text_color="#FFFFFF"
-                    ohos:image_src="$media:head"
-                    ohos:top_margin="20vp"
-                    ohos:start_margin="20vp"
-                    ohos:end_margin="5vp"
-                    ohos:bottom_margin="20vp"
-
-                    />
-
-                <TextField
-                    ohos:height="40fp"
-                    ohos:width="match_parent"
-                    ohos:hint="哈哈哈"
-                    ohos:text_size="14fp"
-                    ohos:text_alignment="left"
-                    ohos:text_color="#000000"
-                    ohos:layout_alignment="left|vertical_center"
-                    ohos:background_element="$graphic:background_textfield_search"
-                    ohos:element_left="$media:search"
-                    ohos:element_padding="5vp"
-                    ohos:padding="10vp"
-                    ohos:margin="20vp"/>
-        </DirectionalLayout>
-
-        <ListContainer
-            ohos:id="$+id:list"
-            ohos:height="200vp"
+            ohos:text="通 知 信 息"
+            ohos:text_size="24fp"
+            ohos:top_padding="20vp"
+            ohos:bottom_padding="20vp"
+            ohos:text_color="$color:black_clear"
+            ohos:text_weight="700"
+            ohos:text_alignment="vertical_center|horizontal_center"/>
+        <Image
+            ohos:id="$+id:chat_line0"
+            ohos:below="$id:chat_title"
+            ohos:height="3"
             ohos:width="match_parent"
+            ohos:background_element="$color:black_line"
+            ohos:bottom_margin="5vp"/>
+
+        <ScrollView
+            ohos:id="$+id:chat_scrollview"
+            ohos:height="match_parent"
+            ohos:width="match_parent"
+            ohos:below="$id:chat_line0"
             ohos:rebound_effect="true"
-            ohos:layout_alignment="horizontal_center"
-            ohos:below="$id:head_of_top"
-            />
+            >
+
+                <DirectionalLayout
+                    ohos:height="match_content"
+                    ohos:width="match_parent"
+                    ohos:margin="10vp"
+                    ohos:orientation="vertical">
+                        <!--显示好友信息-->
+                        <DirectionalLayout
+                            ohos:id="$+id:chat_friend"
+                            ohos:height="match_content"
+                            ohos:width="match_parent"
+                            ohos:background_element="$graphic:background_chat_moudle"
+                            ohos:below="$id:chat_line0"
+                            ohos:margin="10vp"
+                            ohos:orientation="vertical">
+
+                                <DirectionalLayout
+                                    ohos:height="match_content"
+                                    ohos:width="match_parent"
+                                    ohos:alignment="horizontal_center|left"
+                                    ohos:orientation="horizontal"
+                                    >
+
+                                        <Text
+                                            ohos:height="match_content"
+                                            ohos:width="match_content"
+                                            ohos:margin="10vp"
+                                            ohos:text="你的好友"
+                                            ohos:text_alignment="left"
+                                            ohos:text_color="$color:black_clear"
+                                            ohos:text_size="20fp"
+                                            ohos:text_weight="500"/>
+
+                                        <Text
+                                            ohos:height="match_content"
+                                            ohos:width="match_parent"
+                                            ohos:margin="10vp"
+                                            ohos:text="查看更多>"
+                                            ohos:text_alignment="right"
+                                            ohos:text_color="$color:black_clear"
+                                            ohos:text_size="20fp"
+                                            ohos:text_weight="500"/>
+                                </DirectionalLayout>
+
+                                <DirectionalLayout
+                                    ohos:height="match_content"
+                                    ohos:width="match_parent"
+                                    ohos:alignment="horizontal_center|left"
+                                    ohos:orientation="horizontal"
+                                    ohos:start_padding="10vp">
+
+                                        <Image
+                                            ohos:height="45vp"
+                                            ohos:width="45vp"
+                                            ohos:background_element="$color:orange"
+                                            ohos:margin="10vp"
+                                            ohos:scale_mode="stretch"/>
+
+                                        <Image
+                                            ohos:height="45vp"
+                                            ohos:width="45vp"
+                                            ohos:background_element="$color:orange"
+                                            ohos:margin="10vp"
+                                            ohos:scale_mode="stretch"/>
+
+                                        <Image
+                                            ohos:height="45vp"
+                                            ohos:width="45vp"
+                                            ohos:background_element="$color:orange"
+                                            ohos:margin="10vp"
+                                            ohos:scale_mode="stretch"/>
+
+                                        <Image
+                                            ohos:height="45vp"
+                                            ohos:width="45vp"
+                                            ohos:background_element="$color:orange"
+                                            ohos:margin="10vp"
+                                            ohos:scale_mode="stretch"/>
+
+                                        <Image
+                                            ohos:height="45vp"
+                                            ohos:width="45vp"
+                                            ohos:background_element="$color:orange"
+                                            ohos:margin="10vp"
+                                            ohos:scale_mode="stretch"/>
+                                </DirectionalLayout>
+                        </DirectionalLayout>
+                        <!--显示聊天信息-->
+                        <DirectionalLayout
+                            ohos:id="$+id:chat_chat"
+                            ohos:height="match_parent"
+                            ohos:width="match_parent"
+                            ohos:background_element="$graphic:background_chat_moudle"
+                            ohos:below="$id:chat_line0"
+                            ohos:margin="10vp"
+                            ohos:orientation="vertical">
+
+                                <DirectionalLayout
+                                    ohos:height="match_content"
+                                    ohos:width="match_parent"
+                                    ohos:alignment="horizontal_center|left"
+                                    ohos:orientation="horizontal"
+                                    >
+
+                                        <Text
+                                            ohos:height="match_content"
+                                            ohos:width="match_content"
+                                            ohos:margin="10vp"
+                                            ohos:text="聊天内容"
+                                            ohos:text_alignment="left"
+                                            ohos:text_color="$color:black_clear"
+                                            ohos:text_size="20fp"
+                                            ohos:text_weight="500"/>
+                                </DirectionalLayout>
+
+                                <ListContainer
+                                    ohos:height="600vp"
+                                    ohos:width="match_parent"
+                                    ohos:background_element="$color:orange"
+                                    ohos:below="$id:head_of_top"
+                                    ohos:layout_alignment="horizontal_center"
+                                    ohos:margin="10vp"
+                                    />
+                        </DirectionalLayout>
+                </DirectionalLayout>
+
+        </ScrollView>
+
+
+
 
 
 </DependentLayout>
