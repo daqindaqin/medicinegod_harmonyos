@@ -11,7 +11,7 @@
             ohos:id="$+id:chat_title"
             ohos:height="match_content"
             ohos:width="match_parent"
-            ohos:text="通 知 信 息"
+            ohos:text="信 息"
             ohos:text_size="24fp"
             ohos:top_padding="20vp"
             ohos:bottom_padding="20vp"
@@ -82,14 +82,8 @@
                                     ohos:width="match_parent"
                                     ohos:alignment="horizontal_center|left"
                                     ohos:orientation="horizontal"
-                                    ohos:start_padding="10vp">
+                                    ohos:start_padding="15vp">
 
-                                        <Image
-                                            ohos:height="45vp"
-                                            ohos:width="45vp"
-                                            ohos:background_element="$color:orange"
-                                            ohos:margin="10vp"
-                                            ohos:scale_mode="stretch"/>
 
                                         <Image
                                             ohos:height="45vp"
@@ -149,16 +143,17 @@
                                 </DirectionalLayout>
 
                                 <ListContainer
-                                    ohos:height="600vp"
+                                    ohos:id="$+id:chat_chatlist"
+                                    ohos:height="match_content"
                                     ohos:width="match_parent"
                                     ohos:background_element="$color:orange"
                                     ohos:below="$id:head_of_top"
                                     ohos:layout_alignment="horizontal_center"
+                                    ohos:rebound_effect="true"
                                     ohos:margin="10vp"
                                     />
                         </DirectionalLayout>
                 </DirectionalLayout>
-
         </ScrollView>
 
 

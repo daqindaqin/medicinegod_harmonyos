@@ -3,13 +3,13 @@ package com.daqin.medicinegod.slice;
 import com.daqin.medicinegod.CommentPopup;
 import com.daqin.medicinegod.FlowLayout;
 import com.daqin.medicinegod.ResourceTable;
-import com.daqin.medicinegod.utils.ListItemProvider;
+import com.daqin.medicinegod.utils.ChatListItemProvider;
+import com.daqin.medicinegod.utils.HomePageListItemProvider;
 import com.daqin.medicinegod.utils.ScreenSlidePagerProvider;
-import com.daqin.medicinegod.utils.windowsUtil;
+import com.daqin.medicinegod.utils.WindowsUtil;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
 import com.lxj.xpopup.XPopup;
 import com.zzti.fengyongge.imagepicker.ImagePickerInstance;
-
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.ability.DataAbilityHelper;
 import ohos.aafwk.ability.DataAbilityRemoteException;
@@ -32,15 +32,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-
-
 import static java.lang.Math.abs;
-
+//TODO：图片圆角、流式布局
 public class MainAbilitySlice extends AbilitySlice {
     public static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;   //自定义的一个权限请求识别码，用于处理权限回调
     private BubbleNavigationLinearView mBubbleNavigationLinearView;
     private FlowLayout mflowLayout;
 //    private List<String> labelList = new ArrayList<>();
+
     static int newUsage_utils_1 = 0,newUsage_utils_2 = 0;
 
 
@@ -54,8 +53,10 @@ public class MainAbilitySlice extends AbilitySlice {
 
 
         intPageStart();
-        initListContainer();
+        initHomepageListContainer();
+
         intHeadView();
+
 
         //清空添加药品的列表
         Button btn_clear = (Button)findComponentById(ResourceTable.Id_add_clear);
@@ -224,13 +225,72 @@ public class MainAbilitySlice extends AbilitySlice {
         mBubbleNavigationLinearView.setNavigationChangeListener((view, position) ->
         {
             //添加药品的页面刷新多选框
-            if(position==2){
-                intCalendarPicker();
+            switch (position){
+                case 2:
+                    intCalendarPicker();
+                    break;
+                case 3:
+                    initChatListContainer();
+                    break;
+                default:
+                    break;
             }
             viewPager.setCurrentPage(position, true);
 
         });
     }
+
+    // 初始化聊天界面的ListContainer
+    private void initChatListContainer(){
+        //1.获取xml布局中的ListContainer组件
+        ListContainer listContainer = (ListContainer) findComponentById(ResourceTable.Id_chat_chatlist);
+
+        // 2.实例化数据源
+        List<Map<String,Object>> list = getChatListData();
+        // 3.初始化Provider对象
+        ChatListItemProvider listItemProvider = new ChatListItemProvider(list,this);
+        // 4.适配要展示的内容数据
+        listContainer.setItemProvider(listItemProvider);
+        // 5.设置每个Item的点击事件
+        listContainer.setItemClickedListener((container, component, position, id) -> {
+            Map<String,Object> item = (Map<String,Object>) listContainer.getItemProvider().getItem(position);
+            new ToastDialog(this)
+                    .setDuration(2000)
+                    .setText("你点击了:" + item.get("name")+"，"+item.get("lastmsg"))
+                    .setAlignment(LayoutAlignment.CENTER)
+                    .show();
+        });
+
+    }
+    // 初始化聊天界面的数据源
+    private List<Map<String,Object>> getChatListData(){
+        List<Map<String,Object>> list;
+        // icon图标
+        int[] images = {ResourceTable.Media_head,ResourceTable.Media_head,
+                ResourceTable.Media_head,ResourceTable.Media_head,
+                ResourceTable.Media_head,ResourceTable.Media_head,
+                ResourceTable.Media_head,ResourceTable.Media_head,
+                ResourceTable.Media_head,ResourceTable.Media_head};
+
+        String[] names={"曹操","刘备","关羽","诸葛亮","小乔","貂蝉","吕布","赵云","黄盖","周瑜"};
+        String[] lastmsg={"一代枭雄","卖草鞋","财神","卧龙先生","周瑜媳妇","四大镁铝","天下无双","常胜将军","愿意挨打","愿意打人"};
+        String[] lasttime={"20:30","2021-10-02","2021-10-02","2021-10-02","2021-10-02","2021-10-02","2021-10-02","2021-10-02","2021-10-02","2021-10-02"};
+
+        list= new ArrayList<>();
+        for(int i=0;i<images.length;i++){
+            Map<String, Object> map = new HashMap<>();
+//            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("head", images[i]);
+            map.put("name", names[i]);
+            map.put("lastmsg",lastmsg[i]);
+            map.put("lasttime", lasttime[i]);
+            list.add(map);
+        }
+
+
+        return list;
+    }
+
 
     //定义时间选择器
     private void intCalendarPicker() {
@@ -242,13 +302,13 @@ public class MainAbilitySlice extends AbilitySlice {
         }
 
         Picker pickerYear = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_year);
-        pickerYear.setHeight(windowsUtil.getWindowWidthPx(MainAbilitySlice.this)/4);
+        pickerYear.setHeight(WindowsUtil.getWindowWidthPx(MainAbilitySlice.this)/4);
         pickerYear.setDisplayedData(yearList.toArray(new String[]{}));
         pickerYear.setValue(0);
 
         Picker pickerMonth = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_month);
         pickerMonth.setDisplayedData(new String[]{"1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"});
-        pickerMonth.setHeight(windowsUtil.getWindowWidthPx(MainAbilitySlice.this)/4);
+        pickerMonth.setHeight(WindowsUtil.getWindowWidthPx(MainAbilitySlice.this)/4);
         pickerMonth.setValue(0);
 
         Picker pickerOtc = (Picker)findComponentById(ResourceTable.Id_add_newOtc);
@@ -315,32 +375,33 @@ public class MainAbilitySlice extends AbilitySlice {
         return null;
     }
 
-    // 初始化ListContainer
-    private void initListContainer(){
+    // 初始化药品主页的ListContainer
+    private void initHomepageListContainer(){
         //1.获取xml布局中的ListContainer组件
         ListContainer listContainer = (ListContainer) findComponentById(ResourceTable.Id_things_list);
 
-        listContainer.setHeight(abs(windowsUtil.getWindowHeightPx(MainAbilitySlice.this)-windowsUtil.getWindowWidthPx(MainAbilitySlice.this))+2*findComponentById(ResourceTable.Id_head_of_top).getHeight()+130);
+        listContainer.setHeight(abs(WindowsUtil.getWindowHeightPx(MainAbilitySlice.this)- WindowsUtil.getWindowWidthPx(MainAbilitySlice.this))+2*findComponentById(ResourceTable.Id_head_of_top).getHeight()+130);
 
 
         // 2.实例化数据源
         List<Map<String,Object>> list = getData();
         // 3.初始化Provider对象
-        ListItemProvider listItemProvider = new ListItemProvider(list,this);
+        HomePageListItemProvider listItemProvider = new HomePageListItemProvider(list,this);
         // 4.适配要展示的内容数据
         listContainer.setItemProvider(listItemProvider);
         // 5.设置每个Item的点击事件
         listContainer.setItemClickedListener((container, component, position, id) -> {
             Map<String,Object> item = (Map<String,Object>) listContainer.getItemProvider().getItem(position);
             new ToastDialog(this)
+                    .setDuration(2000)
                     .setText("你点击了:" + item.get("name")+"，"+item.get("outdate"))
-                    // Toast显示在界面中间
                     .setAlignment(LayoutAlignment.CENTER)
                     .show();
+
         });
 
     }
-    // 初始化数据源
+    // 初始化药品主页的数据源
     private List<Map<String,Object>> getData(){
         List<Map<String,Object>> list;
         // icon图标

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_content"
+    ohos:width="match_parent"
+    ohos:margin="3vp"
+    ohos:alignment="left|vertical_center"
+    ohos:orientation="horizontal"
+    ohos:end_padding="15vp"
+    >
+
+    <!--头像-->
+    <Image
+        ohos:id="$+id:chat_img_head"
+        ohos:height="50vp"
+        ohos:width="50vp"
+        ohos:image_src="$media:head"
+        ohos:margin="15vp"
+        ohos:scale_mode="stretch"
+        />
+
+    <!--右侧-->
+    <DirectionalLayout
+        ohos:height="match_content"
+        ohos:width="match_parent"
+        ohos:alignment="left|vertical_center"
+        ohos:orientation="vertical">
+        <!--用户名和时间-->
+        <DirectionalLayout
+            ohos:height="match_parent"
+            ohos:width="match_parent"
+            ohos:orientation="horizontal">
+
+            <Text
+                ohos:id="$+id:chat_text_username"
+                ohos:height="match_content"
+                ohos:width="match_content"
+                ohos:max_text_lines="1"
+                ohos:max_width="170vp"
+                ohos:multiple_lines="false"
+                ohos:padding="2vp"
+                ohos:scrollable="true"
+                ohos:text="随手一打就是用户名用户名用户名用户名"
+                ohos:text_alignment="left|vertical_center"
+                ohos:text_color="$color:black_clear"
+                ohos:text_size="16fp"
+                ohos:text_weight="700"
+                />
+            <Text
+                ohos:id="$+id:chat_text_lasttime"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:max_text_lines="1"
+                ohos:max_width="180vp"
+                ohos:text="HH:MM:DD"
+                ohos:text_alignment="right|vertical_center"
+                ohos:text_color="$color:black_line"
+                ohos:text_size="12fp"
+                ohos:text_weight="500"
+                />
+
+        </DirectionalLayout>
+        <!--近期消息-->
+        <Text
+            ohos:id="$+id:chat_text_lastmsg"
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:max_text_lines="1"
+            ohos:multiple_lines="false"
+            ohos:padding="2vp"
+            ohos:text="你好啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaa啊啊啊啊啊"
+            ohos:text_alignment="left|vertical_center"
+            ohos:text_color="$color:black_line"
+            ohos:text_size="16fp"
+            ohos:text_weight="500"
+
+            />
+    </DirectionalLayout>
+
+</DirectionalLayout>
+
+
+
+

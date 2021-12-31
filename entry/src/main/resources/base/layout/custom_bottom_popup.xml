@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DirectionalLayout
+<DependentLayout
     xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:id="$+id:popup_bg"
     ohos:height="match_parent"
     ohos:width="match_parent"
     ohos:background_element="$graphic:bg_round"
-    ohos:orientation="vertical">
+    ohos:orientation="vertical"
+    ohos:alignment="top">
 
     <DirectionalLayout
+        ohos:below="$id:popup_bg"
+        ohos:id="$+id:popup_title"
         ohos:height="match_content"
         ohos:width="match_parent"
         ohos:background_element="$graphic:bg_round">
-
         <Text
             ohos:height="match_content"
             ohos:width="match_parent"
@@ -19,7 +22,6 @@
             ohos:text_color="#000"
             ohos:text_size="24fp"
             ohos:text_weight="700"/>
-
         <Component
             ohos:height="1vp"
             ohos:width="match_parent"
@@ -27,14 +29,18 @@
     </DirectionalLayout>
 
     <ScrollView
-        ohos:height="match_content"
+        ohos:height="match_parent"
         ohos:width="match_content"
+        ohos:below="$id:popup_title"
         ohos:rebound_effect="true"
-        ohos:padding="15vp">
-        <DirectionalLayout
+        ohos:margin="15vp"
+        >
+        <DependentLayout
             ohos:height="match_content"
-            ohos:width="match_content">
+            ohos:width="match_parent"
+            >
             <Text
+                ohos:id="$+id:fst_title"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:text="① OTC是非处方药的标志。"
@@ -46,6 +52,7 @@
                 />
 
             <Text
+                ohos:id="$+id:fst_context"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:text="        非处方（OTC）类药品是可以自行判断、购买和使用的药品。对于那些可自我认识和辨别症状，并能自我治疗的疾病（如感冒、发烧等），消费者可通过阅读药品说明书或咨询医师或药师后自己使用。"
@@ -54,9 +61,12 @@
                 ohos:text_alignment="left"
                 ohos:multiple_lines="true"
                 ohos:bottom_padding="30vp"
+                ohos:below="$id:fst_title"
                 />
 
             <Text
+                ohos:id="$+id:sed_title"
+                ohos:below="$id:fst_context"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:text="② Rx是处方药的标志。"
@@ -68,6 +78,8 @@
                 />
 
             <Text
+                ohos:id="$+id:sed_context"
+                ohos:below="$id:sed_title"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:text="        处方（Rx）类药品是指有处方权的医生所开具出来的处方，并由此从医院药房购买的药物。这种药通常都具有一定的毒性及其他潜在的影响，用药方法和时间都有特殊要求，必须在医生指导下使用。"
@@ -79,6 +91,8 @@
                 />
 
             <Text
+                ohos:id="$+id:trd_title"
+                ohos:below="$id:sed_context"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:text="③ OTC和Rx药品辨别方法"
@@ -90,6 +104,8 @@
                 />
 
             <Text
+                ohos:id="$+id:trd_context"
+                ohos:below="$id:trd_title"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:text="        品牌、标识物、标签及含有OTC（非处方药）或Rx（处方药）指导用语的药物。"
@@ -100,6 +116,8 @@
                 ohos:bottom_padding="30vp"
                 />
             <Text
+                ohos:id="$+id:fth_desp"
+                ohos:below="$id:trd_context"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:text="(如下图均为非处方药标识)"
@@ -111,11 +129,16 @@
                 ohos:text_color="$color:green"
                 />
             <Image
+                ohos:id="$+id:fth_img"
+                ohos:below="$id:fth_desp"
                 ohos:height="match_content"
                 ohos:width="match_content"
                 ohos:image_src="$media:otcchose_otc"
                 ohos:margin="10vp"/>
+
             <Text
+                ohos:id="$+id:fvth_desp"
+                ohos:below="$id:fth_img"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:text="(如下图均为处方药标识)"
@@ -127,35 +150,14 @@
                 ohos:text_color="$color:red"
                 />
             <Image
+                ohos:id="$+id:fvth_img"
+                ohos:below="$id:fvth_desp"
                 ohos:height="match_content"
                 ohos:width="match_content"
                 ohos:image_src="$media:otcchose_rx"
                 ohos:margin="10vp"
                 ohos:bottom_padding="50vp"/>
-
-
-
-        </DirectionalLayout>
+        </DependentLayout>
     </ScrollView>
 
-
-    <DirectionalLayout
-        ohos:height="70vp"
-        ohos:width="match_parent"
-        ohos:background_element="#77C7A7"
-        ohos:padding="15vp">
-
-        <Text
-            ohos:id="$+id:tv_temp"
-            ohos:height="match_content"
-            ohos:width="match_parent"
-            ohos:background_element="#fff"
-            ohos:padding="10vp"
-            ohos:text="点我评论"
-            ohos:text_size="14fp"
-            ohos:text_color="#333"/>
-
-    </DirectionalLayout>
-
-
-</DirectionalLayout>
+</DependentLayout>

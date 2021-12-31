@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import static com.zzti.fengyongge.imagepicker.ImagePickerInstance.*;
 
 
-public class imagePicker {
+public class ImagePicker {
     //获取单例，调用下面方法即可，具体可参考源码sample
 //    ImagePickerInstance.getInstance ();
 
