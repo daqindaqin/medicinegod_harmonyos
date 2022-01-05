@@ -44,7 +44,7 @@
                             ohos:id="$+id:chat_friend"
                             ohos:height="match_content"
                             ohos:width="match_parent"
-                            ohos:background_element="$graphic:background_chat_moudle"
+                            ohos:background_element="$graphic:background_chat_moudle_background"
                             ohos:below="$id:chat_line0"
                             ohos:margin="10vp"
                             ohos:orientation="vertical">
@@ -119,7 +119,7 @@
                             ohos:id="$+id:chat_chat"
                             ohos:height="match_parent"
                             ohos:width="match_parent"
-                            ohos:background_element="$graphic:background_chat_moudle"
+                            ohos:background_element="$graphic:background_chat_moudle_background"
                             ohos:below="$id:chat_line0"
                             ohos:margin="10vp"
                             ohos:orientation="vertical">
