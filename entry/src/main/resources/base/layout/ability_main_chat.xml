@@ -149,7 +149,6 @@
                                     ohos:background_element="$color:orange"
                                     ohos:below="$id:head_of_top"
                                     ohos:layout_alignment="horizontal_center"
-                                    ohos:rebound_effect="true"
                                     ohos:margin="10vp"
                                     />
                         </DirectionalLayout>
