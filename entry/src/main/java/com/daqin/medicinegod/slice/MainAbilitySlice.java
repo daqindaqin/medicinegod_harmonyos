@@ -3,10 +3,7 @@ package com.daqin.medicinegod.slice;
 import com.daqin.medicinegod.CommentPopup;
 import com.daqin.medicinegod.FlowLayout;
 import com.daqin.medicinegod.ResourceTable;
-import com.daqin.medicinegod.utils.ChatListItemProvider;
-import com.daqin.medicinegod.utils.HomePageListItemProvider;
-import com.daqin.medicinegod.utils.ScreenSlidePagerProvider;
-import com.daqin.medicinegod.utils.WindowsUtil;
+import com.daqin.medicinegod.utils.*;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
 import com.lxj.xpopup.XPopup;
 import com.zzti.fengyongge.imagepicker.ImagePickerInstance;
@@ -53,7 +50,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
 
         intPageStart();
-        initHomepageListContainer();
+//        initHomepageListContainer();
 
         intHeadView();
 
@@ -170,7 +167,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
         LayoutScatter layoutScatter1 = LayoutScatter.getInstance(getContext());
         DependentLayout inflatedView1 = (DependentLayout) layoutScatter1.parse(
-                ResourceTable.Layout_ability_main_find, null, false);
+                ResourceTable.Layout_ability_main_community, null, false);
         fragList.add(inflatedView1);
 
         LayoutScatter layoutScatter2 = LayoutScatter.getInstance(getContext());
@@ -225,19 +222,98 @@ public class MainAbilitySlice extends AbilitySlice {
         mBubbleNavigationLinearView.setNavigationChangeListener((view, position) ->
         {
             //添加药品的页面刷新多选框
+            /**
+             * @param lastPos 上一个位置，跨位置刷新数据会闪退
+             */
+            int lastPos = 0;
             switch (position){
+                case 0:
+                    if(lastPos==1){
+                        initHomepageListContainer();
+                    }
+                    lastPos = position;
+                    break;
+                case 1:
+                    if(lastPos== 0||lastPos==2) {
+                        initCommunityListContainer();
+                    }
+                    lastPos = position;
+                    break;
                 case 2:
                     intCalendarPicker();
+                    lastPos = position;
                     break;
                 case 3:
-                    initChatListContainer();
+                    if(lastPos==2||lastPos==4){
+                        initChatListContainer();
+                    }
+                    lastPos = position;
                     break;
                 default:
+                    lastPos = 0;
                     break;
             }
             viewPager.setCurrentPage(position, true);
 
         });
+    }
+    // 初始化社区
+    private void initCommunityListContainer(){
+        //1.获取xml布局中的ListContainer组件
+        ListContainer listContainer = (ListContainer) findComponentById(ResourceTable.Id_community_contextlist);
+
+        // 2.实例化数据源
+        List<Map<String,Object>> list = getCommunityData();
+        // 3.初始化Provider对象
+        CommunityListItemProvider listItemProvider = new CommunityListItemProvider(list,this);
+        // 4.适配要展示的内容数据
+        listContainer.setItemProvider(listItemProvider);
+        // 5.设置每个Item的点击事件
+        listContainer.setItemClickedListener((container, component, position, id) -> {
+            Map<String,Object> item = (Map<String,Object>) listContainer.getItemProvider().getItem(position);
+            new ToastDialog(this)
+                    .setDuration(2000)
+                    .setText("你点击了:" + item.get("commname")+"，"+item.get("commtime"))
+                    .setAlignment(LayoutAlignment.CENTER)
+                    .show();
+
+        });
+
+    }
+    // 初始化社区主页的数据源
+    private List<Map<String,Object>> getCommunityData(){
+        List<Map<String,Object>> list;
+        // icon图标
+        int[] imghead = {ResourceTable.Media_head,ResourceTable.Media_head,
+                ResourceTable.Media_head,ResourceTable.Media_head,
+                ResourceTable.Media_head,ResourceTable.Media_head,
+                ResourceTable.Media_head,ResourceTable.Media_head,
+                ResourceTable.Media_head,ResourceTable.Media_head};
+        int[] imgpho = {ResourceTable.Media_test,ResourceTable.Media_test,
+                ResourceTable.Media_test,ResourceTable.Media_test,
+                ResourceTable.Media_test,ResourceTable.Media_test,
+                ResourceTable.Media_test,ResourceTable.Media_test,
+                ResourceTable.Media_test,ResourceTable.Media_test};
+        String[] names={"曹操","刘备","关羽","诸葛亮","小乔","貂蝉","吕布","赵云","黄盖","周瑜"};
+        String[] qianming={"一代枭雄","卖草鞋","财神","卧龙先生","周瑜媳妇","四大镁铝","天下无双","常胜将军","愿意挨打","愿意打人"};
+        String[] time={"2002-1-1","2102-1-1","2102-1-1","2242-1-1","2202-4-1","2202-2-1","2202-7-1","2202-9-1","2202-3-1","2203-1-1"};
+        String[] context={"木大木大木大木大木大木大木大木大木大木大木大木大木大木大木大木大","木大木大木大木大木大","奥里给奥里给","大大大靠近覅","daaaaaa士大夫方法","发誓生生世世生生世世","xdfhcFAzxfhgzsxv","afgshszdx sdfgsdFszgdhfjdgzgdxhfcjcfxdzsfxd","发生过活动经费算法公式的的说法","反反复复烦烦烦烦烦烦烦烦烦萨顶顶是的"};
+        list= new ArrayList<>();
+        for(int i=0;i<imghead.length;i++){
+            Map<String, Object> map = new HashMap<>();
+//            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("commname",names[i]);
+            map.put("commqianming", qianming[i]);
+            map.put("commtime", time[i]);
+            map.put("commtext",context[i]);
+            map.put("commhead", imghead[i]);
+            map.put("commpho", imgpho[i]);
+
+            list.add(map);
+        }
+
+
+        return list;
     }
 
     // 初始化聊天界面的ListContainer
@@ -429,6 +505,8 @@ public class MainAbilitySlice extends AbilitySlice {
 
         return list;
     }
+
+
 
     @Override
     public void onActive() {

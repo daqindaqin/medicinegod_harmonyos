@@ -46,7 +46,7 @@ public class HomePageListItemProvider extends  BaseItemProvider{
         // 如果还没有convertComponent对象，那么将xml布局文件转为一个Component对象。
         if(convertComponent == null){
             //从当前的AbilitySlice对应的xml布局中，
-            cpt = LayoutScatter.getInstance(slice).parse(ResourceTable.Layout_list_item,null,false);
+            cpt = LayoutScatter.getInstance(slice).parse(ResourceTable.Layout_list_item_homepage,null,false);
         }else{
             cpt = convertComponent;
         }
