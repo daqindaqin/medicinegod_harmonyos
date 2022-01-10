@@ -45,7 +45,7 @@
                     ohos:end_margin="20vp"
                     ohos:alignment="right"
                     >
-                        <TextField
+                        <Text
                             ohos:id="$+id:things_textField_seach"
                             ohos:height="40fp"
                             ohos:width="match_parent"
@@ -67,12 +67,12 @@
 
         <ListContainer
             ohos:id="$+id:things_list"
-            ohos:height="200vp"
+            ohos:height="match_parent"
             ohos:width="match_parent"
             ohos:margin="5vp"
             ohos:rebound_effect="true"
             ohos:below="$id:things_head_of_top"
-
+            ohos:background_element="$color:white"
             />
 
 

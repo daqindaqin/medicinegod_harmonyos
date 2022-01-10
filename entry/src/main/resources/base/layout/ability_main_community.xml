@@ -3,48 +3,85 @@
     xmlns:ohos="http://schemas.huawei.com/res/ohos"
     ohos:height="match_parent"
     ohos:width="match_parent"
-    ohos:alignment="top"
     ohos:background_element="$color:white"
     >
 
-    <Text
-        ohos:id="$+id:community_title"
-        ohos:height="match_content"
-        ohos:width="match_parent"
-        ohos:bottom_padding="20vp"
-        ohos:text="世  界"
-        ohos:text_alignment="vertical_center|horizontal_center"
-        ohos:text_color="$color:black_clear"
-        ohos:text_size="24fp"
-        ohos:text_weight="700"
-        ohos:top_padding="20vp"/>
-
-    <Image
-        ohos:id="$+id:community_line0"
-        ohos:height="3"
-        ohos:width="match_parent"
-        ohos:background_element="$color:black_line"
-        ohos:below="$id:community_title"
-        ohos:bottom_margin="5vp"/>
-
-
-    <DirectionalLayout
+    <ScrollView
         ohos:height="match_parent"
         ohos:width="match_parent"
-        ohos:below="$id:community_line0"
-        ohos:orientation="vertical">
-
-        <ListContainer
-            ohos:id="$+id:community_contextlist"
+        ohos:rebound_effect="true">
+        <DirectionalLayout
             ohos:height="match_parent"
             ohos:width="match_parent"
-            ohos:layout_alignment="horizontal_center"
-            ohos:margin="10vp"
-            ohos:rebound_effect="true"
-            />
+            ohos:alignment="vertical_center|horizontal_center"
+            ohos:orientation="vertical">
+            <Image
+                ohos:height="80vp"
+                ohos:width="80vp"
+                ohos:image_src="$graphic:background_bottombar_community_icon"
+                ohos:scale_mode="stretch"
+                ohos:margin="10vp"/>
+            <Text
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:text="场地施工中"
+                ohos:text_color="$color:black_line"
+                ohos:text_weight="700"
+                ohos:text_size="35vp"
+                ohos:text_alignment="horizontal_center|vertical_center"/>
+            <Text
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:text="请耐心等待工期结束"
+                ohos:text_color="$color:black_line"
+                ohos:text_weight="700"
+                ohos:text_size="35vp"
+                ohos:text_alignment="horizontal_center|vertical_center"
+                ohos:bottom_margin="100vp"/>
+
+        </DirectionalLayout>
+
+<!--        <DirectionalLayout-->
+<!--            ohos:height="match_parent"-->
+<!--            ohos:width="match_parent">-->
 
 
-    </DirectionalLayout>
+<!--            <Text-->
+<!--                ohos:id="$+id:community_title"-->
+<!--                ohos:height="match_content"-->
+<!--                ohos:width="match_parent"-->
+<!--                ohos:bottom_padding="20vp"-->
+<!--                ohos:text="世  界"-->
+<!--                ohos:text_alignment="vertical_center|horizontal_center"-->
+<!--                ohos:text_color="$color:black_clear"-->
+<!--                ohos:text_size="24fp"-->
+<!--                ohos:text_weight="700"-->
+<!--                ohos:top_padding="20vp"/>-->
 
+<!--            <Image-->
+<!--                ohos:id="$+id:community_line0"-->
+<!--                ohos:height="3"-->
+<!--                ohos:width="match_parent"-->
+<!--                ohos:background_element="$color:black_line"-->
+<!--                ohos:below="$id:community_title"-->
+<!--                ohos:bottom_margin="5vp"/>-->
+
+
+
+
+<!--                <ListContainer-->
+<!--                    ohos:id="$+id:community_contextlist"-->
+<!--                    ohos:height="match_content"-->
+<!--                    ohos:width="match_parent"-->
+<!--                    ohos:below="$id:community_line0"-->
+
+<!--                    ohos:layout_alignment="horizontal_center"-->
+<!--                    ohos:margin="10vp"-->
+<!--                    />-->
+
+
+
+<!--        </DirectionalLayout>-->
+    </ScrollView>
 
 </DependentLayout>

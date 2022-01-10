@@ -6,6 +6,10 @@ import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.utils.*;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
 import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.core.BasePopupView;
+import com.lxj.xpopup.interfaces.OnConfirmListener;
+import com.lxj.xpopup.interfaces.SimpleCallback;
+import com.lxj.xpopup.util.ToastUtil;
 import com.zzti.fengyongge.imagepicker.ImagePickerInstance;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.ability.DataAbilityHelper;
@@ -15,7 +19,10 @@ import ohos.agp.components.*;
 import ohos.agp.render.*;
 import ohos.agp.utils.LayoutAlignment;
 import ohos.agp.window.dialog.ToastDialog;
+import ohos.app.Context;
 import ohos.bundle.IBundleManager;
+import ohos.data.DatabaseHelper;
+import ohos.data.preferences.Preferences;
 import ohos.global.resource.NotExistException;
 import ohos.media.image.ImageSource;
 import ohos.media.image.PixelMap;
@@ -38,7 +45,7 @@ public class MainAbilitySlice extends AbilitySlice {
 //    private List<String> labelList = new ArrayList<>();
 
     static int newUsage_utils_1 = 0,newUsage_utils_2 = 0;
-
+    BasePopupView DIALOG;
 
 
     @Override
@@ -50,11 +57,11 @@ public class MainAbilitySlice extends AbilitySlice {
 
 
         intPageStart();
-//        initHomepageListContainer();
-
         intHeadView();
 
-
+        initHomepageListContainer();
+//        initCommunityListContainer();
+//        initChatListContainer();
         //清空添加药品的列表
         Button btn_clear = (Button)findComponentById(ResourceTable.Id_add_clear);
         btn_clear.setClickedListener(l->clearAddTextfield());
@@ -96,14 +103,21 @@ public class MainAbilitySlice extends AbilitySlice {
 
         //用法用量单位变换
         Text btn_newUsage_utils_1 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_1);
+        Text settitle = (Text)findComponentById(ResourceTable.Id_add_newYu_title) ;
         btn_newUsage_utils_1.setClickedListener(l->{
             newUsage_utils_1 += 1;
             switch (newUsage_utils_1){
                 case 1:
                     btn_newUsage_utils_1.setText("克");
+                    settitle.setText("剩余余量(单位:克)");
                     break;
                 case 2:
                     btn_newUsage_utils_1.setText("包");
+                    settitle.setText("剩余余量(单位:包)");
+                    break;
+                case 3:
+                    btn_newUsage_utils_1.setText("片");
+                    settitle.setText("剩余余量(单位:片)");
                     newUsage_utils_1 = 0;
                     break;
             }
@@ -126,9 +140,256 @@ public class MainAbilitySlice extends AbilitySlice {
 //        Button btn_addNewLabel = (Button)findComponentById(ResourceTable.Id_add_newLabel_addButton);
 //        btn_addNewLabel.setClickedListener(l->addNewLabel());
 
+        TextField add_name = (TextField)findComponentById(ResourceTable.Id_add_newName);
+        TextField add_desp = (TextField)findComponentById(ResourceTable.Id_add_newDescription);
+        Picker add_outdate_year = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_year);
+        Picker add_outdate_month = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_month);
+        Picker add_otc = (Picker)findComponentById(ResourceTable.Id_add_newOtc);
+        TextField add_barcode = (TextField)findComponentById(ResourceTable.Id_add_newbarCode);
+        TextField add_usage_total = (TextField)findComponentById(ResourceTable.Id_add_newUsage_1);
+        TextField add_usage_time = (TextField)findComponentById(ResourceTable.Id_add_newUsage_2);
+        TextField add_company = (TextField)findComponentById(ResourceTable.Id_add_newCompany);
+        Picker add_yu = (Picker)findComponentById(ResourceTable.Id_add_newYu);
+        Button btn_ok = (Button)findComponentById(ResourceTable.Id_add_addOk);
+        btn_ok.setClickedListener(l->{
+//            if (add_name.getText()==null){
+                    System.out.println("运行到这了1"+add_name.getText()+(add_name.getText()==""));
+                    DIALOG = new XPopup.Builder(getContext())
+                            .dismissOnBackPressed(false) // 点击返回键是否消失
+                            .dismissOnTouchOutside(true) // 点击外部是否消失
+                            .setPopupCallback(new dialogListener())
+                            .asConfirm("这是标题", "床前明月光，疑是地上霜；举头望明月，低头思故乡。","嗯呐","确定",
+                                    new OnConfirmListener() {
+                                        @Override
+                                        public void onConfirm() {
+                                            ToastUtil.showToast(getContext(),"click confirm");
+                                        }
+                                    }, null, false);
+
+                DIALOG.show();
+
+//            }else if(add_desp.getText()==null){
+
+//            }
+
+
+        });
+
+
+
+
+
+
+
+    }
+    //
+    class dialogListener extends SimpleCallback {
+        @Override
+        public void onCreated(BasePopupView pv) {
+            ToastUtil.showToast(getContext(),"click confirm");
+
+
+        }
+
+        @Override
+        public void onShow(BasePopupView popupView) {
+
+
+        }
+
+        @Override
+        public void onDismiss(BasePopupView popupView) {
+
+
+        }
+
+        @Override
+        public void beforeDismiss(BasePopupView popupView) {
+
+
+        }
+
+        // 如果你自己想拦截返回按键事件，则重写这个方法，返回true即可
+        @Override
+        public boolean onBackPressed(BasePopupView popupView) {
+            ToastUtil.showToast(getContext(), "onBackPressed返回true，拦截了返回按键，按返回键XPopup不会关闭了");
+            return true;
+        }
+
+        @Override
+        public void onKeyBoardStateChanged(BasePopupView popupView, int height) {
+            super.onKeyBoardStateChanged(popupView, height);
+        }
+    }
+
+    //数据库相关
+    static class PreferenceUtils {
+
+        private static String PREFERENCE_FILE_NAME = "mg";
+        private static Preferences preferences;
+        private static DatabaseHelper databaseHelper;
+        private static Preferences.PreferencesObserver mPreferencesObserver;
+
+        private static void initPreference(Context context){
+            if(databaseHelper==null){
+                databaseHelper = new DatabaseHelper(context);
+            }
+            if(preferences==null){
+                preferences = databaseHelper.getPreferences(PREFERENCE_FILE_NAME);
+            }
+
+        }
+
+        //存放、获取时传入的context必须是同一个context,否则存入的数据无法获取
+        public static void putString(Context context, String key, String value) {
+            initPreference(context);
+            preferences.putString(key, value);
+            preferences.flush();
+        }
+
+        /**
+         * @param context 上下文
+         * @param key  键
+         * @return 获取的String 默认值为:null
+         */
+        public static String getString(Context context, String key) {
+            initPreference(context);
+            return preferences.getString(key, null);
+        }
+
+
+        public static void putInt(Context context, String key, int value) {
+            initPreference(context);
+            preferences.putInt(key, value);
+            preferences.flush();
+        }
+
+        /**
+         * @param context 上下文
+         * @param key 键
+         * @return 获取int的默认值为：-1
+         */
+        public static int getInt(Context context, String key) {
+            initPreference(context);
+            return preferences.getInt(key, -1);
+        }
+
+
+        public static void putLong(Context context, String key, long value) {
+            initPreference(context);
+            preferences.putLong(key, value);
+            preferences.flush();
+        }
+
+        /**
+         * @param context 上下文
+         * @param key  键
+         * @return 获取long的默认值为：-1
+         */
+        public static long getLong(Context context, String key) {
+            initPreference(context);
+            return preferences.getLong(key, -1L);
+        }
+
+
+        public static void putBoolean(Context context, String key, boolean value) {
+            initPreference(context);
+            preferences.putBoolean(key, value);
+            preferences.flush();
+        }
+
+        /**
+         * @param context  上下文
+         * @param key  键
+         * @return 获取boolean的默认值为：false
+         */
+        public static boolean getBoolean(Context context, String key) {
+            initPreference(context);
+            return preferences.getBoolean(key, false);
+        }
+
+
+        public static void putFloat(Context context, String key, float value) {
+            initPreference(context);
+            preferences.putFloat(key, value);
+            preferences.flush();
+        }
+
+        /**
+         * @param context 上下文
+         * @param key   键
+         * @return 获取float的默认值为：0.0
+         */
+        public static float getFloat(Context context, String key) {
+            initPreference(context);
+            return preferences.getFloat(key, 0.0F);
+        }
+
+
+        public static void putStringSet(Context context, String key, Set<String> set) {
+            initPreference(context);
+            preferences.putStringSet(key, set);
+            preferences.flush();
+        }
+
+        /**
+         * @param context  上下文
+         * @param key 键
+         * @return 获取set集合的默认值为：null
+         */
+        public static Set<String> getStringSet(Context context, String key) {
+            initPreference(context);
+            return preferences.getStringSet(key, null);
+        }
+
+
+        public static boolean deletePreferences(Context context) {
+            initPreference(context);
+            boolean isDelete= databaseHelper.deletePreferences(PREFERENCE_FILE_NAME);
+            return isDelete;
+        }
+
+
+        public static void registerObserver(Context context, Preferences.PreferencesObserver preferencesObserver){
+            initPreference(context);
+            mPreferencesObserver=preferencesObserver;
+            preferences.registerObserver(mPreferencesObserver);
+        }
+
+        public static void unregisterObserver(){
+            if(mPreferencesObserver!=null){
+                // 向preferences实例注销观察者
+                preferences.unregisterObserver(mPreferencesObserver);
+            }
+        }
 
     }
 
+    //设置scrollview与list一起滚动，暂废弃
+    /*
+    private void setListContainerHeight(ListContainer listContainer) {
+        //获取当前listContainer的适配器
+        BaseItemProvider BaseItemProvider = listContainer.getItemProvider();
+        if (BaseItemProvider == null){
+            return;
+        }
+        int itemHeight = 0;
+        for (int i = 0; i < BaseItemProvider.getCount(); i++) {
+            //循环将listContainer适配器的Item数据进行累加
+            Component listItem = BaseItemProvider.getComponent(i, null, listContainer);
+            itemHeight += listItem.getHeight();
+        }
+        //对当前listContainer进行高度赋值
+        ComponentContainer.LayoutConfig config = listContainer.getLayoutConfig();
+        //这边加上(listContainer.getBoundaryThickness() * (BaseItemProvider.getCount()+1))
+        //listContainer.getBoundaryThickness() 就是分界线的高度
+        //(BaseItemProvider.getCount()+1) 是Item的数量  加1  是因为顶部还有一条分界线
+        config.height = itemHeight
+                + (listContainer.getBoundaryThickness() * (BaseItemProvider.getCount()+1));
+        //赋值
+        listContainer.setLayoutConfig(config);
+    }
+    */
 
     //清空添加药品的列表
     private void clearAddTextfield() {
@@ -222,42 +483,30 @@ public class MainAbilitySlice extends AbilitySlice {
         mBubbleNavigationLinearView.setNavigationChangeListener((view, position) ->
         {
             //添加药品的页面刷新多选框
-            /**
-             * @param lastPos 上一个位置，跨位置刷新数据会闪退
-             */
-            int lastPos = 0;
+            viewPager.setCurrentPage(position, true);
             switch (position){
                 case 0:
-                    if(lastPos==1){
-                        initHomepageListContainer();
-                    }
-                    lastPos = position;
+                    initHomepageListContainer();
                     break;
                 case 1:
-                    if(lastPos== 0||lastPos==2) {
-                        initCommunityListContainer();
-                    }
-                    lastPos = position;
+                    //TODO:修改社区显示内容，卡顿与繁杂
+//                    initCommunityListContainer();
                     break;
                 case 2:
                     intCalendarPicker();
-                    lastPos = position;
                     break;
                 case 3:
-                    if(lastPos==2||lastPos==4){
-                        initChatListContainer();
-                    }
-                    lastPos = position;
+                    initChatListContainer();
+                    break;
+                case 4:
                     break;
                 default:
-                    lastPos = 0;
                     break;
             }
-            viewPager.setCurrentPage(position, true);
-
         });
     }
     // 初始化社区
+    /*
     private void initCommunityListContainer(){
         //1.获取xml布局中的ListContainer组件
         ListContainer listContainer = (ListContainer) findComponentById(ResourceTable.Id_community_contextlist);
@@ -315,7 +564,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
         return list;
     }
-
+    */
     // 初始化聊天界面的ListContainer
     private void initChatListContainer(){
         //1.获取xml布局中的ListContainer组件
@@ -336,6 +585,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     .setAlignment(LayoutAlignment.CENTER)
                     .show();
         });
+//        setListContainerHeight(listContainer);
 
     }
     // 初始化聊天界面的数据源
@@ -456,9 +706,6 @@ public class MainAbilitySlice extends AbilitySlice {
         //1.获取xml布局中的ListContainer组件
         ListContainer listContainer = (ListContainer) findComponentById(ResourceTable.Id_things_list);
 
-        listContainer.setHeight(abs(WindowsUtil.getWindowHeightPx(MainAbilitySlice.this)- WindowsUtil.getWindowWidthPx(MainAbilitySlice.this))+2*findComponentById(ResourceTable.Id_head_of_top).getHeight()+130);
-
-
         // 2.实例化数据源
         List<Map<String,Object>> list = getData();
         // 3.初始化Provider对象
@@ -501,7 +748,6 @@ public class MainAbilitySlice extends AbilitySlice {
             map.put("outdate", outdate[i]);
             list.add(map);
         }
-
 
         return list;
     }
