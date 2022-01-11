@@ -41,6 +41,15 @@
         "label": "$string:entry_MainAbility",
         "type": "page",
         "launchType": "standard"
+      },{
+        "permissions": [
+          "com.huawei.codelab.DataAbilityShellProvider.PROVIDER"
+        ],
+        "name": "com.daqin.medicinegod.utils.PersonDataAbility",
+        "icon": "$media:icon",
+        "description": "数据库相关",
+        "type": "data",
+        "uri": "dataability://com.daqin.medicinegod.utils.PersonDataAbility"
       }
     ],
     "metaData": {
@@ -55,13 +64,13 @@
       {
         "name": "ohos.permission.READ_MEDIA",
         "reason": "选择上传图片使用",
-        "usedScene":
-        {
-          "ability": ["com.daqin.medicinegod.MainAbility"],
+        "usedScene": {
+          "ability": [
+            "com.daqin.medicinegod.MainAbility"
+          ],
           "when": "always"
         }
       }
     ]
-
   }
 }

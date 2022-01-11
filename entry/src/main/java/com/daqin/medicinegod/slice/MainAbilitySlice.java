@@ -22,8 +22,13 @@ import ohos.agp.window.dialog.ToastDialog;
 import ohos.app.Context;
 import ohos.bundle.IBundleManager;
 import ohos.data.DatabaseHelper;
+import ohos.data.dataability.DataAbilityPredicates;
 import ohos.data.preferences.Preferences;
+import ohos.data.rdb.ValuesBucket;
+import ohos.data.resultset.ResultSet;
 import ohos.global.resource.NotExistException;
+import ohos.hiviewdfx.HiLog;
+import ohos.hiviewdfx.HiLogLabel;
 import ohos.media.image.ImageSource;
 import ohos.media.image.PixelMap;
 import ohos.media.image.common.PixelFormat;
@@ -35,6 +40,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 import static java.lang.Math.abs;
 //TODO：图片圆角、流式布局
@@ -48,12 +55,32 @@ public class MainAbilitySlice extends AbilitySlice {
     BasePopupView DIALOG;
 
 
+
+
+    private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "MainAbilitySlice");
+    private static final String BASE_URI = "dataability:///com.daqin.medicinegod.utils.PersonDataAbility";
+    private static final String DATA_PATH = "/mg";
+    private static final String DB_COLUMN_ID = "ID";
+    private static final String DB_COLUMN_NAME = "NAME";
+    private static final String DB_COLUMN_IMAGEPATH = "IMAGEPATH";
+    private static final String DB_COLUMN_DESCRIPTION = "DESCRIPTION";
+    private static final String DB_COLUMN_OUTDATE = "OUTDATE";
+    private static final String DB_COLUMN_OTC = "OTC";
+    private static final String DB_COLUMN_BARCODE = "BARCODE";
+    private static final String DB_COLUMN_USAGE = "USAGE";
+    private static final String DB_COLUMN_COMPANY = "COMPANY";
+    private static final String DB_COLUMN_YU = "YU";
+    private static final String DB_COLUMN_ELABEL = "ELABEL";
+    private DataAbilityHelper databaseHelper;
+
+
     @Override
     public void onStart(Intent intent) {
         super.onStart(intent);
         super.setUIContent(ResourceTable.Layout_ability_main);
 //        mflowLayout = (FlowLayout) findComponentById(ResourceTable.Id_flow_layout);
 //        labelList.clear();
+        databaseHelper = DataAbilityHelper.creator(this);
 
 
         intPageStart();
@@ -152,13 +179,12 @@ public class MainAbilitySlice extends AbilitySlice {
         Picker add_yu = (Picker)findComponentById(ResourceTable.Id_add_newYu);
         Button btn_ok = (Button)findComponentById(ResourceTable.Id_add_addOk);
         btn_ok.setClickedListener(l->{
-//            if (add_name.getText()==null){
-                    System.out.println("运行到这了1"+add_name.getText()+(add_name.getText()==""));
+            if (add_name.getText().equals("")||add_name.getText().equals(" ")||add_name.getText().equals(null)){
                     DIALOG = new XPopup.Builder(getContext())
                             .dismissOnBackPressed(false) // 点击返回键是否消失
-                            .dismissOnTouchOutside(true) // 点击外部是否消失
+                            .dismissOnTouchOutside(false) // 点击外部是否消失
                             .setPopupCallback(new dialogListener())
-                            .asConfirm("这是标题", "床前明月光，疑是地上霜；举头望明月，低头思故乡。","嗯呐","确定",
+                            .asConfirm("这是标题", "床前明月光，疑是地上霜；举头望明月，低头思故乡。","","确定",
                                     new OnConfirmListener() {
                                         @Override
                                         public void onConfirm() {
@@ -168,13 +194,12 @@ public class MainAbilitySlice extends AbilitySlice {
 
                 DIALOG.show();
 
-//            }else if(add_desp.getText()==null){
+            }else if(add_desp.getText()==null){
 
-//            }
+            }
 
 
         });
-
 
 
 
@@ -186,8 +211,6 @@ public class MainAbilitySlice extends AbilitySlice {
     class dialogListener extends SimpleCallback {
         @Override
         public void onCreated(BasePopupView pv) {
-            ToastUtil.showToast(getContext(),"click confirm");
-
 
         }
 
@@ -212,7 +235,7 @@ public class MainAbilitySlice extends AbilitySlice {
         // 如果你自己想拦截返回按键事件，则重写这个方法，返回true即可
         @Override
         public boolean onBackPressed(BasePopupView popupView) {
-            ToastUtil.showToast(getContext(), "onBackPressed返回true，拦截了返回按键，按返回键XPopup不会关闭了");
+//            ToastUtil.showToast(getContext(), "onBackPressed返回true，拦截了返回按键，按返回键XPopup不会关闭了");
             return true;
         }
 
@@ -222,7 +245,7 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
 
-    //数据库相关
+    //轻量数据库相关
     static class PreferenceUtils {
 
         private static String PREFERENCE_FILE_NAME = "mg";
@@ -814,5 +837,125 @@ public class MainAbilitySlice extends AbilitySlice {
         super.onAbilityResult(requestCode, resultCode, data);
     }
 
+
+
+    //获取、刷新数据
+    private void query() {
+        String[] columns = new String[] {DB_COLUMN_ID,
+                DB_COLUMN_NAME,
+                DB_COLUMN_IMAGEPATH,
+                DB_COLUMN_DESCRIPTION,
+                DB_COLUMN_OUTDATE,
+                DB_COLUMN_OTC,
+                DB_COLUMN_BARCODE,
+                DB_COLUMN_USAGE,
+                DB_COLUMN_COMPANY,
+                DB_COLUMN_YU,
+                DB_COLUMN_ELABEL
+        };
+        // 构造查询条件
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.between(DB_COLUMN_ID, 0, 9999);
+        try {
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
+                    columns, predicates);
+            if (resultSet == null || resultSet.getRowCount() == 0) {
+                HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
+                return;
+            }
+            resultSet.goToFirstRow();
+            do {
+                int id = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_ID));
+                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
+                String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
+                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
+                String outdate = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
+                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
+                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
+                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
+                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
+                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
+                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
+                HiLog.info(LABEL_LOG, "query: Id :" + id + " "+name+ " "+imagepath+ " "+description+ " "+outdate
+                        + " "+otc+ " "+barcode+ " "+usage+ " "+company+ " "+yu+ " "+elabel);
+            } while (resultSet.goToNextRow());
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "query: dataRemote exception | illegalStateException");
+        }
+    }
+    //插入数据
+    private void insert(int id, String name, String imagepath,
+                        String description, String outdate, String otc,
+                        String barcode, String usage, String company,
+                        String yu ,String elabel) {
+        ValuesBucket valuesBucket = new ValuesBucket();
+        valuesBucket.putInteger(DB_COLUMN_ID, id);
+        valuesBucket.putString(DB_COLUMN_NAME, name);
+        valuesBucket.putString(DB_COLUMN_IMAGEPATH, imagepath);
+        valuesBucket.putString(DB_COLUMN_DESCRIPTION, description);
+        valuesBucket.putString(DB_COLUMN_OUTDATE, outdate);
+        valuesBucket.putString(DB_COLUMN_OTC, otc);
+        valuesBucket.putString(DB_COLUMN_BARCODE, barcode);
+        valuesBucket.putString(DB_COLUMN_USAGE, usage);
+        valuesBucket.putString(DB_COLUMN_COMPANY, company);
+        valuesBucket.putString(DB_COLUMN_YU, yu);
+        valuesBucket.putString(DB_COLUMN_ELABEL, elabel);
+
+        try {
+            if (databaseHelper.insert(Uri.parse(BASE_URI + DATA_PATH), valuesBucket) != -1) {
+                HiLog.info(LABEL_LOG, "insert successful");
+                ToastUtil.showToast(this,"添加成功");
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "insert: dataRemote exception|illegalStateException");
+            ToastUtil.showToast(this,"添加失败，请重试");
+        }
+    }
+    //更新
+    private void update(int id, String name, String imagepath,
+                        String description, String outdate, String otc,
+                        String barcode, String usage, String company,
+                        String yu ,String elabel) {
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.equalTo(DB_COLUMN_ID, id);
+        ValuesBucket valuesBucket = new ValuesBucket();
+        valuesBucket.putString(DB_COLUMN_NAME, name);
+        valuesBucket.putString(DB_COLUMN_NAME, name);
+        valuesBucket.putString(DB_COLUMN_IMAGEPATH, imagepath);
+        valuesBucket.putString(DB_COLUMN_DESCRIPTION, description);
+        valuesBucket.putString(DB_COLUMN_OUTDATE, outdate);
+        valuesBucket.putString(DB_COLUMN_OTC, otc);
+        valuesBucket.putString(DB_COLUMN_BARCODE, barcode);
+        valuesBucket.putString(DB_COLUMN_USAGE, usage);
+        valuesBucket.putString(DB_COLUMN_COMPANY, company);
+        valuesBucket.putString(DB_COLUMN_YU, yu);
+        valuesBucket.putString(DB_COLUMN_ELABEL, elabel);
+        try {
+            if (databaseHelper.update(Uri.parse(BASE_URI + DATA_PATH), valuesBucket, predicates) != -1) {
+                HiLog.info(LABEL_LOG, "update successful");
+                ToastUtil.showToast(this,"修改成功");
+
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
+            ToastUtil.showToast(this,"修改失败，请重试");
+
+        }
+    }
+    //删除
+    private void delete(int id) {
+        DataAbilityPredicates predicates = new DataAbilityPredicates()
+                .equalTo(DB_COLUMN_ID, id);
+        try {
+            if (databaseHelper.delete(Uri.parse(BASE_URI + DATA_PATH), predicates) != -1) {
+                HiLog.info(LABEL_LOG, "delete successful");
+                ToastUtil.showToast(this,"删除成功");
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "delete: dataRemote exception | illegalStateException");
+            ToastUtil.showToast(this,"删除失败，请重试");
+        }
+    }
 }
+
 
