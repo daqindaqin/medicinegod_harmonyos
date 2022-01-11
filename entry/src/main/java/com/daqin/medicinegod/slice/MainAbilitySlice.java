@@ -17,8 +17,10 @@ import ohos.aafwk.ability.DataAbilityRemoteException;
 import ohos.aafwk.content.Intent;
 import ohos.agp.components.*;
 import ohos.agp.render.*;
+import ohos.agp.utils.Color;
 import ohos.agp.utils.LayoutAlignment;
 import ohos.agp.window.dialog.ToastDialog;
+import ohos.agp.window.service.WindowManager;
 import ohos.app.Context;
 import ohos.bundle.IBundleManager;
 import ohos.data.DatabaseHelper;
@@ -54,6 +56,7 @@ public class MainAbilitySlice extends AbilitySlice {
     static int newUsage_utils_1 = 0,newUsage_utils_2 = 0;
     BasePopupView DIALOG;
 
+    private String imgpath;
 
 
 
@@ -166,7 +169,7 @@ public class MainAbilitySlice extends AbilitySlice {
         //添加药效标签
 //        Button btn_addNewLabel = (Button)findComponentById(ResourceTable.Id_add_newLabel_addButton);
 //        btn_addNewLabel.setClickedListener(l->addNewLabel());
-
+        ScrollView view = (ScrollView)findComponentById(ResourceTable.Id_add_scrollview);
         TextField add_name = (TextField)findComponentById(ResourceTable.Id_add_newName);
         TextField add_desp = (TextField)findComponentById(ResourceTable.Id_add_newDescription);
         Picker add_outdate_year = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_year);
@@ -178,27 +181,35 @@ public class MainAbilitySlice extends AbilitySlice {
         TextField add_company = (TextField)findComponentById(ResourceTable.Id_add_newCompany);
         Picker add_yu = (Picker)findComponentById(ResourceTable.Id_add_newYu);
         Button btn_ok = (Button)findComponentById(ResourceTable.Id_add_addOk);
+        TextField[] texttList = {add_name,add_desp,add_barcode,add_usage_total,add_usage_time,add_company};
+
         btn_ok.setClickedListener(l->{
-            if (add_name.getText().equals("")||add_name.getText().equals(" ")||add_name.getText().equals(null)){
-                    DIALOG = new XPopup.Builder(getContext())
-                            .dismissOnBackPressed(false) // 点击返回键是否消失
-                            .dismissOnTouchOutside(false) // 点击外部是否消失
-                            .setPopupCallback(new dialogListener())
-                            .asConfirm("这是标题", "床前明月光，疑是地上霜；举头望明月，低头思故乡。","","确定",
-                                    new OnConfirmListener() {
-                                        @Override
-                                        public void onConfirm() {
-                                            ToastUtil.showToast(getContext(),"click confirm");
-                                        }
-                                    }, null, false);
-
-                DIALOG.show();
-
-            }else if(add_desp.getText()==null){
-
+            for(TextField box : texttList){
+                if (box.getText().equals("")||box.getText().equals(" ")||box.getText().equals(null)){
+                    box.setFocusable(Component.FOCUS_ENABLE);
+                    box.setTouchFocusable(true);
+                    box.requestFocus();
+                    ToastUtil.showToast(this,"有未填写空白，请填写后提交");
+                    view.fluentScrollTo(0, box.getTop()-100);
+                    break;
+                }
             }
-
-
+            //TODO:编写数据库，用法用量与余量单位变化，增加相关
+            /*if (DIALOG==null) {
+                DIALOG = new XPopup.Builder(getContext())
+                        .dismissOnBackPressed(false) // 点击返回键是否消失
+                        .dismissOnTouchOutside(true) // 点击外部是否消失
+                        .setPopupCallback(new dialogListener())
+                        .asConfirm("提示", "未填写药品名", "取消", "确定",
+                                new OnConfirmListener() {
+                                    @Override
+                                    public void onConfirm() {
+                                        view.fluentScrollTo(0, 0);
+                                    }
+                                }, null, false);
+            }
+            DIALOG.show();
+*/
         });
 
 
@@ -804,6 +815,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 if (data != null) {
                     //取得图片路径
                     String paths = data.getStringArrayListParam("photos").get(0);
+                    imgpath = data.getStringArrayListParam("photos").get(0);
                     //原组件是居中，这里给他选择填充
                     addimg.setScaleMode(Image.ScaleMode.STRETCH);
 //                    定义组件资源

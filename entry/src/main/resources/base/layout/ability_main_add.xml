@@ -50,6 +50,7 @@
         />
 
     <ScrollView
+        ohos:id="$+id:add_scrollview"
         ohos:height="match_parent"
         ohos:width="match_content"
         ohos:below="$id:add_title"
@@ -79,6 +80,7 @@
                 ohos:text_color="$color:black"
                 ohos:text_size="28fp"
                 ohos:text_weight="500"
+
                 />
             <Image
                 ohos:id="$+id:add_line1"
