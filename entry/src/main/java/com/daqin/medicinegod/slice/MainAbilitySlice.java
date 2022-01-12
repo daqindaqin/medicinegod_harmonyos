@@ -7,7 +7,6 @@ import com.daqin.medicinegod.utils.*;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.BasePopupView;
-import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.SimpleCallback;
 import com.lxj.xpopup.util.ToastUtil;
 import com.zzti.fengyongge.imagepicker.ImagePickerInstance;
@@ -17,10 +16,8 @@ import ohos.aafwk.ability.DataAbilityRemoteException;
 import ohos.aafwk.content.Intent;
 import ohos.agp.components.*;
 import ohos.agp.render.*;
-import ohos.agp.utils.Color;
 import ohos.agp.utils.LayoutAlignment;
 import ohos.agp.window.dialog.ToastDialog;
-import ohos.agp.window.service.WindowManager;
 import ohos.app.Context;
 import ohos.bundle.IBundleManager;
 import ohos.data.DatabaseHelper;
@@ -42,10 +39,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
-import static java.lang.Math.abs;
 //TODO：图片圆角、流式布局
 public class MainAbilitySlice extends AbilitySlice {
     public static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;   //自定义的一个权限请求识别码，用于处理权限回调
@@ -56,8 +51,9 @@ public class MainAbilitySlice extends AbilitySlice {
     static int newUsage_utils_1 = 0,newUsage_utils_2 = 0;
     BasePopupView DIALOG;
 
-    private String imgpath;
-
+    private String imgpath = "666";
+    private int idInsert = 0;
+    private String ELABEL = "headache,aligei,nb,666";
 
 
     private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "MainAbilitySlice");
@@ -84,8 +80,7 @@ public class MainAbilitySlice extends AbilitySlice {
 //        mflowLayout = (FlowLayout) findComponentById(ResourceTable.Id_flow_layout);
 //        labelList.clear();
         databaseHelper = DataAbilityHelper.creator(this);
-
-
+        idInsert = PreferenceUtils.getInt(this,"idInset");
         intPageStart();
         intHeadView();
 
@@ -120,7 +115,7 @@ public class MainAbilitySlice extends AbilitySlice {
                                 MainAbilitySlice.this, 1,true, 0);
                     } else {
                         // 显示应用需要权限的理由，提示用户进入设置授权
-                        new ToastDialog(getContext()).setText("请进入系统设置进行授权").show();
+                        ToastUtil.showToast(getContext(),"请进入系统设置进行授权");
                     }
                 } else {
                     // 权限已被授予
@@ -179,19 +174,59 @@ public class MainAbilitySlice extends AbilitySlice {
         TextField add_usage_total = (TextField)findComponentById(ResourceTable.Id_add_newUsage_1);
         TextField add_usage_time = (TextField)findComponentById(ResourceTable.Id_add_newUsage_2);
         TextField add_company = (TextField)findComponentById(ResourceTable.Id_add_newCompany);
-        Picker add_yu = (Picker)findComponentById(ResourceTable.Id_add_newYu);
+        TextField add_yu = (TextField)findComponentById(ResourceTable.Id_add_newYu);
         Button btn_ok = (Button)findComponentById(ResourceTable.Id_add_addOk);
-        TextField[] texttList = {add_name,add_desp,add_barcode,add_usage_total,add_usage_time,add_company};
+
+        Text method1 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_1);
+        Text method2 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_2);
+
+
+
+        TextField[] texttList = {add_name,add_desp,add_barcode,add_usage_total,add_usage_time,add_company,add_yu};
 
         btn_ok.setClickedListener(l->{
-            for(TextField box : texttList){
-                if (box.getText().equals("")||box.getText().equals(" ")||box.getText().equals(null)){
-                    box.setFocusable(Component.FOCUS_ENABLE);
-                    box.setTouchFocusable(true);
-                    box.requestFocus();
-                    ToastUtil.showToast(this,"有未填写空白，请填写后提交");
-                    view.fluentScrollTo(0, box.getTop()-100);
-                    break;
+            //检测已经选择图片
+            if (imgpath == null) {
+                view.fluentScrollTo(0, addimg.getTop() - 100);
+                ToastUtil.showToast(this, "图片不能为空");
+            }else if(ELABEL == null){
+                view.fluentScrollTo(0,btn_ok.getTop());
+                ToastUtil.showToast(this, "图片不能为空");
+            }else {
+                //计次，计算是否都填好了
+                int count = 0;
+                //检测里面是否为空
+                for (TextField box : texttList) {
+                    if (box.getText().equals("") || box.getText().equals(" ") || box.getText().equals(null)) {
+                        //为空则跳转
+                        box.setFocusable(Component.FOCUS_ADAPTABLE);
+                        box.setTouchFocusable(true);
+                        box.requestFocus();
+                        //使view滑动到指定位置
+                        ToastUtil.showToast(this, "有未填写空白，请填写后提交");
+                        view.fluentScrollTo(0, box.getTop() - 100);
+                        break;
+                    } else {
+                        box.clearFocus();
+                        count += 1;
+                        if (count >= 7) {
+                            //添加数据
+                            insert(idInsert,
+                                    add_name.getText(),
+                                    imgpath,
+                                    add_desp.getText(),
+                                    (add_outdate_year.getDisplayedData())[add_outdate_year.getValue()]
+                                            + "-"
+                                            + (add_outdate_month.getDisplayedData())[add_outdate_month.getValue()],
+                                    (add_otc.getDisplayedData())[add_otc.getValue()],
+                                    add_barcode.getText(),
+                                    add_usage_total.getText() + "-" + method1.getText() + "-" + add_usage_time.getText() + "-" + method2.getText(),
+                                    add_company.getText(),
+                                    add_yu.getText() + "-" + method1.getText(),
+                                    ELABEL);
+                            query();//刷新
+                        }
+                    }
                 }
             }
             //TODO:编写数据库，用法用量与余量单位变化，增加相关
@@ -259,7 +294,7 @@ public class MainAbilitySlice extends AbilitySlice {
     //轻量数据库相关
     static class PreferenceUtils {
 
-        private static String PREFERENCE_FILE_NAME = "mg";
+        private static String PREFERENCE_FILE_NAME = "mgconfig";
         private static Preferences preferences;
         private static DatabaseHelper databaseHelper;
         private static Preferences.PreferencesObserver mPreferencesObserver;
@@ -301,11 +336,11 @@ public class MainAbilitySlice extends AbilitySlice {
         /**
          * @param context 上下文
          * @param key 键
-         * @return 获取int的默认值为：-1
+         * @return 获取int的默认值为：0
          */
         public static int getInt(Context context, String key) {
             initPreference(context);
-            return preferences.getInt(key, -1);
+            return preferences.getInt(key, 0);
         }
 
 
@@ -518,6 +553,8 @@ public class MainAbilitySlice extends AbilitySlice {
         {
             //添加药品的页面刷新多选框
             viewPager.setCurrentPage(position, true);
+            idInsert = PreferenceUtils.getInt(this,"idInset");
+            System.out.println("ID是"+idInsert);
             switch (position){
                 case 0:
                     initHomepageListContainer();
@@ -675,12 +712,11 @@ public class MainAbilitySlice extends AbilitySlice {
         pickerOtc.setDisplayedData(new String[]{"OTC(非处方药)","(空)","RX(处方药)"});
         pickerOtc.setValue(1);
 
-        Picker pickerYu = (Picker)findComponentById(ResourceTable.Id_add_newYu);
-        pickerYu.setDisplayedData(new String[]{"1","2","3","4","5","6","7","8","9","10"});
-        pickerYu.setValue(0);
+
 
 
     }
+
 
     //圆角图形
     private void intHeadView() {
@@ -786,8 +822,6 @@ public class MainAbilitySlice extends AbilitySlice {
         return list;
     }
 
-
-
     @Override
     public void onActive() {
         super.onActive();
@@ -888,8 +922,8 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                HiLog.info(LABEL_LOG, "query: Id :" + id + " "+name+ " "+imagepath+ " "+description+ " "+outdate
-                        + " "+otc+ " "+barcode+ " "+usage+ " "+company+ " "+yu+ " "+elabel);
+                HiLog.info(LABEL_LOG, "query: Id :" + id + " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
+                        + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
             } while (resultSet.goToNextRow());
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "query: dataRemote exception | illegalStateException");
@@ -916,6 +950,8 @@ public class MainAbilitySlice extends AbilitySlice {
         try {
             if (databaseHelper.insert(Uri.parse(BASE_URI + DATA_PATH), valuesBucket) != -1) {
                 HiLog.info(LABEL_LOG, "insert successful");
+                idInsert++;
+                PreferenceUtils.putInt(this,"idInset",id + 1);
                 ToastUtil.showToast(this,"添加成功");
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
@@ -961,7 +997,10 @@ public class MainAbilitySlice extends AbilitySlice {
         try {
             if (databaseHelper.delete(Uri.parse(BASE_URI + DATA_PATH), predicates) != -1) {
                 HiLog.info(LABEL_LOG, "delete successful");
+                idInsert--;
+                PreferenceUtils.putInt(this,"idInset",id - 1);
                 ToastUtil.showToast(this,"删除成功");
+                //TODO：删除是否id会空余，修复空余
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "delete: dataRemote exception | illegalStateException");

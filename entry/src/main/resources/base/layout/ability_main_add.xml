@@ -421,16 +421,21 @@
                 ohos:text_weight="500"
                 ohos:top_margin="20vp"
                 />
-            <Picker
+            <TextField
                 ohos:id="$+id:add_newYu"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:below="$id:add_newYu_title"
-                ohos:bottom_margin="10vp"
-                ohos:max_value="9"
-                ohos:selected_text_size="20fp"
-                ohos:selector_item_num="3"
-                ohos:wheel_mode_enabled="true"
+                ohos:max_text_lines="1"
+                ohos:bottom_margin="20vp"
+                ohos:hint="新药品的余量"
+                ohos:layout_alignment="left|vertical_center"
+                ohos:start_margin="20vp"
+                ohos:text_color="$color:black"
+                ohos:text_size="18fp"
+                ohos:text_weight="500"
+                ohos:text_alignment="left|horizontal_center"
+                ohos:text_input_type="pattern_number"
                 />
             <Image
                 ohos:id="$+id:add_line9"

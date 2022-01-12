@@ -89,7 +89,7 @@ public class PersonDataAbility extends Ability {
     public int insert(Uri uri, ValuesBucket value) {
         HiLog.info(LABEL_LOG, "PersonDataAbility insert");
         String path = uri.getLastPath();
-        if (!"person".equals(path)) {
+        if (!"mg".equals(path)) {
             HiLog.info(LABEL_LOG, "DataAbility insert path is not matched");
             return -1;
         }
