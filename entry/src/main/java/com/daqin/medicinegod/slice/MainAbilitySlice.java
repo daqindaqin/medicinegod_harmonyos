@@ -48,10 +48,10 @@ public class MainAbilitySlice extends AbilitySlice {
     private FlowLayout mflowLayout;
 //    private List<String> labelList = new ArrayList<>();
 
-    static int newUsage_utils_1 = 0,newUsage_utils_2 = 0;
+    static int newUsage_utils_1 = 0,newUsage_utils_3 = 0;
     BasePopupView DIALOG;
 
-    private String imgpath = "666";
+    private String imgpath = null;
     private int idInsert = 0;
     private String ELABEL = "headache,aligei,nb,666";
 
@@ -84,11 +84,11 @@ public class MainAbilitySlice extends AbilitySlice {
         intPageStart();
         intHeadView();
 
-        initHomepageListContainer();
+
 //        initCommunityListContainer();
 //        initChatListContainer();
         //清空添加药品的列表
-        Button btn_clear = (Button)findComponentById(ResourceTable.Id_add_clear);
+        Button btn_clear= (Button)findComponentById(ResourceTable.Id_add_clear);
         btn_clear.setClickedListener(l->clearAddTextfield());
         //otc疑问按钮
         Text btn_otc_question = (Text)findComponentById(ResourceTable.Id_add_newOtc_question);
@@ -147,16 +147,16 @@ public class MainAbilitySlice extends AbilitySlice {
                     break;
             }
         });
-        Text btn_newUsage_utils_2 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_2);
-        btn_newUsage_utils_2.setClickedListener(l->{
-            newUsage_utils_2 += 1;
-            switch (newUsage_utils_2){
+        Text btn_newUsage_utils_3 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_3);
+        btn_newUsage_utils_3.setClickedListener(l->{
+            newUsage_utils_3 += 1;
+            switch (newUsage_utils_3){
                 case 1:
-                    btn_newUsage_utils_2.setText("时");
+                    btn_newUsage_utils_3.setText("时");
                     break;
                 case 2:
-                    btn_newUsage_utils_2.setText("天");
-                    newUsage_utils_2 = 0;
+                    btn_newUsage_utils_3.setText("天");
+                    newUsage_utils_3 = 0;
                     break;
             }
         });
@@ -173,25 +173,31 @@ public class MainAbilitySlice extends AbilitySlice {
         TextField add_barcode = (TextField)findComponentById(ResourceTable.Id_add_newbarCode);
         TextField add_usage_total = (TextField)findComponentById(ResourceTable.Id_add_newUsage_1);
         TextField add_usage_time = (TextField)findComponentById(ResourceTable.Id_add_newUsage_2);
+        TextField add_usage_day = (TextField)findComponentById(ResourceTable.Id_add_newUsage_3);
         TextField add_company = (TextField)findComponentById(ResourceTable.Id_add_newCompany);
         TextField add_yu = (TextField)findComponentById(ResourceTable.Id_add_newYu);
         Button btn_ok = (Button)findComponentById(ResourceTable.Id_add_addOk);
 
         Text method1 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_1);
-        Text method2 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_2);
+
+        Text method3 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_3);
 
 
 
-        TextField[] texttList = {add_name,add_desp,add_barcode,add_usage_total,add_usage_time,add_company,add_yu};
+        TextField[] texttList = {add_name,add_desp,add_barcode,add_usage_total,add_usage_time,add_usage_day,add_company,add_yu};
 
         btn_ok.setClickedListener(l->{
             //检测已经选择图片
+
             if (imgpath == null) {
                 view.fluentScrollTo(0, addimg.getTop() - 100);
                 ToastUtil.showToast(this, "图片不能为空");
             }else if(ELABEL == null){
                 view.fluentScrollTo(0,btn_ok.getTop());
                 ToastUtil.showToast(this, "图片不能为空");
+            }else if((add_otc.getDisplayedData())[add_otc.getValue()].equals("(空)")){
+                view.fluentScrollTo(0,add_otc.getTop());
+                ToastUtil.showToast(this, "标识不能为空");
             }else {
                 //计次，计算是否都填好了
                 int count = 0;
@@ -209,8 +215,37 @@ public class MainAbilitySlice extends AbilitySlice {
                     } else {
                         box.clearFocus();
                         count += 1;
-                        if (count >= 7) {
+                        if (count >= 8) {
                             //添加数据
+                            String otctext;
+                            switch ((add_otc.getDisplayedData())[add_otc.getValue()]){
+                                case "OTC(非处方药)-红":
+                                    otctext = "OTC-R";
+                                    break;
+                                case "OTC(非处方药)-绿":
+                                    otctext = "OTC-G";
+                                    break;
+                                case "RX(处方药)":
+                                    otctext = "Rx";
+                                    break;
+                                default:
+                                    otctext = "none";
+                                    break;
+                            }
+                            /*
+                            * insert(id
+                            *       name
+                            *       imgpath
+                            *       desp
+                            *       XXXX年-XX月
+                            *       OTC /  / Rx
+                            *       barcode
+                            *       XX-包/克/片-XX-次-XX-时/天
+                            *       company
+                            *       剩余：XX  包/克/片
+                            *       Elabel
+                            *       )
+                            * */
                             insert(idInsert,
                                     add_name.getText(),
                                     imgpath,
@@ -218,13 +253,14 @@ public class MainAbilitySlice extends AbilitySlice {
                                     (add_outdate_year.getDisplayedData())[add_outdate_year.getValue()]
                                             + "-"
                                             + (add_outdate_month.getDisplayedData())[add_outdate_month.getValue()],
-                                    (add_otc.getDisplayedData())[add_otc.getValue()],
+                                    otctext,
                                     add_barcode.getText(),
-                                    add_usage_total.getText() + "-" + method1.getText() + "-" + add_usage_time.getText() + "-" + method2.getText(),
+                                    add_usage_total.getText() + "-" + method1.getText() + "-" + add_usage_time.getText() + "-次-" + add_usage_day.getText() + method3.getText(),
                                     add_company.getText(),
-                                    add_yu.getText() + "-" + method1.getText(),
+                                    add_yu.getText(),
                                     ELABEL);
-                            query();//刷新
+//                            query();//刷新
+//TODO：1.需修复有数据时打开软件白屏；2.解决img上屏的问题。3.解决闪退问题
                         }
                     }
                 }
@@ -251,7 +287,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
 
 
-
+        initHomepageListContainer();
     }
     //
     class dialogListener extends SimpleCallback {
@@ -482,7 +518,7 @@ public class MainAbilitySlice extends AbilitySlice {
         text1.setText("包");
         Text text2 = (TextField)findComponentById(ResourceTable.Id_add_newUsage_utils_2);
         text2.setText("天");
-        intCalendarPicker();
+        iniCalendarPicker();
 
     }
 
@@ -564,7 +600,7 @@ public class MainAbilitySlice extends AbilitySlice {
 //                    initCommunityListContainer();
                     break;
                 case 2:
-                    intCalendarPicker();
+                    iniCalendarPicker();
                     break;
                 case 3:
                     initChatListContainer();
@@ -690,7 +726,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
 
     //定义时间选择器
-    private void intCalendarPicker() {
+    private void iniCalendarPicker() {
         Calendar cal = Calendar.getInstance();
         List<String> yearList = new ArrayList<>();
         int year_now = cal.get(Calendar.YEAR);
@@ -699,18 +735,18 @@ public class MainAbilitySlice extends AbilitySlice {
         }
 
         Picker pickerYear = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_year);
-        pickerYear.setHeight(WindowsUtil.getWindowWidthPx(MainAbilitySlice.this)/4);
+        pickerYear.setHeight(util.getWindowWidthPx(MainAbilitySlice.this)/4);
         pickerYear.setDisplayedData(yearList.toArray(new String[]{}));
         pickerYear.setValue(0);
 
         Picker pickerMonth = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_month);
         pickerMonth.setDisplayedData(new String[]{"1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"});
-        pickerMonth.setHeight(WindowsUtil.getWindowWidthPx(MainAbilitySlice.this)/4);
+        pickerMonth.setHeight(util.getWindowWidthPx(MainAbilitySlice.this)/4);
         pickerMonth.setValue(0);
 
         Picker pickerOtc = (Picker)findComponentById(ResourceTable.Id_add_newOtc);
-        pickerOtc.setDisplayedData(new String[]{"OTC(非处方药)","(空)","RX(处方药)"});
-        pickerOtc.setValue(1);
+        pickerOtc.setDisplayedData(new String[]{"OTC(非处方药)-红","OTC(非处方药)-绿","(空)","RX(处方药)"});
+        pickerOtc.setValue(2);
 
 
 
@@ -773,11 +809,14 @@ public class MainAbilitySlice extends AbilitySlice {
 
     // 初始化药品主页的ListContainer
     private void initHomepageListContainer(){
+
         //1.获取xml布局中的ListContainer组件
         ListContainer listContainer = (ListContainer) findComponentById(ResourceTable.Id_things_list);
 
         // 2.实例化数据源
-        List<Map<String,Object>> list = getData();
+        List<Map<String,Object>> list = queryData();
+        System.out.println("启动"+queryData());
+        System.out.println(list);
         // 3.初始化Provider对象
         HomePageListItemProvider listItemProvider = new HomePageListItemProvider(list,this);
         // 4.适配要展示的内容数据
@@ -821,6 +860,71 @@ public class MainAbilitySlice extends AbilitySlice {
 
         return list;
     }
+
+    private List<Map<String,Object>> queryData() {
+        List<Map<String,Object>> list = new ArrayList<>();
+        String[] columns = new String[] {DB_COLUMN_ID,
+                DB_COLUMN_NAME,
+                DB_COLUMN_IMAGEPATH,
+                DB_COLUMN_DESCRIPTION,
+                DB_COLUMN_OUTDATE,
+                DB_COLUMN_OTC,
+                DB_COLUMN_BARCODE,
+                DB_COLUMN_USAGE,
+                DB_COLUMN_COMPANY,
+                DB_COLUMN_YU,
+                DB_COLUMN_ELABEL
+        };
+        // 构造查询条件
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.between(DB_COLUMN_ID, 0, 9999);
+        try {
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
+                    columns, predicates);
+            if (resultSet == null || resultSet.getRowCount() == 0) {
+                HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
+                return new ArrayList<>();
+            }
+            resultSet.goToFirstRow();
+            int a = 0;
+            do {
+                Map<String, Object> map = new HashMap<>();
+//            Map<String, Object> map = new HashMap<String, Object>();
+                int id = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_ID));
+                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
+                String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
+                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
+                String outdate = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
+                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
+                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
+                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
+                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
+                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
+                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
+                map.put("id",id);
+                map.put("imgpath", imagepath);
+                map.put("name", name);
+                map.put("description",description);
+                map.put("outdate", outdate);
+                map.put("otc", otc);
+                map.put("barcode", barcode);
+                map.put("usage", usage);
+                map.put("company",company);
+                map.put("yu", yu);
+                map.put("elabel", elabel);
+                map.put("image", ResourceTable.Media_test);
+                list.add(map);
+                HiLog.info(LABEL_LOG, "query: Id :" + id + " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
+                        + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
+            } while (resultSet.goToNextRow());
+            return list;
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "query: dataRemote exception | illegalStateException");
+            return new ArrayList<>();
+        }
+    }
+
+
 
     @Override
     public void onActive() {
@@ -882,7 +986,6 @@ public class MainAbilitySlice extends AbilitySlice {
         }
         super.onAbilityResult(requestCode, resultCode, data);
     }
-
 
 
     //获取、刷新数据
