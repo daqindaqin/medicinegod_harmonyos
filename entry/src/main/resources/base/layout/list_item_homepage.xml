@@ -10,13 +10,13 @@
 
     <DirectionalLayout
         ohos:height="match_parent"
-        ohos:width="match_content"
+        ohos:width="match_parent"
         ohos:alignment="left|vertical_center"
         ohos:orientation="horizontal">
         <Text
             ohos:id="$+id:text_name"
             ohos:height="match_content"
-            ohos:width="match_parent"
+            ohos:width="match_content"
             ohos:text="一二三四五六七八九十胶囊"
             ohos:text_size="24fp"
             ohos:text_color="$color:black_clear"
@@ -31,7 +31,7 @@
             />
         <DirectionalLayout
             ohos:height="match_parent"
-            ohos:width="match_content"
+            ohos:width="match_parent"
             ohos:orientation="horizontal"
             ohos:alignment="left|vertical_center">
             <Text
@@ -51,22 +51,32 @@
                 ohos:end_margin="5vp"
                 ohos:text_size="14fp"
                 />
-            <Text
-                ohos:id="$+id:text_usemedicine"
-                ohos:height="match_content"
-                ohos:width="50vp"
-                ohos:background_element="$graphic:background_text_usemedicine"
-                ohos:text="使用"
-                ohos:text_alignment="center"
-                ohos:text_color="$color:white"
-                ohos:text_weight="700"
-                ohos:start_padding="5vp"
-                ohos:end_padding="5vp"
-                ohos:top_padding="2vp"
-                ohos:end_margin="5vp"
-                ohos:start_margin="5vp"
-                ohos:bottom_padding="2vp"
-                ohos:text_size="14fp"/>
+<!--
+            <DirectionalLayout
+                ohos:height="match_parent"
+                ohos:width="match_parent"
+                ohos:orientation="horizontal"
+                ohos:alignment="right|vertical_center"
+                ohos:end_margin="10vp">
+                <Text
+                    ohos:id="$+id:text_ctrl"
+                    ohos:height="match_content"
+                    ohos:width="50vp"
+                    ohos:background_element="$graphic:background_text_usemedicine"
+                    ohos:text="操作"
+                    ohos:text_alignment="center"
+                    ohos:text_color="$color:white"
+                    ohos:text_weight="700"
+                    ohos:start_padding="5vp"
+                    ohos:end_padding="5vp"
+                    ohos:top_padding="2vp"
+                    ohos:end_margin="5vp"
+                    ohos:start_margin="5vp"
+                    ohos:bottom_padding="2vp"
+                    ohos:text_size="14fp"/>
+            </DirectionalLayout>
+-->
+
         </DirectionalLayout>
     </DirectionalLayout>
 
@@ -111,7 +121,7 @@
                 ohos:max_text_lines="1"
                 ohos:multiple_lines="true"
                 ohos:start_margin="5vp"
-                ohos:text="预计使用：2  次后购买"
+                ohos:text="约能使用：2  次"
                 ohos:text_color="$color:black_clear"
                 ohos:text_weight="300"
                 ohos:text_size="12fp"

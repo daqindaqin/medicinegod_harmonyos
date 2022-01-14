@@ -7,6 +7,7 @@ import com.daqin.medicinegod.utils.*;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.BasePopupView;
+import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.lxj.xpopup.interfaces.SimpleCallback;
 import com.lxj.xpopup.util.ToastUtil;
 import com.zzti.fengyongge.imagepicker.ImagePickerInstance;
@@ -83,10 +84,13 @@ public class MainAbilitySlice extends AbilitySlice {
         idInsert = PreferenceUtils.getInt(this,"idInset");
         intPageStart();
         intHeadView();
+        initHomepageListContainer();
+
 
 
 //        initCommunityListContainer();
 //        initChatListContainer();
+
         //清空添加药品的列表
         Button btn_clear= (Button)findComponentById(ResourceTable.Id_add_clear);
         btn_clear.setClickedListener(l->clearAddTextfield());
@@ -188,8 +192,19 @@ public class MainAbilitySlice extends AbilitySlice {
 
         btn_ok.setClickedListener(l->{
             //检测已经选择图片
-
-            if (imgpath == null) {
+            insert(idInsert,
+                    "Name"+idInsert,
+                    "imgpath",
+                    "描述描述描述描述描述描述",
+                    "2022年-2月",
+                    "OTC-G",
+                    "6666666666",
+                    //XX-包/克/片-XX-次-XX-时/天
+                    "1-包-3-次-1-天",
+                    "company",
+                    "2453",
+                    ELABEL);
+            /*if (imgpath == null) {
                 view.fluentScrollTo(0, addimg.getTop() - 100);
                 ToastUtil.showToast(this, "图片不能为空");
             }else if(ELABEL == null){
@@ -232,7 +247,7 @@ public class MainAbilitySlice extends AbilitySlice {
                                     otctext = "none";
                                     break;
                             }
-                            /*
+                            *//*
                             * insert(id
                             *       name
                             *       imgpath
@@ -245,7 +260,7 @@ public class MainAbilitySlice extends AbilitySlice {
                             *       剩余：XX  包/克/片
                             *       Elabel
                             *       )
-                            * */
+                            * *//*
                             insert(idInsert,
                                     add_name.getText(),
                                     imgpath,
@@ -260,12 +275,11 @@ public class MainAbilitySlice extends AbilitySlice {
                                     add_yu.getText(),
                                     ELABEL);
 //                            query();//刷新
-//TODO：1.需修复有数据时打开软件白屏；2.解决img上屏的问题。3.解决闪退问题
+//TODO：2.解决img上屏的问题。
                         }
                     }
                 }
-            }
-            //TODO:编写数据库，用法用量与余量单位变化，增加相关
+            }*/
             /*if (DIALOG==null) {
                 DIALOG = new XPopup.Builder(getContext())
                         .dismissOnBackPressed(false) // 点击返回键是否消失
@@ -287,7 +301,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
 
 
-        initHomepageListContainer();
+
     }
     //
     class dialogListener extends SimpleCallback {
@@ -550,7 +564,6 @@ public class MainAbilitySlice extends AbilitySlice {
         DependentLayout inflatedView4 = (DependentLayout) layoutScatter4.parse(
                 ResourceTable.Layout_ability_main_home, null, false);
         fragList.add(inflatedView4);
-
         initPagerSlider(fragList);
 
     }
@@ -689,7 +702,7 @@ public class MainAbilitySlice extends AbilitySlice {
             new ToastDialog(this)
                     .setDuration(2000)
                     .setText("你点击了:" + item.get("name")+"，"+item.get("lastmsg"))
-                    .setAlignment(LayoutAlignment.CENTER)
+                    .setAlignment(LayoutAlignment.BOTTOM)
                     .show();
         });
 //        setListContainerHeight(listContainer);
@@ -823,11 +836,20 @@ public class MainAbilitySlice extends AbilitySlice {
         listContainer.setItemProvider(listItemProvider);
         // 5.设置每个Item的点击事件
         listContainer.setItemClickedListener((container, component, position, id) -> {
+            int localP = position;
             Map<String,Object> item = (Map<String,Object>) listContainer.getItemProvider().getItem(position);
-            new ToastDialog(this)
-                    .setDuration(2000)
-                    .setText("你点击了:" + item.get("name")+"，"+item.get("outdate"))
-                    .setAlignment(LayoutAlignment.CENTER)
+            new XPopup.Builder(this)
+                    .isDarkTheme(false)
+                    .asCenterList("请选择一项", new String[]{"使用", "编辑", "删除", "共享"},
+                            new OnSelectListener() {
+                                @Override
+                                public void onSelect(int position, String text) {
+//                                    switch (position){
+//                                        case 0:
+//                                    }
+                                    ToastUtil.showToast(getContext(),"click " +localP+ position+"  ");
+                                }
+                            })
                     .show();
 
         });

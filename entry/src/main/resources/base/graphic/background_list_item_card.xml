@@ -3,6 +3,9 @@
     xmlns:ohos="http://schemas.huawei.com/res/ohos"
     ohos:shape="rectangle">
 
+    <solid
+        ohos:color="$color:white"/>
+
     <corners
         ohos:radius="10vp"/>
 

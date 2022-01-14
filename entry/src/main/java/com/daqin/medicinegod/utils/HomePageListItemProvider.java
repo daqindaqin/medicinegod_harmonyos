@@ -4,6 +4,9 @@ package com.daqin.medicinegod.utils;
 import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.utils.util;
 
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.interfaces.OnSelectListener;
+import com.lxj.xpopup.util.ToastUtil;
 import ohos.aafwk.ability.AbilitySlice;
 
 
@@ -28,7 +31,6 @@ public class HomePageListItemProvider extends  BaseItemProvider{
 
     private List<Map<String,Object>> list;
     private AbilitySlice  slice;
-
 
     public HomePageListItemProvider(List<Map<String, Object>> list, AbilitySlice slice) {
         this.list = list;
@@ -77,6 +79,7 @@ public class HomePageListItemProvider extends  BaseItemProvider{
 */
 
         Map<String,Object> map =list.get(position);//获取数据
+
         Text textName = (Text) cpt.findComponentById(ResourceTable.Id_text_name);
         Text textUsage = (Text)cpt.findComponentById(ResourceTable.Id_text_usage);
         Text textMargin = (Text) cpt.findComponentById(ResourceTable.Id_text_margin);
@@ -128,9 +131,9 @@ public class HomePageListItemProvider extends  BaseItemProvider{
         double yures = yuall / yuus;
         DecimalFormat df = new DecimalFormat("#.0");
         String yu = df.format(yures);
-        textMargin.setText("预计使用：："
+        textMargin.setText("约能使用："
                 + yu
-                +"  次后购买");
+                +"  次");
 
 
         //过期提醒
