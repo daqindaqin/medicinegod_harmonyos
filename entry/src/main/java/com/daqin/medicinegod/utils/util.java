@@ -3,9 +3,13 @@ package com.daqin.medicinegod.utils;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.app.Context;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Base64;
 
 
 public class util extends AbilitySlice {
@@ -44,5 +48,30 @@ public class util extends AbilitySlice {
             e.printStackTrace();
         }
         return res;
+    }
+    public static String getImageBase64(String imgPath) {// 将图片文件转化为字节数组字符串，并对其进行Base64编码处理
+        // String imgFile = imgPath;// 待处理的图片
+        InputStream in = null;
+        byte[] data = null;
+        String encode = null; // 返回Base64编码过的字节数组字符串
+        // 对字节数组Base64编码
+        try {
+            // 读取图片字节数组
+            in = new FileInputStream(imgPath);
+            data = new byte[in.available()];
+            in.read(data);
+            encode = Base64.getEncoder().encodeToString(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                assert in != null;
+                in.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                }
+            }
+        return encode;
     }
 }

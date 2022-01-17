@@ -148,7 +148,6 @@ public class HomePageListItemProvider extends  BaseItemProvider{
         String timeA = outyear + "-" + outmonth + "-1";
         String timeB = cl.get(Calendar.YEAR) + "-" + (cl.get(Calendar.MONTH)+1) + "-1";
         res = util.isTimeOut(timeA,timeB);
-        System.out.println(timeA+","+timeB+"res"+res);
         switch (res){
             case -1:
                 textOutdate.setText("[药品过期]"+"\n"+"禁止服用 请妥善处理。");

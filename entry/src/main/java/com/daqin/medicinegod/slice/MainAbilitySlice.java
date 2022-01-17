@@ -1,6 +1,7 @@
 package com.daqin.medicinegod.slice;
 
-import com.daqin.medicinegod.CommentPopup;
+import com.daqin.medicinegod.CustomFullScreenPopup;
+import com.daqin.medicinegod.OTCQuestionPopup;
 import com.daqin.medicinegod.FlowLayout;
 import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.utils.*;
@@ -91,6 +92,8 @@ public class MainAbilitySlice extends AbilitySlice {
 //        initCommunityListContainer();
 //        initChatListContainer();
 
+
+
         //清空添加药品的列表
         Button btn_clear= (Button)findComponentById(ResourceTable.Id_add_clear);
         btn_clear.setClickedListener(l->clearAddTextfield());
@@ -100,7 +103,7 @@ public class MainAbilitySlice extends AbilitySlice {
             new XPopup.Builder(getContext())
                     .moveUpToKeyboard(false) // 如果不加这个，评论弹窗会移动到软键盘上面
                     .enableDrag(true)
-                    .asCustom(new CommentPopup(getContext()))
+                    .asCustom(new OTCQuestionPopup(getContext()))
                     .show();
 
         });
@@ -828,8 +831,6 @@ public class MainAbilitySlice extends AbilitySlice {
 
         // 2.实例化数据源
         List<Map<String,Object>> list = queryData();
-        System.out.println("启动"+queryData());
-        System.out.println(list);
         // 3.初始化Provider对象
         HomePageListItemProvider listItemProvider = new HomePageListItemProvider(list,this);
         // 4.适配要展示的内容数据
@@ -848,39 +849,23 @@ public class MainAbilitySlice extends AbilitySlice {
 //                                        case 0:
 //                                    }
                                     ToastUtil.showToast(getContext(),"click " +localP+ position+"  ");
+
+
+
+
+                                    //TODO:加一个显示页面显示数据,修改
+                                    new XPopup.Builder(getContext())
+                                            .hasStatusBarShadow(false)
+                                            .autoOpenSoftInput(false)
+                                            .setComponent(component) // 用于获取页面根容器，监听页面高度变化，解决输入法盖住弹窗的问题
+                                            .asCustom(new CustomFullScreenPopup(getContext()))
+                                            .show();
                                 }
                             })
                     .show();
 
         });
 
-    }
-    // 初始化药品主页的数据源
-    private List<Map<String,Object>> getData(){
-        List<Map<String,Object>> list;
-        // icon图标
-        int[] images = {ResourceTable.Media_test,ResourceTable.Media_test,
-                ResourceTable.Media_test,ResourceTable.Media_test,
-                ResourceTable.Media_test,ResourceTable.Media_test,
-                ResourceTable.Media_test,ResourceTable.Media_test,
-                ResourceTable.Media_test,ResourceTable.Media_test};
-
-        String[] names={"曹操","刘备","关羽","诸葛亮","小乔","貂蝉","吕布","赵云","黄盖","周瑜"};
-        String[] outdate={"一代枭雄","卖草鞋","财神","卧龙先生","周瑜媳妇","四大镁铝","天下无双","常胜将军","愿意挨打","愿意打人"};
-        String[] otc={"OTC","Rx","OTC","Rx","OTC","Rx","OTC","Rx","OTC","Rx"};
-
-        list= new ArrayList<>();
-        for(int i=0;i<images.length;i++){
-            Map<String, Object> map = new HashMap<>();
-//            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("image", images[i]);
-            map.put("name", names[i]);
-            map.put("otc",otc[i]);
-            map.put("outdate", outdate[i]);
-            list.add(map);
-        }
-
-        return list;
     }
 
     private List<Map<String,Object>> queryData() {
@@ -993,7 +978,8 @@ public class MainAbilitySlice extends AbilitySlice {
                     //创建位图
                     PixelMap pixelMap = imageSource.createPixelmap(null);
                     addimg.setPixelMap(pixelMap);
-
+//                    String base64 = util.getImageBase64(paths);
+//                    System.out.println("BBBBBBBBBBBBASE"+base64);
 
                     //TODO:跳转去裁剪图片
 //                    Intent newIntent = new Intent();
