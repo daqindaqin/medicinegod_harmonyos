@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Text
     xmlns:ohos="http://schemas.huawei.com/res/ohos"
-    ohos:background_element="$graphic:background_add_useage_util"
+    ohos:background_element="$graphic:bg_add_useage_util"
     ohos:height="match_content"
     ohos:margin="10vp"
     ohos:padding="10vp"

@@ -1,6 +1,12 @@
 package com.daqin.medicinegod.slice;
 
-import com.daqin.medicinegod.CustomFullScreenPopup;
+/**
+ * Description: 自定义全屏弹窗
+ * Create by lxj, at 2019/3/12
+ * Changes by daqin,at 2019-2022
+ */
+
+import com.daqin.medicinegod.MedicineDetailPopup;
 import com.daqin.medicinegod.OTCQuestionPopup;
 import com.daqin.medicinegod.FlowLayout;
 import com.daqin.medicinegod.ResourceTable;
@@ -8,7 +14,6 @@ import com.daqin.medicinegod.utils.*;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.BasePopupView;
-import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.lxj.xpopup.interfaces.SimpleCallback;
 import com.lxj.xpopup.util.ToastUtil;
 import com.zzti.fengyongge.imagepicker.ImagePickerInstance;
@@ -43,6 +48,7 @@ import java.io.InputStream;
 import java.util.*;
 
 
+
 //TODO：图片圆角、流式布局
 public class MainAbilitySlice extends AbilitySlice {
     public static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;   //自定义的一个权限请求识别码，用于处理权限回调
@@ -62,6 +68,7 @@ public class MainAbilitySlice extends AbilitySlice {
     private static final String BASE_URI = "dataability:///com.daqin.medicinegod.utils.PersonDataAbility";
     private static final String DATA_PATH = "/mg";
     private static final String DB_COLUMN_ID = "ID";
+    private static final String DB_COLUMN_KEYID = "KEYID";
     private static final String DB_COLUMN_NAME = "NAME";
     private static final String DB_COLUMN_IMAGEPATH = "IMAGEPATH";
     private static final String DB_COLUMN_DESCRIPTION = "DESCRIPTION";
@@ -86,7 +93,6 @@ public class MainAbilitySlice extends AbilitySlice {
         intPageStart();
         intHeadView();
         initHomepageListContainer();
-
 
 
 //        initCommunityListContainer();
@@ -196,6 +202,7 @@ public class MainAbilitySlice extends AbilitySlice {
         btn_ok.setClickedListener(l->{
             //检测已经选择图片
             insert(idInsert,
+                    "QWERTY12345"+idInsert,
                     "Name"+idInsert,
                     "imgpath",
                     "描述描述描述描述描述描述",
@@ -299,14 +306,9 @@ public class MainAbilitySlice extends AbilitySlice {
             DIALOG.show();
 */
         });
-
-
-
-
-
-
     }
-    //
+
+    //对话框的监听事件
     class dialogListener extends SimpleCallback {
         @Override
         public void onCreated(BasePopupView pv) {
@@ -344,7 +346,7 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
 
-    //轻量数据库相关
+    //本地键值对数据库相关
     static class PreferenceUtils {
 
         private static String PREFERENCE_FILE_NAME = "mgconfig";
@@ -486,32 +488,6 @@ public class MainAbilitySlice extends AbilitySlice {
         }
 
     }
-
-    //设置scrollview与list一起滚动，暂废弃
-    /*
-    private void setListContainerHeight(ListContainer listContainer) {
-        //获取当前listContainer的适配器
-        BaseItemProvider BaseItemProvider = listContainer.getItemProvider();
-        if (BaseItemProvider == null){
-            return;
-        }
-        int itemHeight = 0;
-        for (int i = 0; i < BaseItemProvider.getCount(); i++) {
-            //循环将listContainer适配器的Item数据进行累加
-            Component listItem = BaseItemProvider.getComponent(i, null, listContainer);
-            itemHeight += listItem.getHeight();
-        }
-        //对当前listContainer进行高度赋值
-        ComponentContainer.LayoutConfig config = listContainer.getLayoutConfig();
-        //这边加上(listContainer.getBoundaryThickness() * (BaseItemProvider.getCount()+1))
-        //listContainer.getBoundaryThickness() 就是分界线的高度
-        //(BaseItemProvider.getCount()+1) 是Item的数量  加1  是因为顶部还有一条分界线
-        config.height = itemHeight
-                + (listContainer.getBoundaryThickness() * (BaseItemProvider.getCount()+1));
-        //赋值
-        listContainer.setLayoutConfig(config);
-    }
-    */
 
     //清空添加药品的列表
     private void clearAddTextfield() {
@@ -837,20 +813,39 @@ public class MainAbilitySlice extends AbilitySlice {
         listContainer.setItemProvider(listItemProvider);
         // 5.设置每个Item的点击事件
         listContainer.setItemClickedListener((container, component, position, id) -> {
-            int localP = position;
+
             Map<String,Object> item = (Map<String,Object>) listContainer.getItemProvider().getItem(position);
-            new XPopup.Builder(this)
+            //详情弹窗
+            PreferenceUtils.putInt(this,"mgposition",position);
+            new XPopup.Builder(getContext())
+                    .hasStatusBarShadow(false)
+                    .autoOpenSoftInput(false)
+                    .setComponent(component) // 用于获取页面根容器，监听页面高度变化，解决输入法盖住弹窗的问题
+                    .asCustom(new MedicineDetailPopup(getContext()))
+                    .show();
+
+            /*new XPopup.Builder(this)
                     .isDarkTheme(false)
                     .asCenterList("请选择一项", new String[]{"使用", "编辑", "删除", "共享"},
                             new OnSelectListener() {
                                 @Override
                                 public void onSelect(int position, String text) {
-//                                    switch (position){
-//                                        case 0:
-//                                    }
-                                    ToastUtil.showToast(getContext(),"click " +localP+ position+"  ");
+                                    ToastUtil.showToast(getContext(),"click " + position+"  ");
 
-
+                                    if (popupView2 == null) { // 复用弹窗
+                                        popupView2 = new XPopup.Builder(getContext())
+                                                .setPopupCallback(new DemoXPopupListener())
+                                                .asConfirm("复用项目已有布局", "您可以复用项目已有布局，来使用XPopup强大的交互能力和逻辑封装，弹窗的布局完全由你自己控制。\n" +
+                                                                "注意：你自己的布局必须提供一些控件Id，否则XPopup找不到控件。",
+                                                        "关闭", "XPopup牛逼",
+                                                        new OnConfirmListener() {
+                                                            @Override
+                                                            public void onConfirm() {
+                                                                toast("click confirm");
+                                                            }
+                                                        }, null, false, ResourceTable.Layout_my_confim_popup); // 最后一个参数绑定已有布局
+                                    }
+                                    popupView2.show();
 
 
                                     //TODO:加一个显示页面显示数据,修改
@@ -858,11 +853,11 @@ public class MainAbilitySlice extends AbilitySlice {
                                             .hasStatusBarShadow(false)
                                             .autoOpenSoftInput(false)
                                             .setComponent(component) // 用于获取页面根容器，监听页面高度变化，解决输入法盖住弹窗的问题
-                                            .asCustom(new CustomFullScreenPopup(getContext()))
+                                            .asCustom(new MedicineDetailPopup(getContext()))
                                             .show();
                                 }
                             })
-                    .show();
+                    .show();*/
 
         });
 
@@ -871,6 +866,7 @@ public class MainAbilitySlice extends AbilitySlice {
     private List<Map<String,Object>> queryData() {
         List<Map<String,Object>> list = new ArrayList<>();
         String[] columns = new String[] {DB_COLUMN_ID,
+                DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
                 DB_COLUMN_IMAGEPATH,
                 DB_COLUMN_DESCRIPTION,
@@ -893,11 +889,11 @@ public class MainAbilitySlice extends AbilitySlice {
                 return new ArrayList<>();
             }
             resultSet.goToFirstRow();
-            int a = 0;
             do {
                 Map<String, Object> map = new HashMap<>();
 //            Map<String, Object> map = new HashMap<String, Object>();
                 int id = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_ID));
+                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                 String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
                 String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
                 String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
@@ -909,6 +905,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
                 map.put("id",id);
+                map.put("keyid",keyid);
                 map.put("imgpath", imagepath);
                 map.put("name", name);
                 map.put("description",description);
@@ -921,9 +918,11 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
                 list.add(map);
-                HiLog.info(LABEL_LOG, "query: Id :" + id + " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
+
+                HiLog.info(LABEL_LOG, "query: Id :" + id +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
                         + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
             } while (resultSet.goToNextRow());
+            PreferenceUtils.putString(this,"mgdata",list.toString());
             return list;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "query: dataRemote exception | illegalStateException");
@@ -999,6 +998,7 @@ public class MainAbilitySlice extends AbilitySlice {
     //获取、刷新数据
     private void query() {
         String[] columns = new String[] {DB_COLUMN_ID,
+                DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
                 DB_COLUMN_IMAGEPATH,
                 DB_COLUMN_DESCRIPTION,
@@ -1023,6 +1023,7 @@ public class MainAbilitySlice extends AbilitySlice {
             resultSet.goToFirstRow();
             do {
                 int id = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_ID));
+                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                 String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
                 String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
                 String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
@@ -1033,7 +1034,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                HiLog.info(LABEL_LOG, "query: Id :" + id + " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
+                HiLog.info(LABEL_LOG, "query: Id :" + id + " keyid:"+keyid+" name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
                         + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
             } while (resultSet.goToNextRow());
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
@@ -1041,12 +1042,13 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
     //插入数据
-    private void insert(int id, String name, String imagepath,
+    private void insert(int id, String keyid,String name, String imagepath,
                         String description, String outdate, String otc,
                         String barcode, String usage, String company,
                         String yu ,String elabel) {
         ValuesBucket valuesBucket = new ValuesBucket();
         valuesBucket.putInteger(DB_COLUMN_ID, id);
+        valuesBucket.putString(DB_COLUMN_KEYID, keyid);
         valuesBucket.putString(DB_COLUMN_NAME, name);
         valuesBucket.putString(DB_COLUMN_IMAGEPATH, imagepath);
         valuesBucket.putString(DB_COLUMN_DESCRIPTION, description);
@@ -1071,13 +1073,14 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
     //更新
-    private void update(int id, String name, String imagepath,
+    private void update(int id, String keyid, String name, String imagepath,
                         String description, String outdate, String otc,
                         String barcode, String usage, String company,
                         String yu ,String elabel) {
         DataAbilityPredicates predicates = new DataAbilityPredicates();
         predicates.equalTo(DB_COLUMN_ID, id);
         ValuesBucket valuesBucket = new ValuesBucket();
+        valuesBucket.putString(DB_COLUMN_KEYID, keyid);
         valuesBucket.putString(DB_COLUMN_NAME, name);
         valuesBucket.putString(DB_COLUMN_NAME, name);
         valuesBucket.putString(DB_COLUMN_IMAGEPATH, imagepath);
@@ -1102,16 +1105,17 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
     //删除
-    private void delete(int id) {
+    private void delete(int id,String keyid) {
+        //TODO:对比id和keyid，比对成功删除，不成功打回。
         DataAbilityPredicates predicates = new DataAbilityPredicates()
-                .equalTo(DB_COLUMN_ID, id);
+                .equalTo(DB_COLUMN_KEYID, keyid);
         try {
             if (databaseHelper.delete(Uri.parse(BASE_URI + DATA_PATH), predicates) != -1) {
                 HiLog.info(LABEL_LOG, "delete successful");
                 idInsert--;
                 PreferenceUtils.putInt(this,"idInset",id - 1);
                 ToastUtil.showToast(this,"删除成功");
-                //TODO：删除是否id会空余，修复空余
+                //TODO：检测删除是否id会空余，修复空余
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "delete: dataRemote exception | illegalStateException");

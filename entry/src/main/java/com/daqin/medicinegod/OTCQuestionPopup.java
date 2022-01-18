@@ -21,7 +21,7 @@ public class OTCQuestionPopup extends BottomPopupView {
 
     @Override
     protected int getImplLayoutId() {
-        return ResourceTable.Layout_custom_otc_question_popup;
+        return ResourceTable.Layout_popup_otc_question;
     }
 
     @Override

@@ -18,7 +18,7 @@
             <Image
                 ohos:height="80vp"
                 ohos:width="80vp"
-                ohos:image_src="$graphic:background_bottombar_community_icon"
+                ohos:image_src="$graphic:ic_bottombar_community"
                 ohos:scale_mode="stretch"
                 ohos:margin="10vp"/>
             <Text

@@ -5,7 +5,7 @@
     ohos:width="match_parent"
     ohos:margin="5vp"
     ohos:bottom_padding="10vp"
-    ohos:background_element="$graphic:background_list_item_card"
+    ohos:background_element="$graphic:bg_list_item_card"
     >
 
     <DirectionalLayout
@@ -38,7 +38,7 @@
                 ohos:id="$+id:text_otc"
                 ohos:height="match_content"
                 ohos:width="50fp"
-                ohos:background_element="$graphic:background_text_otc_otc_green"
+                ohos:background_element="$graphic:bg_text_otc_otc_green"
                 ohos:text="OTC"
                 ohos:text_alignment="center"
                 ohos:text_color="$color:white"

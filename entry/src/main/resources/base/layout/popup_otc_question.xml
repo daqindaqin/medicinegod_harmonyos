@@ -40,7 +40,21 @@
             ohos:width="match_parent"
             >
             <Text
+                ohos:id="$+id:zero_context"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:text="【注意事项：独自选用(使用)非处方药前，应仔细阅读说明书，特别注意其中的禁忌和注意事项，判断是否适合自己使用，必要时还须咨询药师或者医师。】"
+                ohos:text_size="16vp"
+                ohos:text_weight="700"
+                ohos:margin="5vp"
+                ohos:bottom_padding="5vp"
+                ohos:text_alignment="left"
+                ohos:multiple_lines="true"
+                ohos:text_color="$color:red"
+                />
+            <Text
                 ohos:id="$+id:fst_title"
+                ohos:below="$id:zero_context"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:text="① OTC是非处方药的标志。"
@@ -89,13 +103,37 @@
                 ohos:multiple_lines="true"
                 ohos:bottom_padding="30vp"
                 />
-
             <Text
                 ohos:id="$+id:trd_title"
                 ohos:below="$id:sed_context"
                 ohos:height="match_content"
                 ohos:width="match_parent"
-                ohos:text="③ OTC和Rx药品辨别方法"
+                ohos:text="③ 双跨药品的标志。"
+                ohos:text_size="20vp"
+                ohos:text_weight="700"
+                ohos:text_alignment="left"
+                ohos:multiple_lines="true"
+                ohos:text_color="$color:red"
+                />
+
+            <Text
+                ohos:id="$+id:trd_context"
+                ohos:below="$id:trd_title"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:text="        双跨药是既可作为处方药又可作为非处方药。双跨药品的适应症有一定的区别，相应的剂型、规格或用法用量可能与其他种类OTC(非处方药)不同。"
+                ohos:text_size="18vp"
+                ohos:text_weight="500"
+                ohos:text_alignment="left"
+                ohos:multiple_lines="true"
+                ohos:bottom_padding="30vp"
+                />
+            <Text
+                ohos:id="$+id:foth_title"
+                ohos:below="$id:trd_context"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:text="④ 药品种类辨别方法"
                 ohos:text_size="20vp"
                 ohos:text_weight="700"
                 ohos:text_alignment="left"
@@ -104,11 +142,11 @@
                 />
 
             <Text
-                ohos:id="$+id:trd_context"
-                ohos:below="$id:trd_title"
+                ohos:id="$+id:foth_context"
+                ohos:below="$id:foth_title"
                 ohos:height="match_content"
                 ohos:width="match_parent"
-                ohos:text="        品牌、标识物、标签及含有OTC（非处方药）或Rx（处方药）指导用语的药物。"
+                ohos:text="        品牌、标识物、标签及含有OTC（非处方药）或Rx（处方药）指导用语的药物。非处方药又细分为甲、乙两类，在包装盒正面上分别用红色OTC 、绿色OTC标识;包装盒上只有国药准字，没有OTC(也没有Rx)标识的药品为处方药。而双跨药品在医院和药店都可以购买，如果是医院开出的双跨药，一般是作为处方药使用，而在药店购买的，则是作为非处方药使用。"
                 ohos:text_size="18vp"
                 ohos:text_weight="500"
                 ohos:text_alignment="left"
@@ -117,7 +155,7 @@
                 />
             <Text
                 ohos:id="$+id:fth_desp"
-                ohos:below="$id:trd_context"
+                ohos:below="$id:foth_context"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:text="(如下图均为非处方药标识)"

@@ -47,7 +47,7 @@
                                             ohos:text_size="12vp"
                                             ohos:text_weight="500"
                                             ohos:text_color="$color:white"
-                                            ohos:background_element="$graphic:background_home_level"
+                                            ohos:background_element="$graphic:bg_home_level"
                                             ohos:top_margin="-28vp"
                                             ohos:start_margin="15vp"
                                             ohos:below="$id:image_head"
@@ -109,7 +109,7 @@
                                     ohos:padding="10vp"
                                     ohos:orientation="vertical"
                                     ohos:alignment="horizontal_center|vertical_center"
-                                    ohos:background_element="$graphic:background_chat_moudle_background">
+                                    ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
                                             ohos:height="match_content"
                                             ohos:width="match_content"
@@ -137,7 +137,7 @@
                                     ohos:padding="10vp"
                                     ohos:orientation="vertical"
                                     ohos:alignment="horizontal_center|vertical_center"
-                                    ohos:background_element="$graphic:background_chat_moudle_background">
+                                    ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
                                             ohos:height="match_content"
                                             ohos:width="match_content"
@@ -164,7 +164,7 @@
                                     ohos:padding="10vp"
                                     ohos:orientation="vertical"
                                     ohos:alignment="horizontal_center|vertical_center"
-                                    ohos:background_element="$graphic:background_chat_moudle_background">
+                                    ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
                                             ohos:height="match_content"
                                             ohos:width="match_content"
@@ -197,7 +197,7 @@
                                     ohos:padding="10vp"
                                     ohos:orientation="vertical"
                                     ohos:alignment="horizontal_center|vertical_center"
-                                    ohos:background_element="$graphic:background_chat_moudle_background">
+                                    ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
                                             ohos:height="match_content"
                                             ohos:width="match_content"
@@ -225,7 +225,7 @@
                                     ohos:padding="10vp"
                                     ohos:orientation="vertical"
                                     ohos:alignment="horizontal_center|vertical_center"
-                                    ohos:background_element="$graphic:background_chat_moudle_background">
+                                    ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
                                             ohos:height="match_content"
                                             ohos:width="match_content"
@@ -252,7 +252,7 @@
                                     ohos:padding="10vp"
                                     ohos:orientation="vertical"
                                     ohos:alignment="horizontal_center|vertical_center"
-                                    ohos:background_element="$graphic:background_chat_moudle_background">
+                                    ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
                                             ohos:height="match_content"
                                             ohos:width="match_content"
@@ -285,7 +285,7 @@
                                     ohos:padding="10vp"
                                     ohos:orientation="vertical"
                                     ohos:alignment="horizontal_center|vertical_center"
-                                    ohos:background_element="$graphic:background_chat_moudle_background">
+                                    ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
                                             ohos:height="match_content"
                                             ohos:width="match_content"
@@ -313,7 +313,7 @@
                                     ohos:padding="10vp"
                                     ohos:orientation="vertical"
                                     ohos:alignment="horizontal_center|vertical_center"
-                                    ohos:background_element="$graphic:background_chat_moudle_background">
+                                    ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
                                             ohos:height="match_content"
                                             ohos:width="match_content"
@@ -340,7 +340,7 @@
                                     ohos:padding="10vp"
                                     ohos:orientation="vertical"
                                     ohos:alignment="horizontal_center|vertical_center"
-                                    ohos:background_element="$graphic:background_chat_moudle_background">
+                                    ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
                                             ohos:height="match_content"
                                             ohos:width="110vp"
@@ -374,7 +374,7 @@
                             ohos:top_margin="10vp"
                             ohos:bottom_margin="5vp"
                             ohos:padding="10vp"
-                            ohos:background_element="$graphic:background_chat_moudle_background"
+                            ohos:background_element="$graphic:bg_chat_moudle_background"
                             />
                         <Text
                             ohos:height="match_content"
@@ -388,7 +388,7 @@
                             ohos:top_margin="5vp"
                             ohos:bottom_margin="5vp"
                             ohos:padding="10vp"
-                            ohos:background_element="$graphic:background_chat_moudle_background"
+                            ohos:background_element="$graphic:bg_chat_moudle_background"
                             />
                         <Text
                             ohos:height="match_content"
@@ -402,7 +402,7 @@
                             ohos:top_margin="5vp"
                             ohos:bottom_margin="5vp"
                             ohos:padding="10vp"
-                            ohos:background_element="$graphic:background_chat_moudle_background"
+                            ohos:background_element="$graphic:bg_chat_moudle_background"
                             />
                         <Text
                             ohos:height="match_content"
@@ -416,7 +416,7 @@
                             ohos:top_margin="5vp"
                             ohos:bottom_margin="5vp"
                             ohos:padding="10vp"
-                            ohos:background_element="$graphic:background_chat_moudle_background"
+                            ohos:background_element="$graphic:bg_chat_moudle_background"
                             />
                         <Text
                             ohos:height="match_content"
@@ -430,7 +430,7 @@
                             ohos:top_margin="5vp"
                             ohos:bottom_margin="5vp"
                             ohos:padding="10vp"
-                            ohos:background_element="$graphic:background_chat_moudle_background"
+                            ohos:background_element="$graphic:bg_chat_moudle_background"
                             />
 
 

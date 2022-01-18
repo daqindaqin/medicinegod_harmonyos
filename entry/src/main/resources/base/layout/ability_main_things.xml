@@ -78,7 +78,7 @@
                                     ohos:text_alignment="left"
                                     ohos:text_color="#000000"
                                     ohos:layout_alignment="left|vertical_center"
-                                    ohos:background_element="$graphic:background_textfield_search"
+                                    ohos:background_element="$graphic:bg_textfield_search"
                                     ohos:element_right="$media:search"
                                     ohos:element_padding="5vp"
                                     ohos:padding="10vp"

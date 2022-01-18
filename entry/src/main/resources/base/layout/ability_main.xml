@@ -27,10 +27,10 @@
             app:bt_active="true"
             app:bt_colorActive="$color:red"
             app:bt_colorInactive="$color:red_clear"
-            app:bt_icon="$graphic:background_bottombar_homepage_icon"
-            app:bt_sel_icon="$graphic:background_bottombar_homepage_icon_select"
-            app:bt_shape="$graphic:background_bottombar_overall"
-            app:bt_shapeRect="$graphic:background_bottombar_homepage_icon_activeshape"
+            app:bt_icon="$graphic:ic_bottombar_homepage"
+            app:bt_sel_icon="$graphic:ic_bottombar_homepage_select"
+            app:bt_shape="$graphic:bg_bottombar_overall"
+            app:bt_shapeRect="$graphic:bg_bottombar_homepage_activeshape"
             app:bt_title="主页"/>
 
         <com.gauravk.bubblenavigation.BubbleToggleView
@@ -39,10 +39,10 @@
             ohos:width="match_content"
             app:bt_colorActive="$color:blue"
             app:bt_colorInactive="$color:blue_clear"
-            app:bt_icon="$graphic:background_bottombar_community_icon"
-            app:bt_sel_icon="$graphic:background_bottombar_community_icon_select"
-            app:bt_shape="$graphic:background_bottombar_overall"
-            app:bt_shapeRect="$graphic:background_bottombar_community_icon_activeshape"
+            app:bt_icon="$graphic:ic_bottombar_community"
+            app:bt_sel_icon="$graphic:ic_bottombar_community_select"
+            app:bt_shape="$graphic:bg_bottombar_overall"
+            app:bt_shapeRect="$graphic:bg_bottombar_community_activeshape"
             app:bt_title="社区"/>
 
         <com.gauravk.bubblenavigation.BubbleToggleView
@@ -51,10 +51,10 @@
             ohos:width="match_content"
             app:bt_colorActive="$color:orange"
             app:bt_colorInactive="$color:orange_clear"
-            app:bt_icon="$graphic:background_bottombar_add_icon"
-            app:bt_sel_icon="$graphic:background_bottombar_add_icon_select"
-            app:bt_shape="$graphic:background_bottombar_overall"
-            app:bt_shapeRect="$graphic:background_bottombar_add_icon_activeshape"
+            app:bt_icon="$graphic:ic_bottombar_add"
+            app:bt_sel_icon="$graphic:ic_bottombar_add_select"
+            app:bt_shape="$graphic:bg_bottombar_overall"
+            app:bt_shapeRect="$graphic:bg_bottombar_add_activeshape"
             app:bt_title="添加"/>
 
         <com.gauravk.bubblenavigation.BubbleToggleView
@@ -63,10 +63,10 @@
             ohos:width="match_content"
             app:bt_colorActive="$color:green"
             app:bt_colorInactive="$color:green_clear"
-            app:bt_icon="$graphic:background_bottombar_chat_icon"
-            app:bt_sel_icon="$graphic:background_bottombar_chat_icon_select"
-            app:bt_shape="$graphic:background_bottombar_overall"
-            app:bt_shapeRect="$graphic:background_bottombar_chat_icon_activeshape"
+            app:bt_icon="$graphic:ic_bottombar_chat"
+            app:bt_sel_icon="$graphic:ic_bottombar_chat_select"
+            app:bt_shape="$graphic:bg_bottombar_overall"
+            app:bt_shapeRect="$graphic:bg_bottombar_chat_activeshape"
             app:bt_title="信息"/>
 
         <com.gauravk.bubblenavigation.BubbleToggleView
@@ -75,10 +75,10 @@
             ohos:width="match_content"
             app:bt_colorActive="$color:purple"
             app:bt_colorInactive="$color:purple_clear"
-            app:bt_icon="$graphic:background_bottombar_person_icon"
-            app:bt_sel_icon="$graphic:background_bottombar_person_icon_select"
-            app:bt_shape="$graphic:background_bottombar_overall"
-            app:bt_shapeRect="$graphic:background_bottombar_person_icon_activeshape"
+            app:bt_icon="$graphic:ic_bottombar_person"
+            app:bt_sel_icon="$graphic:ic_bottombar_person_select"
+            app:bt_shape="$graphic:bg_bottombar_overall"
+            app:bt_shapeRect="$graphic:bg_bottombar_person_activeshape"
             app:bt_title="我的"/>
     </com.gauravk.bubblenavigation.BubbleNavigationLinearView>
 

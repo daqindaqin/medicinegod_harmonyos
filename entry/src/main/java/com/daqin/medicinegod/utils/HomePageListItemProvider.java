@@ -2,26 +2,15 @@ package com.daqin.medicinegod.utils;
 
 
 import com.daqin.medicinegod.ResourceTable;
-import com.daqin.medicinegod.utils.util;
 
-import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.interfaces.OnSelectListener;
-import com.lxj.xpopup.util.ToastUtil;
 import ohos.aafwk.ability.AbilitySlice;
 
 
-import ohos.aafwk.ability.DataAbilityHelper;
-import ohos.aafwk.ability.DataAbilityRemoteException;
 import ohos.agp.components.*;
 import ohos.agp.components.element.*;
 import ohos.agp.utils.Color;
-import ohos.media.image.ImageSource;
-import ohos.media.image.PixelMap;
-import ohos.utils.net.Uri;
 
 
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -95,15 +84,15 @@ public class HomePageListItemProvider extends  BaseItemProvider{
         switch (otc){
             case "OTC-G":
                 textOtc.setText("OTC");
-                textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_background_text_otc_otc_green));
+                textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_otc_green));
                 break;
             case "OTC-R":
                 textOtc.setText("OTC");
-                textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_background_text_otc_otc_red));
+                textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_otc_red));
                 break;
             case "Rx":
                 textOtc.setText("Rx");
-                textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_background_text_otc_rx));
+                textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_rx));
                 break;
         }
 
