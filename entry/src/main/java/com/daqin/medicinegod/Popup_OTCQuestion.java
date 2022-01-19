@@ -11,11 +11,11 @@ import java.util.ArrayList;
  * Description: 仿知乎底部评论弹窗
  * Create by dance, at 2018/12/25
  */
-public class OTCQuestionPopup extends BottomPopupView {
+public class Popup_OTCQuestion extends BottomPopupView {
     ListContainer listContainer;
     private ArrayList<String> data;
 
-    public OTCQuestionPopup(Context context) {
+    public Popup_OTCQuestion(Context context) {
         super(context, null);
     }
 

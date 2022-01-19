@@ -14,7 +14,7 @@
         ohos:alignment="top|vertical_center"
         ohos:background_element="$graphic:bg_round"
         ohos:top_margin="80vp"
-        ohos:bottom_padding="100vp">
+        ohos:bottom_padding="150vp">
 
         <DirectionalLayout
             ohos:height="match_content"
@@ -38,16 +38,19 @@
                 ohos:start_margin="10vp"
                 ohos:end_margin="10vp">
                 <Text
+                    ohos:id="$+id:dtl_mdc_take"
                     ohos:height="30vp"
                     ohos:width="30vp"
                     ohos:margin="10vp"
                     ohos:background_element="$graphic:ic_detail_takeit"/>
                 <Text
+                    ohos:id="$+id:dtl_mdc_share"
                     ohos:height="30vp"
                     ohos:width="30vp"
                     ohos:margin="10vp"
                     ohos:background_element="$graphic:ic_detail_share"/>
                 <Text
+                    ohos:id="$+id:dtl_mdc_delete"
                     ohos:height="30vp"
                     ohos:width="30vp"
                     ohos:margin="10vp"
@@ -60,6 +63,7 @@
             ohos:width="match_parent"
             ohos:background_element="$color:black_line"/>
         <Image
+            ohos:id="$+id:dtl_mdc_img"
             ohos:height="180vp"
             ohos:width="320vp"
             ohos:scale_mode="stretch"
@@ -71,27 +75,28 @@
             ohos:height="match_content"
             ohos:width="match_parent"
             ohos:orientation="horizontal"
-            ohos:alignment="left|vertical_center">
+            ohos:alignment="left|top|vertical_center">
             <Text
                 ohos:height="35vp"
                 ohos:width="35vp"
                 ohos:background_element="$graphic:ic_mdc_name"
                 ohos:start_margin="15vp"
-                ohos:end_margin="10vp"/>
+                ohos:end_margin="10vp"
+                ohos:top_margin="10vp"/>
             <Text
                 ohos:id="$+id:dtl_mdc_name"
                 ohos:height="match_content"
-                ohos:width="match_content"
+                ohos:width="230vp"
+                ohos:bottom_margin="10vp"
+                ohos:multiple_lines="true"
                 ohos:text="药名药名药名药名药名药名药名药名"
                 ohos:text_alignment="left|vertical_center"
                 ohos:text_color="$color:black_clear"
                 ohos:text_size="20fp"
                 ohos:text_weight="500"
-                ohos:top_margin="10vp"
-                ohos:bottom_margin="10vp"
-                ohos:max_width="230vp"
-                ohos:scrollable="true"/>
+                ohos:top_margin="10vp"/>
             <Text
+                ohos:id="$+id:dtl_mdc_name_edit"
                 ohos:height="20vp"
                 ohos:width="20vp"
                 ohos:background_element="$graphic:ic_mdc_edit"
@@ -113,7 +118,7 @@
             <Text
                 ohos:id="$+id:dtl_mdc_desp"
                 ohos:height="match_content"
-                ohos:width="match_content"
+                ohos:width="230vp"
                 ohos:text="描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述"
                 ohos:text_alignment="left|vertical_center"
                 ohos:text_color="$color:black_clear"
@@ -121,9 +126,9 @@
                 ohos:text_weight="500"
                 ohos:top_margin="10vp"
                 ohos:bottom_margin="10vp"
-                ohos:max_width="230vp"
                 ohos:multiple_lines="true"/>
             <Text
+                ohos:id="$+id:dtl_mdc_desp_edit"
                 ohos:height="20vp"
                 ohos:width="20vp"
                 ohos:background_element="$graphic:ic_mdc_edit"
@@ -145,7 +150,7 @@
             <Text
                 ohos:id="$+id:dtl_mdc_elabel"
                 ohos:height="match_content"
-                ohos:width="match_content"
+                ohos:width="230vp"
                 ohos:text="标签1  标签2  标签3  标签4  标签5"
                 ohos:text_alignment="left|vertical_center"
                 ohos:text_color="$color:black_clear"
@@ -153,10 +158,9 @@
                 ohos:text_weight="500"
                 ohos:top_margin="15vp"
                 ohos:bottom_margin="10vp"
-                ohos:max_width="230vp"
-                ohos:scrollable="true"
-                ohos:multiple_lines="false"/>
+                ohos:multiple_lines="true"/>
             <Text
+                ohos:id="$+id:dtl_mdc_elabel_edit"
                 ohos:height="20vp"
                 ohos:width="20vp"
                 ohos:background_element="$graphic:ic_mdc_edit"
@@ -190,6 +194,7 @@
                 ohos:scrollable="true"
                 ohos:multiple_lines="false"/>
             <Text
+                ohos:id="$+id:dtl_mdc_outdate_edit"
                 ohos:height="20vp"
                 ohos:width="20vp"
                 ohos:background_element="$graphic:ic_mdc_edit"
@@ -223,6 +228,7 @@
                 ohos:scrollable="true"
                 ohos:multiple_lines="false"/>
             <Text
+                ohos:id="$+id:dtl_mdc_otc_edit"
                 ohos:height="20vp"
                 ohos:width="20vp"
                 ohos:background_element="$graphic:ic_mdc_edit"
@@ -256,6 +262,7 @@
                 ohos:scrollable="true"
                 ohos:multiple_lines="false"/>
             <Text
+                ohos:id="$+id:dtl_mdc_barcode_edit"
                 ohos:height="20vp"
                 ohos:width="20vp"
                 ohos:background_element="$graphic:ic_mdc_edit"
@@ -289,6 +296,7 @@
                 ohos:scrollable="true"
                 ohos:multiple_lines="false"/>
             <Text
+                ohos:id="$+id:dtl_mdc_usage_edit"
                 ohos:height="20vp"
                 ohos:width="20vp"
                 ohos:background_element="$graphic:ic_mdc_edit"
@@ -322,6 +330,7 @@
                 ohos:scrollable="true"
                 ohos:multiple_lines="false"/>
             <Text
+                ohos:id="$+id:dtl_mdc_yu_edit"
                 ohos:height="20vp"
                 ohos:width="20vp"
                 ohos:background_element="$graphic:ic_mdc_edit"
@@ -355,6 +364,7 @@
                 ohos:scrollable="true"
                 ohos:multiple_lines="false"/>
             <Text
+                ohos:id="$+id:dtl_mdc_company_edit"
                 ohos:height="20vp"
                 ohos:width="20vp"
                 ohos:background_element="$graphic:ic_mdc_edit"
