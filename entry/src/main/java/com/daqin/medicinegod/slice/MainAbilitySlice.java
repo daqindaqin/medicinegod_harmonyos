@@ -14,6 +14,7 @@ import com.daqin.medicinegod.utils.*;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.BasePopupView;
+import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.SimpleCallback;
 import com.lxj.xpopup.util.ToastUtil;
 import com.zzti.fengyongge.imagepicker.ImagePickerInstance;
@@ -23,6 +24,7 @@ import ohos.aafwk.ability.DataAbilityRemoteException;
 import ohos.aafwk.content.Intent;
 import ohos.agp.components.*;
 import ohos.agp.render.*;
+import ohos.agp.render.opengl.Utils;
 import ohos.agp.utils.LayoutAlignment;
 import ohos.agp.window.dialog.ToastDialog;
 import ohos.app.Context;
@@ -62,8 +64,8 @@ public class MainAbilitySlice extends AbilitySlice {
 
     private String imgpath = null;
     private int idInsert = 0;
-    private String ELABEL = "headache,aligei,nb,666";
-
+    private String eLABEL = "headache,aligei,nb,666";
+//    BasePopupView popupView;
 
     private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "MainAbilitySlice");
     private static final String BASE_URI = "dataability:///com.daqin.medicinegod.utils.PersonDataAbility";
@@ -91,7 +93,7 @@ public class MainAbilitySlice extends AbilitySlice {
 //        mflowLayout = (FlowLayout) findComponentById(ResourceTable.Id_flow_layout);
 //        labelList.clear();
         databaseHelper = DataAbilityHelper.creator(this);
-        idInsert = PreferenceUtils.getInt(this,"idInset");
+        idInsert = util.PreferenceUtils.getInt(this,"idInset");
         intPageStart();
         intHeadView();
         initHomepageListContainer();
@@ -215,7 +217,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     "1-包-3-次-1-天",
                     "company",
                     "2453",
-                    ELABEL);
+                    "eLABEL、eLABE、LeLAB、ELeLABEL、eLABEL");
             /*if (imgpath == null) {
                 view.fluentScrollTo(0, addimg.getTop() - 100);
                 ToastUtil.showToast(this, "图片不能为空");
@@ -348,152 +350,153 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
 
-    //本地键值对数据库相关
-    public static class PreferenceUtils {
-
-        private static String PREFERENCE_FILE_NAME = "mgconfig";
-        private static Preferences preferences;
-        private static DatabaseHelper databaseHelper;
-        private static Preferences.PreferencesObserver mPreferencesObserver;
-
-        private static void initPreference(Context context){
-            if(databaseHelper==null){
-                databaseHelper = new DatabaseHelper(context);
-            }
-            if(preferences==null){
-                preferences = databaseHelper.getPreferences(PREFERENCE_FILE_NAME);
-            }
-
-        }
-
-        //存放、获取时传入的context必须是同一个context,否则存入的数据无法获取
-        public static void putString(Context context, String key, String value) {
-            initPreference(context);
-            preferences.putString(key, value);
-            preferences.flush();
-        }
-
-        /**
-         * @param context 上下文
-         * @param key  键
-         * @return 获取的String 默认值为:null
-         */
-        public static String getString(Context context, String key) {
-            initPreference(context);
-            return preferences.getString(key, null);
-        }
-
-
-        public static void putInt(Context context, String key, int value) {
-            initPreference(context);
-            preferences.putInt(key, value);
-            preferences.flush();
-        }
-
-        /**
-         * @param context 上下文
-         * @param key 键
-         * @return 获取int的默认值为：0
-         */
-        public static int getInt(Context context, String key) {
-            initPreference(context);
-            return preferences.getInt(key, 0);
-        }
-
-
-        public static void putLong(Context context, String key, long value) {
-            initPreference(context);
-            preferences.putLong(key, value);
-            preferences.flush();
-        }
-
-        /**
-         * @param context 上下文
-         * @param key  键
-         * @return 获取long的默认值为：-1
-         */
-        public static long getLong(Context context, String key) {
-            initPreference(context);
-            return preferences.getLong(key, -1L);
-        }
-
-
-        public static void putBoolean(Context context, String key, boolean value) {
-            initPreference(context);
-            preferences.putBoolean(key, value);
-            preferences.flush();
-        }
-
-        /**
-         * @param context  上下文
-         * @param key  键
-         * @return 获取boolean的默认值为：false
-         */
-        public static boolean getBoolean(Context context, String key) {
-            initPreference(context);
-            return preferences.getBoolean(key, false);
-        }
-
-
-        public static void putFloat(Context context, String key, float value) {
-            initPreference(context);
-            preferences.putFloat(key, value);
-            preferences.flush();
-        }
-
-        /**
-         * @param context 上下文
-         * @param key   键
-         * @return 获取float的默认值为：0.0
-         */
-        public static float getFloat(Context context, String key) {
-            initPreference(context);
-            return preferences.getFloat(key, 0.0F);
-        }
-
-
-        public static void putStringSet(Context context, String key, Set<String> set) {
-            initPreference(context);
-            preferences.putStringSet(key, set);
-            preferences.flush();
-        }
-
-        /**
-         * @param context  上下文
-         * @param key 键
-         * @return 获取set集合的默认值为：null
-         */
-        public static Set<String> getStringSet(Context context, String key) {
-            initPreference(context);
-            return preferences.getStringSet(key, null);
-        }
-
-
-        public static boolean deletePreferences(Context context) {
-            initPreference(context);
-            boolean isDelete= databaseHelper.deletePreferences(PREFERENCE_FILE_NAME);
-            return isDelete;
-        }
-
-
-        public static void registerObserver(Context context, Preferences.PreferencesObserver preferencesObserver){
-            initPreference(context);
-            mPreferencesObserver=preferencesObserver;
-            preferences.registerObserver(mPreferencesObserver);
-        }
-
-        public static void unregisterObserver(){
-            if(mPreferencesObserver!=null){
-                // 向preferences实例注销观察者
-                preferences.unregisterObserver(mPreferencesObserver);
-            }
-        }
-
-    }
+//    本地键值对数据库相关
+//    public static class PreferenceUtils {
+//
+//        private static String PREFERENCE_FILE_NAME = "mgconfig";
+//        private static Preferences preferences;
+//        private static DatabaseHelper databaseHelper;
+//        private static Preferences.PreferencesObserver mPreferencesObserver;
+//
+//        private static void initPreference(Context context){
+//            if(databaseHelper==null){
+//                databaseHelper = new DatabaseHelper(context);
+//            }
+//            if(preferences==null){
+//                preferences = databaseHelper.getPreferences(PREFERENCE_FILE_NAME);
+//            }
+//
+//        }
+//
+//        //存放、获取时传入的context必须是同一个context,否则存入的数据无法获取
+//        public static void putString(Context context, String key, String value) {
+//            initPreference(context);
+//            preferences.putString(key, value);
+//            preferences.flush();
+//        }
+//
+//        /**
+//         * @param context 上下文
+//         * @param key  键
+//         * @return 获取的String 默认值为:null
+//         */
+//        public static String getString(Context context, String key) {
+//            initPreference(context);
+//            return preferences.getString(key, null);
+//        }
+//
+//
+//        public static void putInt(Context context, String key, int value) {
+//            initPreference(context);
+//            preferences.putInt(key, value);
+//            preferences.flush();
+//        }
+//
+//        /**
+//         * @param context 上下文
+//         * @param key 键
+//         * @return 获取int的默认值为：0
+//         */
+//        public static int getInt(Context context, String key) {
+//            initPreference(context);
+//            return preferences.getInt(key, 0);
+//        }
+//
+//
+//        public static void putLong(Context context, String key, long value) {
+//            initPreference(context);
+//            preferences.putLong(key, value);
+//            preferences.flush();
+//        }
+//
+//        /**
+//         * @param context 上下文
+//         * @param key  键
+//         * @return 获取long的默认值为：-1
+//         */
+//        public static long getLong(Context context, String key) {
+//            initPreference(context);
+//            return preferences.getLong(key, -1L);
+//        }
+//
+//
+//        public static void putBoolean(Context context, String key, boolean value) {
+//            initPreference(context);
+//            preferences.putBoolean(key, value);
+//            preferences.flush();
+//        }
+//
+//        /**
+//         * @param context  上下文
+//         * @param key  键
+//         * @return 获取boolean的默认值为：false
+//         */
+//        public static boolean getBoolean(Context context, String key) {
+//            initPreference(context);
+//            return preferences.getBoolean(key, false);
+//        }
+//
+//
+//        public static void putFloat(Context context, String key, float value) {
+//            initPreference(context);
+//            preferences.putFloat(key, value);
+//            preferences.flush();
+//        }
+//
+//        /**
+//         * @param context 上下文
+//         * @param key   键
+//         * @return 获取float的默认值为：0.0
+//         */
+//        public static float getFloat(Context context, String key) {
+//            initPreference(context);
+//            return preferences.getFloat(key, 0.0F);
+//        }
+//
+//
+//        public static void putStringSet(Context context, String key, Set<String> set) {
+//            initPreference(context);
+//            preferences.putStringSet(key, set);
+//            preferences.flush();
+//        }
+//
+//        /**
+//         * @param context  上下文
+//         * @param key 键
+//         * @return 获取set集合的默认值为：null
+//         */
+//        public static Set<String> getStringSet(Context context, String key) {
+//            initPreference(context);
+//            return preferences.getStringSet(key, null);
+//        }
+//
+//
+//        public static boolean deletePreferences(Context context) {
+//            initPreference(context);
+//            boolean isDelete= databaseHelper.deletePreferences(PREFERENCE_FILE_NAME);
+//            return isDelete;
+//        }
+//
+//
+//        public static void registerObserver(Context context, Preferences.PreferencesObserver preferencesObserver){
+//            initPreference(context);
+//            mPreferencesObserver=preferencesObserver;
+//            preferences.registerObserver(mPreferencesObserver);
+//        }
+//
+//        public static void unregisterObserver(){
+//            if(mPreferencesObserver!=null){
+//                // 向preferences实例注销观察者
+//                preferences.unregisterObserver(mPreferencesObserver);
+//            }
+//        }
+//
+//    }
 
     //清空添加药品的列表
     private void clearAddTextfield() {
-
+        imgpath = null;
+        eLABEL = null;
         TextField textfield = (TextField)findComponentById(ResourceTable.Id_add_newName);
         textfield.setText("");
         TextField textfield1 = (TextField)findComponentById(ResourceTable.Id_add_newDescription);
@@ -509,12 +512,18 @@ public class MainAbilitySlice extends AbilitySlice {
         textfield4.setText("");
         TextField textfield5 = (TextField)findComponentById(ResourceTable.Id_add_newUsage_2);
         textfield5.setText("");
-        Text text1 = (TextField)findComponentById(ResourceTable.Id_add_newUsage_utils_1);
+        TextField textfield6 = (TextField)findComponentById(ResourceTable.Id_add_newUsage_3);
+        textfield6.setText("");
+        Text text1 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_1);
         text1.setText("包");
-        Text text2 = (TextField)findComponentById(ResourceTable.Id_add_newUsage_utils_2);
-        text2.setText("天");
+        Text text2 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_2);
+        text2.setText("次");
+        Text text3 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_3);
+        text3.setText("天");
         iniCalendarPicker();
-
+        ScrollView s = (ScrollView)findComponentById(ResourceTable.Id_add_scrollview);
+        s.fluentScrollTo(0,0);
+        ToastUtil.showToast(getContext(),"已清空内容  ");
     }
 
     //导航栏和窗口初始化
@@ -583,8 +592,7 @@ public class MainAbilitySlice extends AbilitySlice {
         {
             //添加药品的页面刷新多选框
             viewPager.setCurrentPage(position, true);
-            idInsert = PreferenceUtils.getInt(this,"idInset");
-            System.out.println("ID是"+idInsert);
+            idInsert = util.PreferenceUtils.getInt(this,"idInset");
             switch (position){
                 case 0:
                     initHomepageListContainer();
@@ -666,6 +674,7 @@ public class MainAbilitySlice extends AbilitySlice {
         return list;
     }
     */
+
     // 初始化聊天界面的ListContainer
     private void initChatListContainer(){
         //1.获取xml布局中的ListContainer组件
@@ -719,7 +728,7 @@ public class MainAbilitySlice extends AbilitySlice {
     }
 
 
-    //定义时间选择器
+    //定义选择器
     private void iniCalendarPicker() {
         Calendar cal = Calendar.getInstance();
         List<String> yearList = new ArrayList<>();
@@ -803,7 +812,6 @@ public class MainAbilitySlice extends AbilitySlice {
 
     // 初始化药品主页的ListContainer
     private void initHomepageListContainer(){
-
         //1.获取xml布局中的ListContainer组件
         ListContainer listContainer = (ListContainer) findComponentById(ResourceTable.Id_things_list);
 
@@ -818,51 +826,17 @@ public class MainAbilitySlice extends AbilitySlice {
 
             Map<String,Object> item = (Map<String,Object>) listContainer.getItemProvider().getItem(position);
             Map<String,Object> res = list.get(position);
-            //详情弹窗
-            PreferenceUtils.putInt(this,"mglocalid", (Integer) res.getOrDefault("id",-1));
-            PreferenceUtils.putString(this,"mglocalkey", res.getOrDefault("keyid","null").toString());
+
+            //单击打开详情弹窗
+            util.PreferenceUtils.putInt(this,"mglocalid", (Integer) res.getOrDefault("id",-1));
+            util.PreferenceUtils.putString(this,"mglocalkey", res.getOrDefault("keyid","null").toString());
             new XPopup.Builder(getContext())
-                    .hasStatusBarShadow(false)
-                    .autoOpenSoftInput(false)
-                    .setComponent(component) // 用于获取页面根容器，监听页面高度变化，解决输入法盖住弹窗的问题
-                    .asCustom(new Popup_MedicineDetail(getContext()))
-                    .show();
-
-            /*new XPopup.Builder(this)
-                    .isDarkTheme(false)
-                    .asCenterList("请选择一项", new String[]{"使用", "编辑", "删除", "共享"},
-                            new OnSelectListener() {
-                                @Override
-                                public void onSelect(int position, String text) {
-                                    ToastUtil.showToast(getContext(),"click " + position+"  ");
-
-                                    if (popupView2 == null) { // 复用弹窗
-                                        popupView2 = new XPopup.Builder(getContext())
-                                                .setPopupCallback(new DemoXPopupListener())
-                                                .asConfirm("复用项目已有布局", "您可以复用项目已有布局，来使用XPopup强大的交互能力和逻辑封装，弹窗的布局完全由你自己控制。\n" +
-                                                                "注意：你自己的布局必须提供一些控件Id，否则XPopup找不到控件。",
-                                                        "关闭", "XPopup牛逼",
-                                                        new OnConfirmListener() {
-                                                            @Override
-                                                            public void onConfirm() {
-                                                                toast("click confirm");
-                                                            }
-                                                        }, null, false, ResourceTable.Layout_my_confim_popup); // 最后一个参数绑定已有布局
-                                    }
-                                    popupView2.show();
-
-
-                                    //TODO:加一个显示页面显示数据,修改
-                                    new XPopup.Builder(getContext())
-                                            .hasStatusBarShadow(false)
-                                            .autoOpenSoftInput(false)
-                                            .setComponent(component) // 用于获取页面根容器，监听页面高度变化，解决输入法盖住弹窗的问题
-                                            .asCustom(new Popup_MedicineDetail(getContext()))
-                                            .show();
-                                }
-                            })
-                    .show();*/
-
+                        .hasStatusBarShadow(false)
+                        .autoOpenSoftInput(false)//打开输入法
+                        .isDestroyOnDismiss(true)//关闭后自动销毁
+                        .setComponent(listContainer) // 用于获取页面根容器，监听页面高度变化，解决输入法盖住弹窗的问题
+                        .asCustom(new Popup_MedicineDetail(getContext()))
+                        .show();
         });
 
     }
@@ -893,7 +867,6 @@ public class MainAbilitySlice extends AbilitySlice {
                 return new ArrayList<>();
             }
             resultSet.goToFirstRow();
-            StringBuilder mgdata = new StringBuilder();
             do {
                 Map<String, Object> map = new HashMap<>();
 //            Map<String, Object> map = new HashMap<String, Object>();
@@ -924,42 +897,15 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("image", ResourceTable.Media_test);
                 list.add(map);
                 //map数据转文本存本地备用
-                mgdata.append(MapToString(map));
                 //@?@是每单条map的分隔符
-                mgdata.append("@?@");
                 HiLog.info(LABEL_LOG, "query: Id :" + id +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
                         + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
             } while (resultSet.goToNextRow());
-            PreferenceUtils.putString(this,"mgdata",mgdata.delete(mgdata.length()-3,mgdata.length()).toString());
             return list;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "query: dataRemote exception | illegalStateException");
             return new ArrayList<>();
         }
-    }
-
-
-
-    public static String MapToString(Map<String,Object> map){
-        Set<String> keySet = map.keySet();
-        //将set集合转换为数组
-        String[] keyArray = keySet.toArray(new String[keySet.size()]);
-        //给数组排序(升序)
-        Arrays.sort(keyArray);
-        //因为String拼接效率会很低的，所以转用StringBuilder
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < keyArray.length; i++) {
-            // 参数值为空，则不参与签名 这个方法trim()是去空格
-            if ((String.valueOf(map.get(keyArray[i]))).trim().length() > 0) {
-                //@@之间是单条键值对的分隔符
-                stringBuilder.append(keyArray[i]).append("@@").append(String.valueOf(map.get(keyArray[i])).trim());
-            }
-            if(i != keyArray.length-1){
-                //@!@之前是map表中每条键值对分隔符
-                stringBuilder.append("@!@");
-            }
-        }
-        return stringBuilder.toString();
     }
 
     @Override
@@ -1158,12 +1104,29 @@ public class MainAbilitySlice extends AbilitySlice {
             if (databaseHelper.insert(Uri.parse(BASE_URI + DATA_PATH), valuesBucket) != -1) {
                 HiLog.info(LABEL_LOG, "insert successful");
                 idInsert++;
-                PreferenceUtils.putInt(this,"idInset",id + 1);
-                ToastUtil.showToast(this,"添加成功");
+                util.PreferenceUtils.putInt(this,"idInset",id + 1);
+                //消息弹框
+
+                new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .asConfirm("添加成功", "        您已成功添加了一个药品，单击药品列可查看更多操作。\n" +
+                                        "        是否清空内容以便继续填写?",
+                                "返回", "清空内容",
+                                new OnConfirmListener() {
+                                    @Override
+                                    public void onConfirm() {
+                                        clearAddTextfield();
+                                    }
+                                }, null, false, ResourceTable.Layout_popup_comfrim_with_cancel)
+                        .show(); // 最后一个参数绑定已有布局
+
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "insert: dataRemote exception|illegalStateException");
-            ToastUtil.showToast(this,"添加失败，请重试");
+            ToastUtil.showToast(this,"添加失败，请重试  ");
         }
     }
     //更新
@@ -1189,12 +1152,12 @@ public class MainAbilitySlice extends AbilitySlice {
         try {
             if (databaseHelper.update(Uri.parse(BASE_URI + DATA_PATH), valuesBucket, predicates) != -1) {
                 HiLog.info(LABEL_LOG, "update successful");
-                ToastUtil.showToast(this,"修改成功");
+                ToastUtil.showToast(this,"修改成功  ");
 
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
-            ToastUtil.showToast(this,"修改失败，请重试");
+            ToastUtil.showToast(this,"修改失败，请重试  ");
 
         }
     }
@@ -1207,15 +1170,50 @@ public class MainAbilitySlice extends AbilitySlice {
             if (databaseHelper.delete(Uri.parse(BASE_URI + DATA_PATH), predicates) != -1) {
                 HiLog.info(LABEL_LOG, "delete successful");
                 idInsert--;
-                PreferenceUtils.putInt(this,"idInset",id - 1);
-                ToastUtil.showToast(this,"删除成功");
+                util.PreferenceUtils.putInt(this,"idInset",id - 1);
+                ToastUtil.showToast(this,"删除成功  ");
                 //TODO：检测删除是否id会空余，修复空余
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "delete: dataRemote exception | illegalStateException");
-            ToastUtil.showToast(this,"删除失败，请重试");
+            ToastUtil.showToast(this,"删除失败，请重试  ");
         }
     }
+    public static class XPopupListener extends SimpleCallback {
+        @Override
+        public void onCreated(BasePopupView pv) {
+            HiLog.info(LABEL_LOG, "onCreater");
+        }
+
+        @Override
+        public void onShow(BasePopupView popupView) {
+            HiLog.info(LABEL_LOG,"onShow");
+        }
+
+        @Override
+        public void onDismiss(BasePopupView popupView) {
+            HiLog.info(LABEL_LOG,"onDismiss");
+        }
+
+        @Override
+        public void beforeDismiss(BasePopupView popupView) {
+            HiLog.info(LABEL_LOG, "beforeDismiss");
+        }
+
+        // 如果你自己想拦截返回按键事件，则重写这个方法，返回true即可
+        @Override
+        public boolean onBackPressed(BasePopupView popupView) {
+//            ToastUtil.showToast(getContext(), "onBackPressed返回true，拦截了返回按键，按返回键XPopup不会关闭了");
+            return true;
+        }
+
+        @Override
+        public void onKeyBoardStateChanged(BasePopupView popupView, int height) {
+            super.onKeyBoardStateChanged(popupView, height);
+//            loge("tag", "onKeyBoardStateChanged height: " + height);
+        }
+    }
+
 }
 
 

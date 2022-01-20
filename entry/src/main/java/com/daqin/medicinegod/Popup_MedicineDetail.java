@@ -2,29 +2,28 @@ package com.daqin.medicinegod;
 
 import com.daqin.medicinegod.slice.MainAbilitySlice;
 import com.daqin.medicinegod.utils.PersonDataAbility;
+import com.daqin.medicinegod.utils.util;
 import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.core.BasePopupView;
 import com.lxj.xpopup.impl.FullScreenPopupView;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.lxj.xpopup.util.ToastUtil;
 import ohos.aafwk.ability.DataAbilityHelper;
 import ohos.aafwk.ability.DataAbilityRemoteException;
-import ohos.agp.components.Component;
-import ohos.agp.components.LayoutScatter;
-import ohos.agp.components.ScrollView;
-import ohos.agp.components.Text;
+import ohos.agp.components.*;
 import ohos.app.Context;
 import ohos.data.DatabaseHelper;
 import ohos.data.dataability.DataAbilityPredicates;
 import ohos.data.preferences.Preferences;
 import ohos.data.rdb.ValuesBucket;
 import ohos.data.resultset.ResultSet;
+import ohos.global.icu.text.UnicodeSet;
+import ohos.global.icu.text.UnicodeSetSpanner;
 import ohos.hiviewdfx.HiLog;
 import ohos.hiviewdfx.HiLogLabel;
 import ohos.utils.net.Uri;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Description: 自定义全屏弹窗
@@ -37,33 +36,50 @@ public class Popup_MedicineDetail extends FullScreenPopupView {
     }
 
     private Map<String,Object> mdc_SingleData;
-
     private int localID = 0;
     private String localKEY = null;
 
-
+    Text mdc_name ;
+    Text mdc_desp ;
+    Text mdc_outdate ;
+    Text mdc_otc ;
+    Text mdc_barcode ;
+    Text mdc_usage ;
+    Text mdc_yu ;
+    Text mdc_company ;
+    Text mdc_elabel ;
 
     @Override
     protected int getImplLayoutId() {
         return ResourceTable.Layout_popup_medicine_detail;
     }
 
+
     @Override
     protected void onCreate() {
         super.onCreate();
-        localID = MainAbilitySlice.PreferenceUtils.getInt(getContext(),"mglocalid");
-        localKEY = MainAbilitySlice.PreferenceUtils.getString(getContext(),"mglocalkey");
-        if (localID == -1 || localKEY == null || localKEY.equals("null")){
+        mdc_name = (Text) findComponentById(ResourceTable.Id_dtl_mdc_name);
+        mdc_desp = (Text) findComponentById(ResourceTable.Id_dtl_mdc_desp);
+        mdc_outdate = (Text) findComponentById(ResourceTable.Id_dtl_mdc_outdate);
+        mdc_otc = (Text) findComponentById(ResourceTable.Id_dtl_mdc_otc);
+        mdc_barcode = (Text) findComponentById(ResourceTable.Id_dtl_mdc_barcode);
+        mdc_usage = (Text) findComponentById(ResourceTable.Id_dtl_mdc_usage);
+        mdc_yu = (Text) findComponentById(ResourceTable.Id_dtl_mdc_yu);
+        mdc_company = (Text) findComponentById(ResourceTable.Id_dtl_mdc_company);
+        mdc_elabel = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel);
+        localID = util.PreferenceUtils.getInt(getContext(), "mglocalid");
+        localKEY = util.PreferenceUtils.getString(getContext(), "mglocalkey");
+        if (localID == -1 || localKEY == null || localKEY.equals("null")) {
             //TODO:添加提示
             Popup_MedicineDetail.super.dismiss();
         }
         initListener(LayoutScatter.getInstance(getContext()).parse(getImplLayoutId(), this, true));
         //设置滑动监听，仿滑到关闭动画
-        ScrollView s = (ScrollView)findComponentById(ResourceTable.Id_detail_scrollview);
+        ScrollView s = (ScrollView) findComponentById(ResourceTable.Id_detail_scrollview);
         s.setScrolledListener(new ScrolledListener() {
             @Override
             public void onContentScrolled(Component component, int i, int i1, int i2, int i3) {
-                if (i1<=-300){
+                if (i1 <= -350) {
                     Popup_MedicineDetail.super.dismiss();
                 }
             }
@@ -75,39 +91,27 @@ public class Popup_MedicineDetail extends FullScreenPopupView {
             }
         });
         mdc_SingleData = MainAbilitySlice.querySingleData(localKEY);
-        if (mdc_SingleData == null){
+        if (mdc_SingleData == null) {
             //TODO:添加提示
             Popup_MedicineDetail.super.dismiss();
         }
-        Text mdc_img = (Text)findComponentById(ResourceTable.Id_dtl_mdc_img);
-        Text mdc_name = (Text)findComponentById(ResourceTable.Id_dtl_mdc_name);
-        Text mdc_desp = (Text)findComponentById(ResourceTable.Id_dtl_mdc_desp);
-        Text mdc_outdate = (Text)findComponentById(ResourceTable.Id_dtl_mdc_outdate);
-        Text mdc_otc = (Text)findComponentById(ResourceTable.Id_dtl_mdc_otc);
-        Text mdc_barcode = (Text)findComponentById(ResourceTable.Id_dtl_mdc_barcode);
-        Text mdc_usage = (Text)findComponentById(ResourceTable.Id_dtl_mdc_usage);
-        Text mdc_yu = (Text)findComponentById(ResourceTable.Id_dtl_mdc_yu);
-        Text mdc_company = (Text)findComponentById(ResourceTable.Id_dtl_mdc_company);
-        Text mdc_elabel = (Text)findComponentById(ResourceTable.Id_dtl_mdc_elabel);
-
-        //TODO:调整显示内容，文字上屏
-        System.out.println("DADADADAD"+mdc_SingleData+"DADADAD"+(String)mdc_SingleData.get("name"));
-        mdc_name.setText("666");
-//        mdc_desp.setText((String)mdc_SingleData.get("description"));
-//        mdc_elabel.setText((String)mdc_SingleData.get("elabel"));
-//        mdc_outdate.setText((String)mdc_SingleData.get("outdate"));
-//        mdc_otc.setText((String)mdc_SingleData.get("otc"));
-//        mdc_barcode.setText((String)mdc_SingleData.get("barcode"));
-//        mdc_usage.setText((String)mdc_SingleData.get("usage"));
-//        mdc_company.setText((String)mdc_SingleData.get("company"));
-//        mdc_yu.setText((String)mdc_SingleData.get("yu"));
 
 
-
-
-
+        //TODO:调整显示内容
+        System.out.println("DADADADAD" + mdc_name + "DADADAD" + (String) mdc_SingleData.get("name"));
+        mdc_name.setText((String) mdc_SingleData.get("name"));
+        mdc_desp.setText((String) mdc_SingleData.get("description"));
+        mdc_elabel.setText((String) mdc_SingleData.get("elabel"));
+        mdc_outdate.setText((String) mdc_SingleData.get("outdate"));
+        mdc_otc.setText((String) mdc_SingleData.get("otc"));
+        mdc_barcode.setText((String) mdc_SingleData.get("barcode"));
+        mdc_usage.setText((String) mdc_SingleData.get("usage"));
+        mdc_company.setText((String) mdc_SingleData.get("company"));
+        mdc_yu.setText((String) mdc_SingleData.get("yu"));
 
     }
+
+
 
 
 
@@ -174,6 +178,7 @@ public class Popup_MedicineDetail extends FullScreenPopupView {
             case ResourceTable.Id_dtl_mdc_yu:
             case ResourceTable.Id_dtl_mdc_company:
             case ResourceTable.Id_dtl_mdc_elabel:
+
                 break;
 
 
@@ -185,5 +190,6 @@ public class Popup_MedicineDetail extends FullScreenPopupView {
 
         }
     }
+
 
 }
