@@ -207,14 +207,14 @@ public class MainAbilitySlice extends AbilitySlice {
                     "QWERTY12345"+idInsert,
                     "Name"+idInsert,
                     "imgpath",
-                    "描述描述描述描述描述描述",
+                    "描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述",
                     "2022年-2月",
-                    "OTC-G",
+                    "OTC-R",
                     "6666666666",
                     //XX-包/克/片-XX-次-XX-时/天
-                    "1-包-3-次-1-天",
-                    "company",
-                    "2453",
+                    "3-片-3-次-1-天",
+                    "大马猴",
+                    "2459",
                     "eLABEL、eLABE、LeLAB、ELeLABEL、eLABEL");
             /*if (imgpath == null) {
                 view.fluentScrollTo(0, addimg.getTop() - 100);

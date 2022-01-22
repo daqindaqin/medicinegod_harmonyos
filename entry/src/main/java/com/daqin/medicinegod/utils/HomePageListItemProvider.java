@@ -118,6 +118,7 @@ public class HomePageListItemProvider extends  BaseItemProvider{
         int yuall = Integer.parseInt(map.get("yu").toString());
         int yuus = Integer.parseInt(textUagesAll[0]);
         double yures = yuall / yuus;
+        //TODO：修复bug
         DecimalFormat df = new DecimalFormat("#.0");
         String yu = df.format(yures);
         textMargin.setText(yu);

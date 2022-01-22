@@ -197,6 +197,7 @@
                     ohos:text="距过期还有 1999 天"
                     ohos:height="match_content"
                     ohos:width="match_parent"
+                    ohos:start_margin="5vp"
                     ohos:end_margin="10vp"
                     ohos:multiple_lines="true"
                     ohos:text_alignment="left|vertical_center"
@@ -229,16 +230,19 @@
                     ohos:scrollable="true"
                     ohos:text="OTC (非处方药)"
                     ohos:height="match_content"
-                    ohos:width="match_parent"
+                    ohos:width="match_content"
                     ohos:end_margin="10vp"
                     ohos:multiple_lines="true"
                     ohos:text_alignment="left|vertical_center"
-                    ohos:text_color="$color:black_clear"
+                    ohos:text_color="$color:white"
                     ohos:text_size="20fp"
                     ohos:text_weight="500"
-                    ohos:top_margin="10vp"
+                    ohos:top_margin="15vp"
                     ohos:bottom_margin="10vp"
-                    ohos:enabled="false"/>
+                    ohos:enabled="false"
+                    ohos:start_padding="10vp"
+                    ohos:end_padding="10vp"
+                    ohos:background_element="$graphic:bg_text_otc_otc_green"/>
 
 
             </DirectionalLayout>
@@ -270,7 +274,7 @@
                     ohos:text_color="$color:black_clear"
                     ohos:text_size="20fp"
                     ohos:text_weight="500"
-                    ohos:top_margin="10vp"
+                    ohos:top_margin="15vp"
                     ohos:bottom_margin="10vp"
                     ohos:enabled="false"/>
             </DirectionalLayout>
@@ -302,7 +306,7 @@
                     ohos:text_color="$color:black_clear"
                     ohos:text_size="20fp"
                     ohos:text_weight="500"
-                    ohos:top_margin="10vp"
+                    ohos:top_margin="15vp"
                     ohos:bottom_margin="10vp"
                     ohos:enabled="false"/>
             </DirectionalLayout>
@@ -334,7 +338,7 @@
                     ohos:text_color="$color:black_clear"
                     ohos:text_size="20fp"
                     ohos:text_weight="500"
-                    ohos:top_margin="10vp"
+                    ohos:top_margin="15vp"
                     ohos:bottom_margin="10vp"
                     ohos:enabled="false"/>
 
@@ -367,7 +371,7 @@
                     ohos:text_color="$color:black_clear"
                     ohos:text_size="20fp"
                     ohos:text_weight="500"
-                    ohos:top_margin="10vp"
+                    ohos:top_margin="15vp"
                     ohos:bottom_margin="10vp"
                     ohos:enabled="false"/>
 
