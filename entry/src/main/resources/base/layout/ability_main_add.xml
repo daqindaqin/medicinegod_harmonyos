@@ -535,13 +535,8 @@
                 ohos:alignment="top"
                 ohos:below="$+id:add_addNewlabel_DirectionalLayout"
                 ohos:background_element="$color:blue_clear">
-<!--                <com.daqin.medicinegod.FlowLayout-->
-<!--                    ohos:id="$+id:flow_layout"-->
-<!--                    ohos:height="match_content"-->
-<!--                    ohos:width="match_parent"-->
-<!--                    ohos:layout_alignment="top"-->
-<!--                    ohos:below="$+id:add_addNewlabel_labellayout">-->
-<!--                </com.daqin.medicinegod.FlowLayout>-->
+
+
             </DirectionalLayout>
 
             <Image

@@ -58,7 +58,7 @@
             ohos:text="返回"
             ohos:text_alignment="center"
             ohos:text_size="16fp"
-            ohos:text_color="$color:black_line"
+            ohos:text_color="$color:black_clear"
             ohos:top_margin="10vp"
             ohos:text_weight="700"
             ohos:weight="1"/>

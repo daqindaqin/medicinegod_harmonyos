@@ -113,20 +113,45 @@
                 ohos:text_weight="700"
                 ohos:text_size="14fp"
                 />
-            <Text
-                ohos:id="$+id:text_margin"
+            <DirectionalLayout
                 ohos:height="match_content"
                 ohos:width="match_parent"
-                ohos:end_margin="5vp"
-                ohos:max_text_lines="1"
-                ohos:multiple_lines="true"
-                ohos:start_margin="5vp"
-                ohos:text="约能使用：2  次"
-                ohos:text_color="$color:black_clear"
-                ohos:text_weight="300"
-                ohos:text_size="12fp"
-                ohos:top_margin="5vp"
-                />
+                ohos:orientation="horizontal"
+                ohos:alignment="vertical_center|top">
+                <Text
+                    ohos:height="match_content"
+                    ohos:width="match_content"
+                    ohos:text="约能使用："
+                    ohos:text_color="$color:black_clear"
+                    ohos:text_weight="300"
+                    ohos:text_size="12fp"
+                    ohos:top_margin="5vp"
+                    ohos:start_margin="5vp"
+                    />
+                <Text
+                    ohos:id="$+id:text_margin"
+                    ohos:height="match_content"
+                    ohos:width="match_content"
+                    ohos:max_text_lines="1"
+                    ohos:multiple_lines="false"
+                    ohos:text="2"
+                    ohos:text_color="$color:black_clear"
+                    ohos:text_weight="500"
+                    ohos:text_size="12fp"
+                    ohos:top_margin="5vp"
+                    />
+                <Text
+                    ohos:height="match_content"
+                    ohos:width="match_content"
+                    ohos:text="  次"
+                    ohos:text_color="$color:black_clear"
+                    ohos:text_weight="300"
+                    ohos:text_size="12fp"
+                    ohos:top_margin="5vp"
+                    ohos:end_margin="5vp"
+                    />
+            </DirectionalLayout>
+
             <Text
                 ohos:id="$+id:text_usage"
                 ohos:height="match_content"

@@ -120,9 +120,7 @@ public class HomePageListItemProvider extends  BaseItemProvider{
         double yures = yuall / yuus;
         DecimalFormat df = new DecimalFormat("#.0");
         String yu = df.format(yures);
-        textMargin.setText("约能使用："
-                + yu
-                +"  次");
+        textMargin.setText(yu);
 
 
         //过期提醒

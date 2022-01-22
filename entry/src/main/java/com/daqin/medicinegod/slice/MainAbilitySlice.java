@@ -6,9 +6,7 @@ package com.daqin.medicinegod.slice;
  * Changes by daqin,at 2019-2022
  */
 
-import com.daqin.medicinegod.Popup_MedicineDetail;
 import com.daqin.medicinegod.Popup_OTCQuestion;
-import com.daqin.medicinegod.FlowLayout;
 import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.utils.*;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
@@ -22,6 +20,7 @@ import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.ability.DataAbilityHelper;
 import ohos.aafwk.ability.DataAbilityRemoteException;
 import ohos.aafwk.content.Intent;
+import ohos.aafwk.content.Operation;
 import ohos.agp.components.*;
 import ohos.agp.render.*;
 import ohos.agp.render.opengl.Utils;
@@ -56,7 +55,6 @@ public class MainAbilitySlice extends AbilitySlice {
     public static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;   //自定义的一个权限请求识别码，用于处理权限回调
     private static DataAbilityHelper databaseHelper;
     private BubbleNavigationLinearView mBubbleNavigationLinearView;
-    private FlowLayout mflowLayout;
 //    private List<String> labelList = new ArrayList<>();
 
     static int newUsage_utils_1 = 0,newUsage_utils_3 = 0;
@@ -830,13 +828,18 @@ public class MainAbilitySlice extends AbilitySlice {
             //单击打开详情弹窗
             util.PreferenceUtils.putInt(this,"mglocalid", (Integer) res.getOrDefault("id",-1));
             util.PreferenceUtils.putString(this,"mglocalkey", res.getOrDefault("keyid","null").toString());
-            new XPopup.Builder(getContext())
-                        .hasStatusBarShadow(false)
-                        .autoOpenSoftInput(false)//打开输入法
-                        .isDestroyOnDismiss(true)//关闭后自动销毁
-                        .setComponent(listContainer) // 用于获取页面根容器，监听页面高度变化，解决输入法盖住弹窗的问题
-                        .asCustom(new Popup_MedicineDetail(getContext()))
-                        .show();
+
+            Intent intentDetail = new Intent();
+            Operation operation = new Intent.OperationBuilder()
+                    .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                    .withBundleName(getBundleName())    // 包名
+                    .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                    // Ability页面的名称，在本地可以缺省前面的路径
+                    .build();    // 构建代码
+            intentDetail.setOperation(operation);    // 将operation存入到intent中
+            startAbility(intentDetail);    // 实现Ability跳转
+
+
         });
 
     }

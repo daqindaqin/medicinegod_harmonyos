@@ -41,7 +41,8 @@
         "label": "$string:entry_MainAbility",
         "type": "page",
         "launchType": "standard"
-      },{
+      },
+      {
         "permissions": [
           "com.huawei.codelab.DataAbilityShellProvider.PROVIDER"
         ],
@@ -50,6 +51,12 @@
         "description": "数据库相关",
         "type": "data",
         "uri": "dataability://com.daqin.medicinegod.utils.PersonDataAbility"
+      },
+      {
+        "icon": "$media:icon",
+        "name": "com.daqin.medicinegod.DetailAbility",
+        "description": "药品详情",
+        "type": "page"
       }
     ],
     "metaData": {

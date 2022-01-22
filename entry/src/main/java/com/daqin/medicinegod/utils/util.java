@@ -5,9 +5,16 @@ import com.daqin.medicinegod.slice.MainAbilitySlice;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
 import ohos.aafwk.ability.AbilitySlice;
+import ohos.agp.components.Image;
+import ohos.agp.render.*;
 import ohos.app.Context;
 import ohos.data.DatabaseHelper;
 import ohos.data.preferences.Preferences;
+import ohos.global.resource.NotExistException;
+import ohos.media.image.ImageSource;
+import ohos.media.image.PixelMap;
+import ohos.media.image.common.PixelFormat;
+import ohos.media.image.common.Size;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -225,6 +232,54 @@ public class util extends AbilitySlice {
                 }
             }
         return encode;
+    }
+    //圆角图形
+    public void imgCorner(){
+        //从资源文件加载PixelMap
+        PixelMap originMap = getPixelMapFromResource(ResourceTable.Media_head);
+        Image imgOrigin = (Image) findComponentById(ResourceTable.Id_things_image_head);
+        imgOrigin.setPixelMap(originMap);
+
+        //获取原图片的大小
+        assert originMap != null;
+        Size originSize = originMap.getImageInfo().size;
+        PixelMap.InitializationOptions options = new PixelMap.InitializationOptions();
+        options.size = new Size(originSize.width, originSize.height);
+        options.pixelFormat = PixelFormat.ARGB_8888;
+        options.editable = true;
+        //创建结果PixelMap
+        PixelMap circlePixelMap = PixelMap.create(options);
+        Canvas canvas = new Canvas();
+        //将结果PixelMap作为画布背景
+        Texture texture = new Texture(circlePixelMap);
+        canvas.setTexture(texture);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setDither(true);
+        PixelMapHolder pixelMapHolder = new PixelMapHolder(PixelMap.create(originMap, options));
+        PixelMapShader shader = new PixelMapShader(pixelMapHolder, Shader.TileMode.CLAMP_TILEMODE, Shader.TileMode.CLAMP_TILEMODE);
+        paint.setShader(shader, Paint.ShaderType.PIXELMAP_SHADER);
+        //圆角矩形图
+//        RectFloat rect = new RectFloat(50, 50, originSize.width - 20, originSize.height -20);
+//        canvas.drawRoundRect(rect, 50,50, paint);
+        //圆形图
+        canvas.drawCircle(originSize.width * 1.0f / 2, originSize.height * 1.0f / 2, originSize.width * 1.0f / 2, paint);
+        Image imgCircle = (Image) findComponentById(ResourceTable.Id_things_image_head);
+        imgCircle.setPixelMap(circlePixelMap);
+
+    }
+    private PixelMap getPixelMapFromResource(int resourceId) {
+        try (InputStream inputStream = getContext().getResourceManager().getResource(resourceId)) {
+            // 创建图像数据源ImageSource对象
+            ImageSource.SourceOptions srcOpts = new ImageSource.SourceOptions();
+            srcOpts.formatHint = "image/jpg";
+            ImageSource imageSource = ImageSource.create(inputStream, srcOpts);
+            // 设置图片参数
+            ImageSource.DecodingOptions decodingOptions = new ImageSource.DecodingOptions();
+            return imageSource.createPixelmap(decodingOptions);
+        } catch (IOException | NotExistException ignored) {
+        }
+        return null;
     }
 
 
