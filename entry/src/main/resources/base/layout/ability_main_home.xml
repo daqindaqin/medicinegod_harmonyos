@@ -27,16 +27,14 @@
                                     ohos:height="match_parent"
                                     ohos:width="match_content">
                                         <Image
-                                            ohos:id="$+id:image_head"
-                                            ohos:height="70vp"
-                                            ohos:width="70vp"
+                                            ohos:id="$+id:home_image_head"
+                                            ohos:height="60vp"
+                                            ohos:width="60vp"
                                             ohos:bottom_margin="20vp"
                                             ohos:end_margin="20vp"
-                                            ohos:focus_border_radius="50"
                                             ohos:image_src="$media:head"
                                             ohos:scale_mode="stretch"
-                                            ohos:start_margin="20vp"
-                                            ohos:text_color="#FFFFFF"
+                                            ohos:start_margin="25vp"
                                             ohos:top_margin="20vp"
                                             />
                                         <Text
@@ -49,9 +47,8 @@
                                             ohos:text_color="$color:white"
                                             ohos:background_element="$graphic:bg_home_level"
                                             ohos:top_margin="-28vp"
-                                            ohos:start_margin="15vp"
-                                            ohos:below="$id:image_head"
-                                            ohos:align_start="$id:image_head"
+                                            ohos:start_margin="35vp"
+                                            ohos:below="$id:home_image_head"
                                             ohos:padding="5vp"/>
                                 </DependentLayout>
                                 <!--名字和签名-->

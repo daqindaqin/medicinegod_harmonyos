@@ -170,6 +170,7 @@ public class HomePageListItemProvider extends  BaseItemProvider{
 //        image.setPixelMap(pixelMap);
 //        本机资源ID可使用下方命令
         image.setPixelMap(ResourceTable.Media_test);
+        image.setCornerRadius(25);
 //        image.setPixelMap((int)map.get("image"));
 
         return cpt;

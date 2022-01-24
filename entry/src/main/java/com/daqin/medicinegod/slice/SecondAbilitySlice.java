@@ -13,6 +13,7 @@ public class SecondAbilitySlice extends AbilitySlice {
 
         Image cropped_image = (Image) findComponentById(ResourceTable.Id_cropped_image);
         cropped_image.setPixelMap(intent.getSequenceableParam("cropedimage"));
+
     }
 
     @Override

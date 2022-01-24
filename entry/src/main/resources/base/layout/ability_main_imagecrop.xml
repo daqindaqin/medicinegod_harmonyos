@@ -7,52 +7,61 @@
     ohos:background_element="$color:white"
     ohos:padding="20vp"
     ohos:orientation="vertical">
-
-    <com.daqin.medicinegod.imagecrop.EditPhotoView
-        xmlns:crop="http://schemas.huawei.com/res/ohos-auto"
-        ohos:id="$+id:editable_image"
-        ohos:height="match_content"
-        ohos:width="match_content"
-        ohos:background_element="$color:purple_light"
-        ohos:margin="10vp"
-        crop:crop_corner_color="#45B4CA"
-        crop:crop_dot_color="#333333"
-        crop:crop_line_color="#FFFFFF"
-        crop:crop_shadow_color="#77FFFFFF"
-        />
-
-    <DirectionalLayout
-        ohos:height="match_content"
-        ohos:width="match_content"
-        ohos:alignment="horizontal_center|vertical_center"
-        ohos:orientation="horizontal">
-
-        <Button
-            ohos:id="$+id:imagecrop_btn_rotate"
+    <ScrollView
+        ohos:height="match_parent"
+        ohos:width="match_parent">
+        <DirectionalLayout
             ohos:height="match_content"
-            ohos:width="match_content"
-            ohos:background_element="$color:blue"
-            ohos:end_margin="30vp"
-            ohos:layout_alignment="vertical_center|horizontal_center"
-            ohos:padding="5vp"
-            ohos:text="旋转90°"
-            ohos:text_color="$color:white"
-            ohos:text_size="16fp"
-            ohos:text_weight="500"/>
+            ohos:width="match_parent"
+            ohos:orientation="vertical">
+            <com.daqin.medicinegod.imagecrop.EditPhotoView
+                xmlns:crop="http://schemas.huawei.com/res/ohos-auto"
+                ohos:id="$+id:editable_image"
+                ohos:height="300vp"
+                ohos:width="300vp"
+                ohos:background_element="$color:purple_light"
+                ohos:margin="10vp"
+                crop:crop_corner_color="#45B4CA"
+                crop:crop_dot_color="#333333"
+                crop:crop_line_color="#FFFFFF"
+                crop:crop_shadow_color="#77FFFFFF"
+                />
 
-        <Button
-            ohos:id="$+id:imagecrop_btn_crop"
-            ohos:height="match_content"
-            ohos:width="match_content"
-            ohos:background_element="$color:blue"
-            ohos:end_margin="30vp"
-            ohos:layout_alignment="vertical_center|horizontal_center"
-            ohos:padding="5vp"
-            ohos:text="裁剪"
-            ohos:text_color="$color:white"
-            ohos:text_size="16fp"
-            ohos:text_weight="500"/>
-    </DirectionalLayout>
+            <DirectionalLayout
+                ohos:height="match_content"
+                ohos:width="match_content"
+                ohos:alignment="horizontal_center|vertical_center"
+                ohos:orientation="horizontal">
+
+                <Button
+                    ohos:id="$+id:imagecrop_btn_rotate"
+                    ohos:height="match_content"
+                    ohos:width="match_content"
+                    ohos:background_element="$color:blue"
+                    ohos:end_margin="30vp"
+                    ohos:layout_alignment="vertical_center|horizontal_center"
+                    ohos:padding="5vp"
+                    ohos:text="旋转90°"
+                    ohos:text_color="$color:white"
+                    ohos:text_size="16fp"
+                    ohos:text_weight="500"/>
+
+                <Button
+                    ohos:id="$+id:imagecrop_btn_crop"
+                    ohos:height="match_content"
+                    ohos:width="match_content"
+                    ohos:background_element="$color:blue"
+                    ohos:end_margin="30vp"
+                    ohos:layout_alignment="vertical_center|horizontal_center"
+                    ohos:padding="5vp"
+                    ohos:text="裁剪"
+                    ohos:text_color="$color:white"
+                    ohos:text_size="16fp"
+                    ohos:text_weight="500"/>
+            </DirectionalLayout>
+
+        </DirectionalLayout>
+    </ScrollView>
 
 
 

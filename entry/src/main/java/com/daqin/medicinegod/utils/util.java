@@ -16,14 +16,12 @@ import ohos.media.image.PixelMap;
 import ohos.media.image.common.PixelFormat;
 import ohos.media.image.common.Size;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Base64;
-import java.util.Set;
+import java.util.*;
 
 
 public class util extends AbilitySlice {
@@ -207,6 +205,54 @@ public class util extends AbilitySlice {
         return res;
     }
 
+    public static int[] getRemainTime(String timeA,String timeB){
+        /**
+         * @param timeA 第一个时间
+         * @param timeB 第二个时间
+         * @param return 返回时间数组
+         */
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        int[] outdate = new int[]{0,0,0,0,0,0};
+        //0年 1月 2天 3时 4分 5秒
+        try {
+            //将日期转成Date对象作比较
+            Date fomatDate1 = dateFormat.parse(timeA);
+            Date fomatDate2 = dateFormat.parse(timeB);
+
+            Long time1 =  fomatDate1.getTime();
+            Long time2 =  fomatDate2.getTime();
+            int second = (int) ((time1 - time2) / 1000);
+            //TODO：如有更好的方案则优化此处
+            if (second > 0) {
+                outdate[5] = second;
+                if (outdate[5] >= 60) {
+                    outdate[4] = outdate[5] / 60;
+                    outdate[5] = outdate[5] % 60;
+                    if (outdate[4] >= 60) {
+                        outdate[3] = outdate[4] / 60;
+                        outdate[4] = outdate[4] % 60;
+                        if (outdate[3] > 24) {
+                            outdate[2] = outdate[3] / 24;
+                            outdate[3] = outdate[3] % 24;
+                            if(outdate[2] > 30){
+                                outdate[1] = outdate[2] / 30;
+                                outdate[2] = outdate[2] % 30;
+                                if(outdate[1] > 12){
+                                    outdate[0] = outdate[1] / 12;
+                                    outdate[1] = outdate[1] % 12;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return outdate;
+    }
+
     public static String getImageBase64(String imgPath) {
         // 将图片文件转化为字节数组字符串，并对其进行Base64编码处理
         // String imgFile = imgPath;// 待处理的图片
@@ -233,7 +279,144 @@ public class util extends AbilitySlice {
             }
         return encode;
     }
+    public static String getImageBase6466(byte[] byte0) {
+        // 将图片文件转化为字节数组字符串，并对其进行Base64编码处理
+        // String imgFile = imgPath;// 待处理的图片
+        InputStream in = null;
+        byte[] data = null;
+        String encode = null; // 返回Base64编码过的字节数组字符串
+        // 对字节数组Base64编码
+        try {
+            // 读取图片字节数组
+            in = new ByteArrayInputStream(byte0);
+            data = new byte[in.available()];
+            in.read(data);
+            encode = Base64.getEncoder().encodeToString(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                assert in != null;
+                in.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return encode;
+    }
+    /**
+     * 向指定URL发送GET方法的请求
+     *
+     * @param url
+     *            发送请求的URL
+     * @param param
+     *            请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
+     * @return URL 所代表远程资源的响应结果
+     */
+    public static String sendGet(String url, String param) {
+        String result = "";
+        BufferedReader in = null;
+        try {
+            String urlNameString = url + "?" + param;
+            URL realUrl = new URL(urlNameString);
+            // 打开和URL之间的连接
+            URLConnection connection = realUrl.openConnection();
+            // 设置通用的请求属性
+            connection.setRequestProperty("accept", "*/*");
+            connection.setRequestProperty("connection", "Keep-Alive");
+            connection.setRequestProperty("user-agent",
+                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 建立实际的连接
+            connection.connect();
+            // 获取所有响应头字段
+            Map<String, List<String>> map = connection.getHeaderFields();
+            // 遍历所有的响应头字段
+            for (String key : map.keySet()) {
+                System.out.println(key + "--->" + map.get(key));
+            }
+            // 定义 BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result += line;
+            }
+        } catch (Exception e) {
+            System.out.println("发送GET请求出现异常！" + e);
+            e.printStackTrace();
+        }
+        // 使用finally块来关闭输入流
+        finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        return result;
+    }
 
+    /**
+     * 向指定 URL 发送POST方法的请求
+     *
+     * @param url
+     *            发送请求的 URL
+     * @param param
+     *            请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
+     * @return 所代表远程资源的响应结果
+     */
+    public static String sendPost(String url, String param) {
+        PrintWriter out = null;
+        BufferedReader in = null;
+        String result = "";
+        try {
+            URL realUrl = new URL(url);
+            // 打开和URL之间的连接
+            URLConnection conn = realUrl.openConnection();
+            // 设置通用的请求属性
+            conn.setRequestProperty("accept", "*/*");
+            conn.setRequestProperty("connection", "Keep-Alive");
+            conn.setRequestProperty("user-agent",
+                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 发送POST请求必须设置如下两行
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            // 获取URLConnection对象对应的输出流
+            out = new PrintWriter(conn.getOutputStream());
+            // 发送请求参数
+            out.print(param);
+            // flush输出流的缓冲
+            out.flush();
+            // 定义BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result += line;
+            }
+        } catch (Exception e) {
+            System.out.println("发送 POST 请求出现异常！"+e);
+            e.printStackTrace();
+        }
+        //使用finally块来关闭输出流、输入流
+        finally{
+            try{
+                if(out!=null){
+                    out.close();
+                }
+                if(in!=null){
+                    in.close();
+                }
+            }
+            catch(IOException ex){
+                ex.printStackTrace();
+            }
+        }
+        return result;
+    }
 
 
 }

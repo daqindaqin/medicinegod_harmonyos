@@ -48,7 +48,7 @@
         ],
         "name": "com.daqin.medicinegod.utils.PersonDataAbility",
         "icon": "$media:icon",
-        "description": "数据库相关",
+        "description": "数据库",
         "type": "data",
         "uri": "dataability://com.daqin.medicinegod.utils.PersonDataAbility"
       },
@@ -56,6 +56,12 @@
         "icon": "$media:icon",
         "name": "com.daqin.medicinegod.DetailAbility",
         "description": "药品详情",
+        "type": "page"
+      },
+      {
+        "icon": "$media:icon",
+        "name": "com.daqin.medicinegod.ImageCropAbility",
+        "description": "",
         "type": "page"
       }
     ],
@@ -70,7 +76,17 @@
     "reqPermissions": [
       {
         "name": "ohos.permission.READ_MEDIA",
-        "reason": "选择上传图片使用",
+        "reason": "选择药品图片以供上传使用",
+        "usedScene": {
+          "ability": [
+            "com.daqin.medicinegod.MainAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "android.permission.INTERNET",
+        "reason": "上传图片、用户登录所用",
         "usedScene": {
           "ability": [
             "com.daqin.medicinegod.MainAbility"

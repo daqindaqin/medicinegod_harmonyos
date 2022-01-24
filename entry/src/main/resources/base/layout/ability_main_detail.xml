@@ -81,7 +81,7 @@
                 ohos:id="$+id:dtl_mdc_img"
                 ohos:height="180vp"
                 ohos:width="320vp"
-                ohos:background_element="$color:blue_clear"
+                ohos:background_element="$color:white"
                 ohos:image_src="$media:test"
                 ohos:margin="20vp"
                 ohos:scale_mode="stretch"/>
@@ -90,7 +90,8 @@
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:alignment="left|top|vertical_center"
-                ohos:orientation="horizontal">
+                ohos:orientation="horizontal"
+                ohos:end_margin="20vp">
 
                 <Text
                     ohos:height="35vp"
@@ -120,7 +121,8 @@
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:alignment="left|top|vertical_center"
-                ohos:orientation="horizontal">
+                ohos:orientation="horizontal"
+                ohos:end_margin="20vp">
 
                 <Text
                     ohos:height="35vp"
@@ -136,7 +138,7 @@
                     ohos:width="match_parent"
                     ohos:bottom_margin="10vp"
                     ohos:enabled="false"
-                    ohos:end_margin="10vp"
+                    ohos:end_margin="20vp"
                     ohos:multiple_lines="true"
                     ohos:text="描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述"
                     ohos:text_alignment="left|vertical_center"
@@ -150,7 +152,8 @@
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:alignment="left|top|vertical_center"
-                ohos:orientation="horizontal">
+                ohos:orientation="horizontal"
+                ohos:end_margin="20vp">
 
                 <Text
                     ohos:height="35vp"
@@ -160,20 +163,104 @@
                     ohos:start_margin="15vp"
                     ohos:top_margin="15vp"/>
 
-                <TextField
-                    ohos:id="$+id:dtl_mdc_elabel"
-                    ohos:text="标签1 标签2 标签3 标签4 标签5"
+                <ScrollView
                     ohos:height="match_content"
                     ohos:width="match_parent"
-                    ohos:end_margin="10vp"
-                    ohos:multiple_lines="true"
-                    ohos:text_alignment="left|vertical_center"
-                    ohos:text_color="$color:black_clear"
-                    ohos:text_size="20fp"
-                    ohos:text_weight="500"
-                    ohos:top_margin="10vp"
-                    ohos:bottom_margin="10vp"
-                    ohos:enabled="false"/>
+                    ohos:rebound_effect="true"
+                    ohos:top_padding="10vp"
+                    ohos:bottom_padding="10vp">
+                    <DirectionalLayout
+                        ohos:height="match_content"
+                        ohos:width="match_content"
+                        ohos:orientation="horizontal"
+                        ohos:alignment="left|vertical_center">
+                        <TextField
+                            ohos:id="$+id:dtl_mdc_elabel1"
+                            ohos:height="match_content"
+                            ohos:width="match_content"
+                            ohos:background_element="$graphic:bg_text_otc_otc_green"
+                            ohos:bottom_margin="10vp"
+                            ohos:enabled="false"
+                            ohos:end_margin="10vp"
+                            ohos:end_padding="10vp"
+                            ohos:start_padding="10vp"
+                            ohos:text="随便啦啦啦"
+                            ohos:text_alignment="left|vertical_center"
+                            ohos:text_color="$color:white"
+                            ohos:text_size="20fp"
+                            ohos:text_weight="500"
+                            ohos:top_margin="15vp"/>
+                        <TextField
+                            ohos:id="$+id:dtl_mdc_elabel2"
+                            ohos:height="match_content"
+                            ohos:width="match_content"
+                            ohos:background_element="$graphic:bg_text_otc_otc_green"
+                            ohos:bottom_margin="10vp"
+                            ohos:enabled="false"
+                            ohos:end_margin="10vp"
+                            ohos:end_padding="10vp"
+                            ohos:start_padding="10vp"
+                            ohos:text="随便恩"
+                            ohos:text_alignment="left|vertical_center"
+                            ohos:text_color="$color:white"
+                            ohos:text_size="20fp"
+                            ohos:text_weight="500"
+                            ohos:top_margin="15vp"/>
+                        <TextField
+                            ohos:id="$+id:dtl_mdc_elabel3"
+                            ohos:height="match_content"
+                            ohos:width="match_content"
+                            ohos:background_element="$graphic:bg_text_otc_otc_green"
+                            ohos:bottom_margin="10vp"
+                            ohos:enabled="false"
+                            ohos:end_margin="10vp"
+                            ohos:end_padding="10vp"
+                            ohos:start_padding="10vp"
+                            ohos:text="随便"
+                            ohos:text_alignment="left|vertical_center"
+                            ohos:text_color="$color:white"
+                            ohos:text_size="20fp"
+                            ohos:text_weight="500"
+                            ohos:top_margin="15vp"/>
+                        <TextField
+                            ohos:id="$+id:dtl_mdc_elabel4"
+                            ohos:height="match_content"
+                            ohos:width="match_content"
+                            ohos:background_element="$graphic:bg_text_otc_otc_green"
+                            ohos:bottom_margin="10vp"
+                            ohos:enabled="false"
+                            ohos:end_margin="10vp"
+                            ohos:end_padding="10vp"
+                            ohos:start_padding="10vp"
+                            ohos:text="随便"
+                            ohos:text_alignment="left|vertical_center"
+                            ohos:text_color="$color:white"
+                            ohos:text_size="20fp"
+                            ohos:text_weight="500"
+                            ohos:top_margin="15vp"/>
+                        <TextField
+                            ohos:id="$+id:dtl_mdc_elabel5"
+                            ohos:height="match_content"
+                            ohos:width="match_content"
+                            ohos:background_element="$graphic:bg_text_otc_otc_green"
+                            ohos:bottom_margin="10vp"
+                            ohos:enabled="false"
+                            ohos:end_margin="10vp"
+                            ohos:end_padding="10vp"
+                            ohos:start_padding="10vp"
+                            ohos:text="随便"
+                            ohos:text_alignment="left|vertical_center"
+                            ohos:text_color="$color:white"
+                            ohos:text_size="20fp"
+                            ohos:text_weight="500"
+                            ohos:top_margin="15vp"/>
+
+
+
+
+                    </DirectionalLayout>
+                </ScrollView>
+
             </DirectionalLayout>
             <!--过期时间-->
             <DirectionalLayout
@@ -189,24 +276,44 @@
                     ohos:end_margin="10vp"
                     ohos:start_margin="15vp"
                     ohos:top_margin="15vp"/>
-
-                <TextField
-                    ohos:id="$+id:dtl_mdc_outdate"
-                    ohos:max_width="230vp"
-                    ohos:scrollable="true"
-                    ohos:text="距过期还有 1999 天"
+                <DirectionalLayout
                     ohos:height="match_content"
                     ohos:width="match_parent"
-                    ohos:start_margin="5vp"
-                    ohos:end_margin="10vp"
-                    ohos:multiple_lines="true"
-                    ohos:text_alignment="left|vertical_center"
-                    ohos:text_color="$color:black_clear"
-                    ohos:text_size="20fp"
-                    ohos:text_weight="500"
-                    ohos:top_margin="10vp"
-                    ohos:bottom_margin="10vp"
-                    ohos:enabled="false"/>
+                    ohos:orientation="vertical"
+                    ohos:alignment="vertical_center|left">
+                    <TextField
+                        ohos:id="$+id:dtl_mdc_outdate"
+                        ohos:max_width="230vp"
+                        ohos:scrollable="true"
+                        ohos:text="距过期还有 1999 天"
+                        ohos:height="match_content"
+                        ohos:width="match_parent"
+                        ohos:multiple_lines="true"
+                        ohos:text_alignment="left|vertical_center"
+                        ohos:text_color="$color:black_clear"
+                        ohos:text_size="20fp"
+                        ohos:text_weight="500"
+                        ohos:start_margin="5vp"
+                        ohos:end_margin="10vp"
+                        ohos:top_margin="10vp"
+                        ohos:enabled="false"/>
+                    <TextField
+                        ohos:id="$+id:dtl_mdc_outdate_day"
+                        ohos:max_width="230vp"
+                        ohos:scrollable="true"
+                        ohos:text="距过期还有 1999 天"
+                        ohos:height="match_content"
+                        ohos:width="match_parent"
+                        ohos:start_margin="5vp"
+                        ohos:end_margin="10vp"
+                        ohos:multiple_lines="true"
+                        ohos:text_alignment="left|vertical_center"
+                        ohos:text_color="$color:black_clear"
+                        ohos:text_size="20fp"
+                        ohos:text_weight="500"
+                        ohos:bottom_margin="10vp"
+                        ohos:enabled="false"/>
+                </DirectionalLayout>
 
             </DirectionalLayout>
             <!--otc-->
@@ -260,23 +367,36 @@
                     ohos:end_margin="10vp"
                     ohos:start_margin="15vp"
                     ohos:top_margin="15vp"/>
-
-                <TextField
-                    ohos:id="$+id:dtl_mdc_barcode"
-                    ohos:max_width="230vp"
-                    ohos:scrollable="true"
-                    ohos:text="123456789012"
+                <DirectionalLayout
                     ohos:height="match_content"
                     ohos:width="match_parent"
-                    ohos:end_margin="10vp"
-                    ohos:multiple_lines="true"
-                    ohos:text_alignment="left|vertical_center"
-                    ohos:text_color="$color:black_clear"
-                    ohos:text_size="20fp"
-                    ohos:text_weight="500"
-                    ohos:top_margin="15vp"
-                    ohos:bottom_margin="10vp"
-                    ohos:enabled="false"/>
+                    ohos:orientation="vertical"
+                    ohos:alignment="left|vertical_center">
+                    <TextField
+                        ohos:id="$+id:dtl_mdc_barcode"
+                        ohos:max_width="230vp"
+                        ohos:scrollable="true"
+                        ohos:text="123456789012"
+                        ohos:height="match_content"
+                        ohos:width="match_parent"
+                        ohos:end_margin="10vp"
+                        ohos:multiple_lines="true"
+                        ohos:text_alignment="left|vertical_center"
+                        ohos:text_color="$color:black_clear"
+                        ohos:text_size="20fp"
+                        ohos:text_weight="500"
+                        ohos:top_margin="15vp"
+                        ohos:bottom_margin="5vp"
+                        ohos:enabled="false"/>
+                    <Image
+                        ohos:height="match_content"
+                        ohos:width="match_content"
+                        ohos:scale_mode="stretch"
+                        ohos:top_margin="10vp"
+                        ohos:background_element="$color:white"
+                        ohos:id="$+id:dtl_mdc_barcode_img"/>
+                </DirectionalLayout>
+
             </DirectionalLayout>
             <!--用量-->
             <DirectionalLayout

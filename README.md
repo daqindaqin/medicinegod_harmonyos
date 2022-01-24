@@ -1,19 +1,31 @@
-# medicinegod
+# MedicineGod
 
 #### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
 
-#### 软件架构
-软件架构说明
+MedicineGod（下述"**MG**"）此版本是基于**DevEco Studio**开发的HarmonyOS的APP。
+
+使用MG可以存储自己的药品，通过简单的提示与图像管理自己拥有的药品，还可将药品信息分享给朋友（当线下交付药品后也可自己管理）。
+
+已有功能：存储、显示
+
+待增功能：改动、删除、分享、用户
 
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1. 下载**DevEco Studio**
+
+   https://developer.harmonyos.com/cn/develop/deveco-studio/
+
+2. 导入**MedicineGod**项目
+
+3. 注册**华为账号**（已有跳至4）
+
+4. 在线运行项目
+
+5. （可略）对项目进行签名（已签名跳至6）
+
+6. （可略）打包APK导出
 
 #### 使用说明
 
@@ -27,13 +39,3 @@ Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN�
 2.  新建 Feat_xxx 分支
 3.  提交代码
 4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
