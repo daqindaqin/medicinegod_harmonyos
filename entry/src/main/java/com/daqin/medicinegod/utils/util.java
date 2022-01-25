@@ -11,6 +11,7 @@ import ohos.app.Context;
 import ohos.data.DatabaseHelper;
 import ohos.data.preferences.Preferences;
 import ohos.global.resource.NotExistException;
+import ohos.media.image.ImagePacker;
 import ohos.media.image.ImageSource;
 import ohos.media.image.PixelMap;
 import ohos.media.image.common.PixelFormat;
@@ -167,6 +168,52 @@ public class util extends AbilitySlice {
         }
 
     }
+    /**
+     *
+     * @Author: kiki
+     * @Date: 2018/12/26
+     */
+    public static String bytes2HexString(byte[] bArr) {
+        StringBuilder sb = new StringBuilder(bArr.length);
+        String sTmp;
+
+        for (byte b : bArr) {
+            sTmp = Integer.toHexString(0xFF & b);
+            if (sTmp.length() < 2) {
+                sb.append(0);
+            }
+            sb.append(sTmp.toUpperCase());
+        }
+        return sb.toString();
+    }
+
+    /**
+     * hex字符串转byte数组
+     *
+     * @param inHex 待转换的Hex字符串
+     * @return 转换后的byte数组结果
+     */
+    public static byte[] hex2ByteArray(String inHex) {
+        int hexlen = inHex.length();
+        byte[] result;
+        if (hexlen % 2 == 1) {
+            //奇数
+            hexlen++;
+            result = new byte[(hexlen / 2)];
+            inHex = "0" + inHex;
+        } else {
+            //偶数
+            result = new byte[(hexlen / 2)];
+        }
+        int j = 0;
+        for (int i = 0; i < hexlen; i += 2) {
+            result[j] = (byte) Integer.parseInt(inHex.substring(i, i + 2), 16);
+            j++;
+        }
+        return result;
+    }
+
+
 
     public static int getWindowHeightPx(Context context) {
         return context.getResourceManager().getDeviceCapability().height * context.getResourceManager().getDeviceCapability().screenDensity / 160;
@@ -277,32 +324,6 @@ public class util extends AbilitySlice {
                 e.printStackTrace();
                 }
             }
-        return encode;
-    }
-    public static String getImageBase6466(byte[] byte0) {
-        // 将图片文件转化为字节数组字符串，并对其进行Base64编码处理
-        // String imgFile = imgPath;// 待处理的图片
-        InputStream in = null;
-        byte[] data = null;
-        String encode = null; // 返回Base64编码过的字节数组字符串
-        // 对字节数组Base64编码
-        try {
-            // 读取图片字节数组
-            in = new ByteArrayInputStream(byte0);
-            data = new byte[in.available()];
-            in.read(data);
-            encode = Base64.getEncoder().encodeToString(data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                assert in != null;
-                in.close();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
         return encode;
     }
     /**
@@ -418,5 +439,25 @@ public class util extends AbilitySlice {
         return result;
     }
 
+    public static PixelMap byte2PixelmapImage(byte[] bytes){
+        ImageSource.DecodingOptions decodingOptions = new ImageSource.DecodingOptions();
+        ImageSource.SourceOptions srcOpts = new ImageSource.SourceOptions();
 
+        srcOpts.formatHint = "image/jpg";
+        decodingOptions.rotateDegrees = 0.0f;
+        decodingOptions.desiredPixelFormat = PixelFormat.ARGB_8888;
+
+        return ImageSource.create(bytes, srcOpts).createPixelmap(decodingOptions);
+
+    }
+    public static String pixelMap2BASE64(PixelMap pixelMap){
+        ImagePacker imagePacker = ImagePacker.create();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImagePacker.PackingOptions packingOptions = new ImagePacker.PackingOptions();
+        imagePacker.initializePacking(byteArrayOutputStream, packingOptions);
+        imagePacker.addImage(pixelMap);
+        imagePacker.finalizePacking();
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        return Base64.getEncoder().encodeToString(bytes);
+    }
 }

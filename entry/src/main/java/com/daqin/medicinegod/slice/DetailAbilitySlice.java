@@ -10,6 +10,7 @@ import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.lxj.xpopup.util.ToastUtil;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.content.Intent;
+import ohos.agp.components.Component;
 import ohos.agp.components.Image;
 import ohos.agp.components.Text;
 import ohos.agp.components.TextField;
@@ -18,6 +19,10 @@ import ohos.agp.utils.Color;
 import ohos.eventhandler.EventHandler;
 import ohos.eventhandler.EventRunner;
 import ohos.media.image.PixelMap;
+import ohos.miscservices.inputmethodability.KeyboardController;
+import ohos.miscservices.pasteboard.PasteData;
+import ohos.miscservices.pasteboard.SystemPasteboard;
+import ohos.utils.PacMap;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -27,24 +32,26 @@ public class DetailAbilitySlice extends AbilitySlice {
     private Map<String,Object> mdc_SingleData;
     private int localID = 0;
     private String localKEY = null;
+    private String[] textUagesAll;
 
 
+    Text mdc_name ;
+    Text mdc_desp ;
+    Text mdc_outdate ;
+    Text mdc_outdate_day ;
+    Text mdc_otc ;
+    Text mdc_barcode ;
+    Text mdc_usage ;
+    Text mdc_yu ;
+    Text mdc_company ;
+    Text mdc_elabel1 ;
+    Text mdc_elabel2 ;
+    Text mdc_elabel3 ;
+    Text mdc_elabel4 ;
+    Text mdc_elabel5 ;
 
-    TextField mdc_name ;
-    TextField mdc_desp ;
-    TextField mdc_outdate ;
-    TextField mdc_outdate_day ;
-    TextField mdc_otc ;
-    TextField mdc_barcode ;
-    TextField mdc_usage ;
-    TextField mdc_yu ;
-    TextField mdc_company ;
-    TextField mdc_elabel1 ;
-    TextField mdc_elabel2 ;
-    TextField mdc_elabel3 ;
-    TextField mdc_elabel4 ;
-    TextField mdc_elabel5 ;
-
+    Text mdc_elabel_add1 ;
+    Text mdc_elabel_add2 ;
 
     Image mdc_img ;
     Image mdc_img_barcode ;
@@ -65,20 +72,24 @@ public class DetailAbilitySlice extends AbilitySlice {
         mdc_img = (Image)findComponentById(ResourceTable.Id_dtl_mdc_img);
         mdc_img.setCornerRadius(25);
         mdc_img_barcode = (Image)findComponentById(ResourceTable.Id_dtl_mdc_barcode_img);
-        mdc_name = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_name);
-        mdc_desp = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_desp);
-        mdc_outdate = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_outdate);
-        mdc_outdate_day = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_outdate_day);
-        mdc_otc = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_otc);
-        mdc_barcode = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_barcode);
-        mdc_usage = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_usage);
-        mdc_yu = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_yu);
-        mdc_company = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_company);
-        mdc_elabel1 = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_elabel1);
-        mdc_elabel2 = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_elabel2);
-        mdc_elabel3 = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_elabel3);
-        mdc_elabel4 = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_elabel4);
-        mdc_elabel5 = (TextField) findComponentById(ResourceTable.Id_dtl_mdc_elabel5);
+        mdc_name = (Text) findComponentById(ResourceTable.Id_dtl_mdc_name);
+        mdc_desp = (Text) findComponentById(ResourceTable.Id_dtl_mdc_desp);
+        mdc_outdate = (Text) findComponentById(ResourceTable.Id_dtl_mdc_outdate);
+        mdc_outdate_day = (Text) findComponentById(ResourceTable.Id_dtl_mdc_outdate_day);
+        mdc_otc = (Text) findComponentById(ResourceTable.Id_dtl_mdc_otc);
+        mdc_barcode = (Text) findComponentById(ResourceTable.Id_dtl_mdc_barcode);
+        mdc_usage = (Text) findComponentById(ResourceTable.Id_dtl_mdc_usage);
+        mdc_yu = (Text) findComponentById(ResourceTable.Id_dtl_mdc_yu);
+        mdc_company = (Text) findComponentById(ResourceTable.Id_dtl_mdc_company);
+        mdc_elabel1 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel1);
+        mdc_elabel2 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel2);
+        mdc_elabel3 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel3);
+        mdc_elabel4 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel4);
+        mdc_elabel5 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel5);
+
+        mdc_elabel_add1 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel_add1);
+        mdc_elabel_add2 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel_add2);
+
 
         mdc_back = (Text) findComponentById(ResourceTable.Id_dtl_mdc_back);
         mdc_back.setClickedListener(l->terminate());
@@ -110,7 +121,6 @@ public class DetailAbilitySlice extends AbilitySlice {
         localID = util.PreferenceUtils.getInt(getContext(), "mglocalid");
         localKEY = util.PreferenceUtils.getString(getContext(), "mglocalkey");
         mdc_SingleData = MainAbilitySlice.querySingleData(localKEY);
-
         if (localID == -1 || localKEY == null || localKEY.equals("null") || mdc_SingleData == null ) {
             //当不存在ID和KEY时打开了屏幕则关闭屏幕并展示弹窗信息
             DetailAbilitySlice.super.terminate();
@@ -134,8 +144,22 @@ public class DetailAbilitySlice extends AbilitySlice {
         mdc_name.setText((String) mdc_SingleData.get("name"));
         mdc_desp.setText("        "+(String) mdc_SingleData.get("description"));
 
-        //TODO：背景板添加类似 OTC样子的色块
-        mdc_elabel1.setText((String) mdc_SingleData.get("elabel"));
+
+        String[] otclist = mdc_SingleData.get("elabel").toString().split("@@");
+        System.out.println("66666666666"+Arrays.toString(otclist));
+        Text[] Texts = {mdc_elabel1,mdc_elabel2,mdc_elabel3,mdc_elabel4,mdc_elabel5};
+        for (int i = 0;i < otclist.length ;i++){
+            Texts[i].setVisibility(Component.VISIBLE);
+            Texts[i].setText(otclist[i]);
+        }
+        if (otclist.length < 3){
+            mdc_elabel_add1.setVisibility(Component.VISIBLE);
+            mdc_elabel_add2.setVisibility(Component.HIDE);
+        }else if (otclist.length == 3 || otclist.length == 4){
+            mdc_elabel_add2.setVisibility(Component.VISIBLE);
+            mdc_elabel_add1.setVisibility(Component.HIDE);
+        }
+        //TODO：点击添加标签
 
         //过期提醒
         //XXXX年X月
@@ -203,11 +227,20 @@ public class DetailAbilitySlice extends AbilitySlice {
 
         String barcode = (String) mdc_SingleData.get("barcode");
         mdc_barcode.setText(barcode + " (点击复制) ");
+        mdc_barcode.setClickedListener(l->{
+            System.out.println("点击");
+            //将编码放到剪贴板
+            SystemPasteboard mPasteboard = SystemPasteboard.getSystemPasteboard(this);;
+            PasteData pasteData=  PasteData.creatPlainTextData(barcode);
+            mPasteboard.setPasteData(pasteData);
+            ToastUtil.showToast(getContext(),"已复制  ");
+        });
+
 
         createWidthContent(barcode);
 
 
-        String[] textUagesAll =  ((String) mdc_SingleData.get("usage")).split("-");
+        textUagesAll =  ((String) mdc_SingleData.get("usage")).split("-");
         //1-包-3-次-1-天
         if ((Integer.parseInt(textUagesAll[4].toString())) == 1 ){
             if ((Integer.parseInt(textUagesAll[4])) == 1 ){
@@ -227,20 +260,24 @@ public class DetailAbilitySlice extends AbilitySlice {
 
         int yuall = Integer.parseInt(mdc_SingleData.get("yu").toString());
         int yuus = Integer.parseInt(textUagesAll[0]);
-        double yures = yuall / yuus;
-        //TODO：修复bug
-        DecimalFormat df = new DecimalFormat("#.#");
-        String yu = df.format(yures);
         mdc_yu.setText("预计可再使用"+(String) mdc_SingleData.get("yu")+textUagesAll[1]+"后购买;\n"
-                + "或再使用预计"+yu+"次后购买新药品。");
+                + "或再使用预计"+(yuall/yuus)+"次后购买新药品。");
 
 
     }
 
 
-    public static void popupClick(int position){
+    public void popupClick(int position){
         switch (position){
             case 0:
+                //使用药品(现实生活中的使用，可由此定位)
+                int yu = Integer.parseInt(mdc_SingleData.get("yu").toString());
+                mdc_SingleData.put("yu",(yu - Integer.parseInt(textUagesAll[0])));
+                yu -= Integer.parseInt(textUagesAll[0]);
+                int yuus = Integer.parseInt(textUagesAll[0]);
+                mdc_yu.setText("预计可再使用"+ yu +textUagesAll[1]+"后购买;\n"
+                        + "或再使用预计"+(yu/yuus)+"次后购买新药品。");
+                ToastUtil.showToast(getContext(),"已记为使用一次该药品  ");
                 break;
             case 1:
                 break;

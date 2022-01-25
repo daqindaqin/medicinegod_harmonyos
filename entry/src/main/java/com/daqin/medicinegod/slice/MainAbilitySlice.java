@@ -25,6 +25,7 @@ import ohos.agp.components.*;
 import ohos.agp.render.*;
 import ohos.agp.render.opengl.Utils;
 import ohos.agp.utils.LayoutAlignment;
+import ohos.agp.utils.SystemSettingsHelper;
 import ohos.agp.window.dialog.ToastDialog;
 import ohos.app.Context;
 import ohos.bundle.IBundleManager;
@@ -40,12 +41,10 @@ import ohos.media.image.ImageSource;
 import ohos.media.image.PixelMap;
 import ohos.media.image.common.PixelFormat;
 import ohos.media.image.common.Size;
+import ohos.media.photokit.metadata.AVStorage;
 import ohos.utils.net.Uri;
 
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 
 
@@ -56,6 +55,9 @@ public class MainAbilitySlice extends AbilitySlice {
     private static DataAbilityHelper databaseHelper;
     private BubbleNavigationLinearView mBubbleNavigationLinearView;
 //    private List<String> labelList = new ArrayList<>();
+    private static final int RESULTCODE_IMAGE_STARTCROP = 100;
+    private static final int RESULTCODE_IMAGE_CROPED = 101;
+    private static final int RESULTCODE_STARTDETAIL = 200;
 
     static int newUsage_utils_1 = 0,newUsage_utils_3 = 0;
     BasePopupView DIALOG;
@@ -93,10 +95,20 @@ public class MainAbilitySlice extends AbilitySlice {
         databaseHelper = DataAbilityHelper.creator(this);
         idInsert = util.PreferenceUtils.getInt(this,"idInset");
         intPageStart();
-        intHeadView();
+
         initHomepageListContainer();
-
-
+        if (verifySelfPermission("ohos.permission.READ_MEDIA") != IBundleManager.PERMISSION_GRANTED) {
+            // 应用未被授予权限
+            if (canRequestPermission("ohos.permission.READ_MEDIA")) {
+                // 是否可以申请弹框授权(首次申请或者用户未选择禁止且不再提示)
+                requestPermissionsFromUser(
+                        new String[]{"ohos.permission.READ_MEDIA"}, MY_PERMISSIONS_REQUEST_READ_MEDIA);
+            }
+        }
+        Image img_thinghead = (Image) findComponentById(ResourceTable.Id_things_image_head);
+        img_thinghead.setCornerRadius(100);
+//        Image img_homehead = (Image) findComponentById(ResourceTable.Id_home_image_head);
+//        img_homehead.setCornerRadius(150);
 //        initCommunityListContainer();
 //        initChatListContainer();
 
@@ -126,8 +138,18 @@ public class MainAbilitySlice extends AbilitySlice {
                         // 是否可以申请弹框授权(首次申请或者用户未选择禁止且不再提示)
                         requestPermissionsFromUser(
                                 new String[] { "ohos.permission.READ_MEDIA" } , MY_PERMISSIONS_REQUEST_READ_MEDIA);
-                        ImagePickerInstance.getInstance().photoSelect(
-                                MainAbilitySlice.this, 1,true, 0);
+
+                        Intent intent = new Intent();
+                        Operation opt=new Intent.OperationBuilder().withAction("android.intent.action.GET_CONTENT").build();
+                        intent.setOperation(opt);
+                        intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
+                        intent.setType("image/*");
+//                        intent.setBundle("com.huawei.photos");
+                        startAbilityForResult(intent,RESULTCODE_IMAGE_STARTCROP);
+
+
+
+
                     } else {
                         // 显示应用需要权限的理由，提示用户进入设置授权
                         ToastUtil.showToast(getContext(),"请进入系统设置进行授权");
@@ -135,8 +157,13 @@ public class MainAbilitySlice extends AbilitySlice {
                 } else {
                     // 权限已被授予
                     //加载显示系统相册中的照片
-                    ImagePickerInstance.getInstance().photoSelect(
-                            MainAbilitySlice.this, 1,true, 0);
+                    Intent intent = new Intent();
+                    Operation opt=new Intent.OperationBuilder().withAction("android.intent.action.GET_CONTENT").build();
+                    intent.setOperation(opt);
+                    intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
+                    intent.setType("image/*");
+                    intent.setBundle("com.huawei.photos");
+                    startAbilityForResult(intent,RESULTCODE_IMAGE_STARTCROP);
                 }
             }
         });
@@ -215,7 +242,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     "3-片-3-次-1-天",
                     "大马猴",
                     "2459",
-                    "eLABEL、eLABE、LeLAB、ELeLABEL、eLABEL");
+                    "超级无敌@@超级无敌");
             /*if (imgpath == null) {
                 view.fluentScrollTo(0, addimg.getTop() - 100);
                 ToastUtil.showToast(this, "图片不能为空");
@@ -606,6 +633,8 @@ public class MainAbilitySlice extends AbilitySlice {
                     initChatListContainer();
                     break;
                 case 4:
+                    Image img_homehead = (Image) findComponentById(ResourceTable.Id_home_image_head);
+                    img_homehead.setCornerRadius(200);
                     break;
                 default:
                     break;
@@ -755,58 +784,6 @@ public class MainAbilitySlice extends AbilitySlice {
     }
 
 
-    //圆角图形
-    private void intHeadView() {
-
-
-        //从资源文件加载PixelMap
-        PixelMap originMap = getPixelMapFromResource(ResourceTable.Media_head);
-        Image imgOrigin = (Image) findComponentById(ResourceTable.Id_things_image_head);
-        imgOrigin.setPixelMap(originMap);
-
-        //获取原图片的大小
-        assert originMap != null;
-        Size originSize = originMap.getImageInfo().size;
-        PixelMap.InitializationOptions options = new PixelMap.InitializationOptions();
-        options.size = new Size(originSize.width, originSize.height);
-        options.pixelFormat = PixelFormat.ARGB_8888;
-        options.editable = true;
-        //创建结果PixelMap
-        PixelMap circlePixelMap = PixelMap.create(options);
-        Canvas canvas = new Canvas();
-        //将结果PixelMap作为画布背景
-        Texture texture = new Texture(circlePixelMap);
-        canvas.setTexture(texture);
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setDither(true);
-        PixelMapHolder pixelMapHolder = new PixelMapHolder(PixelMap.create(originMap, options));
-        PixelMapShader shader = new PixelMapShader(pixelMapHolder, Shader.TileMode.CLAMP_TILEMODE, Shader.TileMode.CLAMP_TILEMODE);
-        paint.setShader(shader, Paint.ShaderType.PIXELMAP_SHADER);
-        //圆角矩形图
-//        RectFloat rect = new RectFloat(50, 50, originSize.width - 20, originSize.height -20);
-//        canvas.drawRoundRect(rect, 50,50, paint);
-        //圆形图
-        canvas.drawCircle(originSize.width * 1.0f / 2, originSize.height * 1.0f / 2, originSize.width * 1.0f / 2, paint);
-        Image imgCircle = (Image) findComponentById(ResourceTable.Id_things_image_head);
-        imgCircle.setPixelMap(circlePixelMap);
-
-
-
-    }
-    private PixelMap getPixelMapFromResource(int resourceId) {
-        try (InputStream inputStream = getContext().getResourceManager().getResource(resourceId)) {
-            // 创建图像数据源ImageSource对象
-            ImageSource.SourceOptions srcOpts = new ImageSource.SourceOptions();
-            srcOpts.formatHint = "image/jpg";
-            ImageSource imageSource = ImageSource.create(inputStream, srcOpts);
-            // 设置图片参数
-            ImageSource.DecodingOptions decodingOptions = new ImageSource.DecodingOptions();
-            return imageSource.createPixelmap(decodingOptions);
-        } catch (IOException | NotExistException ignored) {
-        }
-        return null;
-    }
 
     // 初始化药品主页的ListContainer
     private void initHomepageListContainer(){
@@ -837,12 +814,13 @@ public class MainAbilitySlice extends AbilitySlice {
                     // Ability页面的名称，在本地可以缺省前面的路径
                     .build();    // 构建代码
             intentDetail.setOperation(operation);    // 将operation存入到intent中
-            startAbility(intentDetail);    // 实现Ability跳转
+            startAbilityForResult(intentDetail,RESULTCODE_STARTDETAIL);    // 实现Ability跳转
 
 
         });
 
     }
+
 
     private List<Map<String,Object>> queryData() {
         List<Map<String,Object>> list = new ArrayList<>();
@@ -933,17 +911,30 @@ public class MainAbilitySlice extends AbilitySlice {
     @Override
     public void onAbilityResult(int requestCode, int resultCode, Intent data) {
         Image addimg=(Image)findComponentById(ResourceTable.Id_add_newImg);
+        System.out.println("返回"+resultCode+":"+requestCode+":"+data);
         switch (requestCode) {
-            case 0:
+            case RESULTCODE_IMAGE_STARTCROP:
                 if (data != null) {
                     //取得图片路径
-                    String paths = data.getStringArrayListParam("photos").get(0);
-                    imgpath = data.getStringArrayListParam("photos").get(0);
+                    String paths = data.getUriString();
+                    imgpath = data.getUriString();
+
+                    System.out.println("gggggggg"+imgpath);
+                    //定义数据能力帮助对象
+                    DataAbilityHelper helper = DataAbilityHelper.creator(getContext());
+
                     //原组件是居中，这里给他选择填充
                     addimg.setScaleMode(Image.ScaleMode.STRETCH);
-//                    定义组件资源
+
+                    //定义组件资源
                     ImageSource imageSource = null;
-                    DataAbilityHelper helper=DataAbilityHelper.creator(getContext());
+                    FileInputStream inputStream = null;
+
+                    try {
+                        inputStream = new FileInputStream(helper.openFile(Uri.parse(imgpath), "r"));
+                    } catch (DataAbilityRemoteException|FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     //定义文件
                     FileDescriptor file = null;
                     try {
@@ -955,15 +946,29 @@ public class MainAbilitySlice extends AbilitySlice {
                     imageSource = ImageSource.create(file, null);
                     //创建位图
                     PixelMap pixelMap = imageSource.createPixelmap(null);
-                    addimg.setPixelMap(pixelMap);
-//                    String base64 = util.getImageBase64(paths);
-//                    System.out.println("BBBBBBBBBBBBASE"+base64);
+//                    addimg.setPixelMap(pixelMap);
 
-                    //TODO:跳转去裁剪图片
-//                    Intent newIntent = new Intent();
-//                    newIntent.setParam("startcropimage", paths);
-//                    present(new ImageCropAbilitySlice(), newIntent);
+
+
+
+
+                    //readInputStream将inputStream转换成byte[]
+                    byte[] bytes = readInputStream(inputStream);
+                    System.out.println("ggggg"+ Arrays.toString(bytes));
+                    System.out.println("ggggg"+ util.pixelMap2BASE64(util.byte2PixelmapImage(bytes)));
+                    //BASE64编码后上传并返回图片链接，后续使用在线图片链接
+
+                    //TODO:修复跳转去裁剪图片
+                    Intent newIntent = new Intent();
+                    newIntent.setParam("startcropimage",bytes);
+                    presentForResult(new ImageCropAbilitySlice(), newIntent,RESULTCODE_IMAGE_CROPED);
+
                 }
+                break;
+            case RESULTCODE_IMAGE_CROPED:
+                addimg.setPixelMap(data.getSequenceableParam("cropedimage"));
+                break;
+            case RESULTCODE_STARTDETAIL:
                 break;
             default:
                 addimg.setScaleMode(Image.ScaleMode.CENTER);
@@ -972,6 +977,37 @@ public class MainAbilitySlice extends AbilitySlice {
         }
         super.onAbilityResult(requestCode, resultCode, data);
     }
+
+    private byte[] readInputStream(InputStream inputStream) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        byte[] buffer = new byte[1024];
+
+        int length = -1;
+
+        try {
+            while ((length = inputStream.read(buffer)) != -1) {
+                baos.write(buffer, 0, length);
+            }
+            baos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        byte[] data = baos.toByteArray();
+
+        try {
+            inputStream.close();
+            baos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return data;
+    }
+
+
 
     //获取、刷新数据
     public void query() {
