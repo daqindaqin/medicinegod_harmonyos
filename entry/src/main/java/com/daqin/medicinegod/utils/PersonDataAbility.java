@@ -24,7 +24,6 @@ public class PersonDataAbility extends Ability {
 
     private static final String DB_TAB_NAME = "MEDICINE";
 
-    private static final String DB_COLUMN_ID = "ID";
     private static final String DB_COLUMN_KEYID = "KEYID";
     private static final String DB_COLUMN_NAME = "NAME";
     private static final String DB_COLUMN_IMAGEPATH = "IMAGEPATH";
@@ -48,7 +47,6 @@ public class PersonDataAbility extends Ability {
         public void onCreate(RdbStore store) {
             store.executeSql("create table if not exists "
                     + DB_TAB_NAME + " ("
-                    + DB_COLUMN_ID + " integer primary key, "
                     + DB_COLUMN_KEYID + " text not null, "
                     + DB_COLUMN_NAME + " text not null, "
                     + DB_COLUMN_IMAGEPATH + " long text not null, "
@@ -96,7 +94,6 @@ public class PersonDataAbility extends Ability {
             return -1;
         }
         ValuesBucket values = new ValuesBucket();
-        values.putInteger(DB_COLUMN_ID, value.getInteger(DB_COLUMN_ID));
         values.putString(DB_COLUMN_KEYID, value.getString(DB_COLUMN_KEYID));
         values.putString(DB_COLUMN_NAME, value.getString(DB_COLUMN_NAME));
         values.putString(DB_COLUMN_IMAGEPATH, value.getString(DB_COLUMN_IMAGEPATH));

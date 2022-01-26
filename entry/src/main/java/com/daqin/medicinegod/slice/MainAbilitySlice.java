@@ -15,44 +15,34 @@ import com.lxj.xpopup.core.BasePopupView;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.SimpleCallback;
 import com.lxj.xpopup.util.ToastUtil;
-import com.zzti.fengyongge.imagepicker.ImagePickerInstance;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.ability.DataAbilityHelper;
 import ohos.aafwk.ability.DataAbilityRemoteException;
 import ohos.aafwk.content.Intent;
 import ohos.aafwk.content.Operation;
 import ohos.agp.components.*;
-import ohos.agp.render.*;
-import ohos.agp.render.opengl.Utils;
 import ohos.agp.utils.LayoutAlignment;
-import ohos.agp.utils.SystemSettingsHelper;
 import ohos.agp.window.dialog.ToastDialog;
-import ohos.app.Context;
 import ohos.bundle.IBundleManager;
-import ohos.data.DatabaseHelper;
 import ohos.data.dataability.DataAbilityPredicates;
-import ohos.data.preferences.Preferences;
 import ohos.data.rdb.ValuesBucket;
 import ohos.data.resultset.ResultSet;
-import ohos.global.resource.NotExistException;
 import ohos.hiviewdfx.HiLog;
 import ohos.hiviewdfx.HiLogLabel;
 import ohos.media.image.ImageSource;
 import ohos.media.image.PixelMap;
-import ohos.media.image.common.PixelFormat;
-import ohos.media.image.common.Size;
-import ohos.media.photokit.metadata.AVStorage;
 import ohos.utils.net.Uri;
 
 import java.io.*;
 import java.util.*;
-
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 //TODO：图片圆角、流式布局
 public class MainAbilitySlice extends AbilitySlice {
     public static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;   //自定义的一个权限请求识别码，用于处理权限回调
     private static DataAbilityHelper databaseHelper;
+
     private BubbleNavigationLinearView mBubbleNavigationLinearView;
 //    private List<String> labelList = new ArrayList<>();
     private static final int RESULTCODE_IMAGE_STARTCROP = 100;
@@ -61,16 +51,19 @@ public class MainAbilitySlice extends AbilitySlice {
 
     static int newUsage_utils_1 = 0,newUsage_utils_3 = 0;
     BasePopupView DIALOG;
-
+    /**
+     * @param lowKey 第一条key，查询所用
+     * @param highKey 最后一条key，查询所用
+     */
+    private String lowKey ;
+    private String highKey ;
     private String imgpath = null;
-    private int idInsert = 0;
     private String eLABEL = "headache,aligei,nb,666";
 //    BasePopupView popupView;
 
     private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "MainAbilitySlice");
     private static final String BASE_URI = "dataability:///com.daqin.medicinegod.utils.PersonDataAbility";
     private static final String DATA_PATH = "/mg";
-    private static final String DB_COLUMN_ID = "ID";
     private static final String DB_COLUMN_KEYID = "KEYID";
     private static final String DB_COLUMN_NAME = "NAME";
     private static final String DB_COLUMN_IMAGEPATH = "IMAGEPATH";
@@ -93,7 +86,14 @@ public class MainAbilitySlice extends AbilitySlice {
 //        mflowLayout = (FlowLayout) findComponentById(ResourceTable.Id_flow_layout);
 //        labelList.clear();
         databaseHelper = DataAbilityHelper.creator(this);
-        idInsert = util.PreferenceUtils.getInt(this,"idInset");
+        lowKey = util.PreferenceUtils.getString(this,"lowKey");
+        highKey = util.PreferenceUtils.getString(this,"highKey");
+        if (lowKey==null){
+            lowKey = "";
+        }if (highKey==null){
+            highKey = "";
+        }
+        query();
         intPageStart();
 
         initHomepageListContainer();
@@ -227,12 +227,12 @@ public class MainAbilitySlice extends AbilitySlice {
 
 
         TextField[] texttList = {add_name,add_desp,add_barcode,add_usage_total,add_usage_time,add_usage_day,add_company,add_yu};
-
+        AtomicInteger a = new AtomicInteger();
         btn_ok.setClickedListener(l->{
             //检测已经选择图片
-            insert(idInsert,
-                    "QWERTY12345"+idInsert,
-                    "Name"+idInsert,
+            a.getAndIncrement();
+            insert("QWEY"+a,
+                    "Name",
                     "imgpath",
                     "描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述",
                     "2022年-2月",
@@ -617,7 +617,6 @@ public class MainAbilitySlice extends AbilitySlice {
         {
             //添加药品的页面刷新多选框
             viewPager.setCurrentPage(position, true);
-            idInsert = util.PreferenceUtils.getInt(this,"idInset");
             switch (position){
                 case 0:
                     initHomepageListContainer();
@@ -803,7 +802,6 @@ public class MainAbilitySlice extends AbilitySlice {
             Map<String,Object> res = list.get(position);
 
             //单击打开详情弹窗
-            util.PreferenceUtils.putInt(this,"mglocalid", (Integer) res.getOrDefault("id",-1));
             util.PreferenceUtils.putString(this,"mglocalkey", res.getOrDefault("keyid","null").toString());
 
             Intent intentDetail = new Intent();
@@ -824,7 +822,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
     private List<Map<String,Object>> queryData() {
         List<Map<String,Object>> list = new ArrayList<>();
-        String[] columns = new String[] {DB_COLUMN_ID,
+        String[] columns = new String[] {
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
                 DB_COLUMN_IMAGEPATH,
@@ -839,7 +837,8 @@ public class MainAbilitySlice extends AbilitySlice {
         };
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.between(DB_COLUMN_ID, 0, 9999);
+        System.out.println("开始"+lowKey+"-"+highKey);
+        predicates.between(DB_COLUMN_KEYID, lowKey, highKey);
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
                     columns, predicates);
@@ -851,7 +850,6 @@ public class MainAbilitySlice extends AbilitySlice {
             do {
                 Map<String, Object> map = new HashMap<>();
 //            Map<String, Object> map = new HashMap<String, Object>();
-                int id = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_ID));
                 String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                 String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
                 String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
@@ -863,7 +861,6 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                map.put("id",id);
                 map.put("keyid",keyid);
                 map.put("imgpath", imagepath);
                 map.put("name", name);
@@ -879,7 +876,8 @@ public class MainAbilitySlice extends AbilitySlice {
                 list.add(map);
                 //map数据转文本存本地备用
                 //@?@是每单条map的分隔符
-                HiLog.info(LABEL_LOG, "query: Id :" + id +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
+
+                HiLog.info(LABEL_LOG, "query: Id :"  +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
                         + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
             } while (resultSet.goToNextRow());
             return list;
@@ -954,8 +952,8 @@ public class MainAbilitySlice extends AbilitySlice {
 
                     //readInputStream将inputStream转换成byte[]
                     byte[] bytes = readInputStream(inputStream);
-                    System.out.println("ggggg"+ Arrays.toString(bytes));
-                    System.out.println("ggggg"+ util.pixelMap2BASE64(util.byte2PixelmapImage(bytes)));
+//                    System.out.println("ggggg"+ Arrays.toString(bytes));
+//                    System.out.println("ggggg"+ util.pixelMap2BASE64(util.byte2PixelmapImage(bytes)));
                     //BASE64编码后上传并返回图片链接，后续使用在线图片链接
 
                     //TODO:修复跳转去裁剪图片
@@ -969,6 +967,68 @@ public class MainAbilitySlice extends AbilitySlice {
                 addimg.setPixelMap(data.getSequenceableParam("cropedimage"));
                 break;
             case RESULTCODE_STARTDETAIL:
+                String[] confrimDelete = data.getStringArrayParam("confirmDelete");
+                //确认就删除
+                //confrimDelete = { "chancel" , null } 无操作
+                //confrimDelete = { "confirm" , keyid } 删除此条key指向的药品
+                if (confrimDelete[0].equals("confirm")) {
+
+                    /**
+                     * @param key 要被删除的key
+                     */
+                    String key = confrimDelete[1];
+
+                    // 置换key
+                    DataAbilityPredicates predicates = new DataAbilityPredicates();
+                    predicates.between(DB_COLUMN_KEYID, lowKey, highKey);
+                    String[] columns = new String[]{
+                            DB_COLUMN_KEYID,
+                            DB_COLUMN_NAME,
+                            DB_COLUMN_IMAGEPATH,
+                            DB_COLUMN_DESCRIPTION,
+                            DB_COLUMN_OUTDATE,
+                            DB_COLUMN_OTC,
+                            DB_COLUMN_BARCODE,
+                            DB_COLUMN_USAGE,
+                            DB_COLUMN_COMPANY,
+                            DB_COLUMN_YU,
+                            DB_COLUMN_ELABEL
+                    };
+                    try {
+                        ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
+                                columns, predicates);
+                        if (resultSet == null || resultSet.getRowCount() == 0) {
+                            HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
+                            ToastUtil.showToast(getContext(),"未找到该条药品信息  ");
+                        }else{
+                            if (lowKey.equals(key)) {
+                                //这里要将存在的数量做判断，否则越界
+                                if (resultSet.getColumnCount()==1){
+                                    //如果就剩一条信息，那就进这条信息(取key)
+                                    resultSet.goToRow(0);
+                                    lowKey = "";
+                                }else{
+                                    //如果不止一条信息，那就进这条下面的信息(取key)
+                                    resultSet.goToRow(1);
+                                    lowKey = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
+                                }
+                                //删除目标key
+                            } else if (highKey.equals(key)) {
+                                //因为goToRow命令从0开始，从x-1结束，而getRowCount从1开始，x结束
+                                //在要getRowCount()-1取倒数第二条信息时仅仅是取到了最后一条
+                                //在此基础上再减1则是取倒数第二条
+                                resultSet.goToRow(resultSet.getRowCount() - 2);
+                                highKey = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
+                            }
+                            delete(key);
+                            initHomepageListContainer();
+                            System.out.println("开始"+lowKey+"-"+highKey);
+                        }
+                    } catch (DataAbilityRemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 break;
             default:
                 addimg.setScaleMode(Image.ScaleMode.CENTER);
@@ -1011,7 +1071,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
     //获取、刷新数据
     public void query() {
-        String[] columns = new String[] {DB_COLUMN_ID,
+        String[] columns = new String[] {
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
                 DB_COLUMN_IMAGEPATH,
@@ -1026,7 +1086,8 @@ public class MainAbilitySlice extends AbilitySlice {
         };
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.between(DB_COLUMN_ID, 0, 9999);
+        predicates.between(DB_COLUMN_KEYID, lowKey, highKey);
+        int count = 0;
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
                     columns, predicates);
@@ -1035,8 +1096,10 @@ public class MainAbilitySlice extends AbilitySlice {
                 return;
             }
             resultSet.goToFirstRow();
+            lowKey = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
+            util.PreferenceUtils.putString(this,"lowKey",lowKey);
             do {
-                int id = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_ID));
+                count++;
                 String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                 String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
                 String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
@@ -1048,9 +1111,14 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                HiLog.info(LABEL_LOG, "query: Id :" + id + " keyid:"+keyid+" name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
+                HiLog.info(LABEL_LOG, "query: Id :"  + " keyid:"+keyid+" name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
                         + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
+                if (count==resultSet.getRowCount()){
+                    highKey = keyid;
+                    util.PreferenceUtils.putString(this,"highKey",highKey);
+                }
             } while (resultSet.goToNextRow());
+
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "query: dataRemote exception | illegalStateException");
         }
@@ -1059,7 +1127,7 @@ public class MainAbilitySlice extends AbilitySlice {
     public static Map<String,Object> querySingleData(String idkey) {
         Map<String, Object> map = new HashMap<>();
 //            Map<String, Object> map = new HashMap<String, Object>();
-        String[] columns = new String[] {DB_COLUMN_ID,
+        String[] columns = new String[] {
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
                 DB_COLUMN_IMAGEPATH,
@@ -1084,7 +1152,6 @@ public class MainAbilitySlice extends AbilitySlice {
             }
             resultSet.goToFirstRow();
             do {
-                int id = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_ID));
                 String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                 String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
                 String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
@@ -1096,7 +1163,6 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                map.put("id",id);
                 map.put("keyid",keyid);
                 map.put("imgpath", imagepath);
                 map.put("name", name);
@@ -1109,7 +1175,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("yu", yu);
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
-                HiLog.info(LABEL_LOG, "query: Id :" + id +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
+                HiLog.info(LABEL_LOG, "query: Id :" +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
                         + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
             } while (resultSet.goToNextRow());
             return map;
@@ -1121,12 +1187,11 @@ public class MainAbilitySlice extends AbilitySlice {
 
 
     //插入数据
-    public void insert(int id, String keyid,String name, String imagepath,
+    public void insert( String keyid,String name, String imagepath,
                         String description, String outdate, String otc,
                         String barcode, String usage, String company,
                         String yu ,String elabel) {
         ValuesBucket valuesBucket = new ValuesBucket();
-        valuesBucket.putInteger(DB_COLUMN_ID, id);
         valuesBucket.putString(DB_COLUMN_KEYID, keyid);
         valuesBucket.putString(DB_COLUMN_NAME, name);
         valuesBucket.putString(DB_COLUMN_IMAGEPATH, imagepath);
@@ -1141,11 +1206,15 @@ public class MainAbilitySlice extends AbilitySlice {
 
         try {
             if (databaseHelper.insert(Uri.parse(BASE_URI + DATA_PATH), valuesBucket) != -1) {
+                if (lowKey.equals("")||lowKey.equals(null)){
+                    lowKey = keyid;
+                    util.PreferenceUtils.putString(this,"lowKey",lowKey);
+                }
+                highKey = keyid;
+                util.PreferenceUtils.putString(this,"highKey",highKey);
+                System.out.println("keykeykey"+lowKey+"ley"+highKey+"ffff");
                 HiLog.info(LABEL_LOG, "insert successful");
-                idInsert++;
-                util.PreferenceUtils.putInt(this,"idInset",id + 1);
                 //消息弹框
-
                 new XPopup.Builder(getContext())
 //                        .setPopupCallback(new XPopupListener())
                         .dismissOnTouchOutside(false)
@@ -1161,7 +1230,6 @@ public class MainAbilitySlice extends AbilitySlice {
                                     }
                                 }, null, false, ResourceTable.Layout_popup_comfrim_with_cancel)
                         .show(); // 最后一个参数绑定已有布局
-
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "insert: dataRemote exception|illegalStateException");
@@ -1169,12 +1237,12 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
     //更新
-    public void update(int id, String keyid, String name, String imagepath,
+    public void update( String keyid, String name, String imagepath,
                         String description, String outdate, String otc,
                         String barcode, String usage, String company,
                         String yu ,String elabel) {
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.equalTo(DB_COLUMN_ID, id);
+        predicates.equalTo(DB_COLUMN_KEYID, keyid);
         ValuesBucket valuesBucket = new ValuesBucket();
         valuesBucket.putString(DB_COLUMN_KEYID, keyid);
         valuesBucket.putString(DB_COLUMN_NAME, name);
@@ -1201,17 +1269,17 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
     //删除
-    public void delete(int id,String keyid) {
-        //TODO:对比id和keyid，比对成功删除，不成功打回。
+    public void delete(String keyid) {
         DataAbilityPredicates predicates = new DataAbilityPredicates()
                 .equalTo(DB_COLUMN_KEYID, keyid);
         try {
             if (databaseHelper.delete(Uri.parse(BASE_URI + DATA_PATH), predicates) != -1) {
                 HiLog.info(LABEL_LOG, "delete successful");
-                idInsert--;
-                util.PreferenceUtils.putInt(this,"idInset",id - 1);
+                //TODO：删除之后id会空余，修复空余
+//                idInsert--;
+//                util.PreferenceUtils.putInt(this,"idInset",idInsert);
                 ToastUtil.showToast(this,"删除成功  ");
-                //TODO：检测删除是否id会空余，修复空余
+
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "delete: dataRemote exception | illegalStateException");

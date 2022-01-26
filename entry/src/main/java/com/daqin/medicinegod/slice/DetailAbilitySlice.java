@@ -8,6 +8,7 @@ import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.lxj.xpopup.util.ToastUtil;
+import ohos.aafwk.ability.Ability;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.content.Intent;
 import ohos.agp.components.Component;
@@ -30,7 +31,6 @@ import java.util.*;
 
 public class DetailAbilitySlice extends AbilitySlice {
     private Map<String,Object> mdc_SingleData;
-    private int localID = 0;
     private String localKEY = null;
     private String[] textUagesAll;
 
@@ -92,7 +92,12 @@ public class DetailAbilitySlice extends AbilitySlice {
 
 
         mdc_back = (Text) findComponentById(ResourceTable.Id_dtl_mdc_back);
-        mdc_back.setClickedListener(l->terminate());
+        mdc_back.setClickedListener(l-> {
+            Intent intentback = new Intent();
+            intentback.setParam("confirmDelete",new String[]{"chancel",null});
+            getAbility().setResult(200,intentback);
+            terminate();
+        });
         mdc_more = (Text) findComponentById(ResourceTable.Id_dtl_mdc_more);
         mdc_more.setClickedListener(l->{
             new XPopup.Builder(getContext())
@@ -118,10 +123,9 @@ public class DetailAbilitySlice extends AbilitySlice {
 
 
 
-        localID = util.PreferenceUtils.getInt(getContext(), "mglocalid");
         localKEY = util.PreferenceUtils.getString(getContext(), "mglocalkey");
         mdc_SingleData = MainAbilitySlice.querySingleData(localKEY);
-        if (localID == -1 || localKEY == null || localKEY.equals("null") || mdc_SingleData == null ) {
+        if (localKEY == null || localKEY.equals("null") || mdc_SingleData == null ) {
             //当不存在ID和KEY时打开了屏幕则关闭屏幕并展示弹窗信息
             DetailAbilitySlice.super.terminate();
             new XPopup.Builder(getContext())
@@ -280,12 +284,20 @@ public class DetailAbilitySlice extends AbilitySlice {
                 ToastUtil.showToast(getContext(),"已记为使用一次该药品  ");
                 break;
             case 1:
+                //编辑
                 break;
             case 2:
+                //分享
                 break;
             case 3:
+                //复制
                 break;
             case 4:
+                //删除
+                Intent intent = new Intent();
+                intent.setParam("confirmDelete",new String[]{"confirm",localKEY});
+                getAbility().setResult(200,intent);
+                terminate();
                 break;
         }
 
@@ -306,4 +318,12 @@ public class DetailAbilitySlice extends AbilitySlice {
         });
     }
 
+    @Override
+    protected void onBackPressed() {
+        super.onBackPressed();
+        Intent intentback = new Intent();
+        intentback.setParam("confirmDelete",new String[]{"chancel",null});
+        getAbility().setResult(200,intentback);
+        terminate();
+    }
 }
