@@ -6,7 +6,6 @@ package com.daqin.medicinegod.slice;
  * Changes by daqin,at 2019-2022
  */
 
-import com.daqin.medicinegod.Popup_OTCQuestion;
 import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.utils.*;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
@@ -38,7 +37,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-//TODO：图片圆角、流式布局
+//TODO：图片处理、otc为空的判断、变量整理
 public class MainAbilitySlice extends AbilitySlice {
     public static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;   //自定义的一个权限请求识别码，用于处理权限回调
     private static DataAbilityHelper databaseHelper;
@@ -203,9 +202,7 @@ public class MainAbilitySlice extends AbilitySlice {
             }
         });
 
-        //添加药效标签
-//        Button btn_addNewLabel = (Button)findComponentById(ResourceTable.Id_add_newLabel_addButton);
-//        btn_addNewLabel.setClickedListener(l->addNewLabel());
+
         ScrollView view = (ScrollView)findComponentById(ResourceTable.Id_add_scrollview);
         TextField add_name = (TextField)findComponentById(ResourceTable.Id_add_newName);
         TextField add_desp = (TextField)findComponentById(ResourceTable.Id_add_newDescription);
@@ -219,6 +216,155 @@ public class MainAbilitySlice extends AbilitySlice {
         TextField add_company = (TextField)findComponentById(ResourceTable.Id_add_newCompany);
         TextField add_yu = (TextField)findComponentById(ResourceTable.Id_add_newYu);
         Button btn_ok = (Button)findComponentById(ResourceTable.Id_add_addOk);
+
+        //添加药效标签
+        AtomicInteger elabelcount = new AtomicInteger();
+        Button btn_addNewLabel = (Button)findComponentById(ResourceTable.Id_add_newLabel_addButton);
+        TextField add_elabelBox = (TextField)findComponentById(ResourceTable.Id_add_newLabel_addTextFiled);
+        Text add_elabel1 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label1);
+        Text add_elabel_title = (Text)findComponentById(ResourceTable.Id_add_newLabel_title);
+
+        Text add_elabel2 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label2);
+        Text add_elabel3 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label3);
+        Text add_elabel4 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label4);
+        Text add_elabel5 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label5);
+        Text[] add_elabel = new Text[]{add_elabel1,add_elabel2,add_elabel3,add_elabel4,add_elabel5};
+
+        add_elabel1.setClickedListener(component -> {
+            new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .asConfirm("确认删除", "要删除" + add_elabel1.getText() + "这个标签吗?",
+                            "返回", "删除", new OnConfirmListener() {
+                                @Override
+                                public void onConfirm() {
+                                    add_elabel1.setText("测试标签");
+                                    add_elabel1.setVisibility(Component.HIDE);
+                                    elabelcount.addAndGet(-1);
+                                    add_elabel_title.setText("添加药效标签("+elabelcount+"/5)");
+
+                                }
+                            }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
+                    .show(); // 最后一个参数绑定已有布局
+        });
+        add_elabel2.setClickedListener(component -> {
+            new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .asConfirm("确认删除", "要删除" + add_elabel2.getText() + "这个标签吗?",
+                            "返回", "删除", new OnConfirmListener() {
+                                @Override
+                                public void onConfirm() {
+                                    add_elabel2.setText("测试标签");
+                                    add_elabel2.setVisibility(Component.HIDE);
+                                    elabelcount.addAndGet(-1);
+                                    add_elabel_title.setText("添加药效标签("+elabelcount+"/5)");
+
+                                }
+                            }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
+                    .show(); // 最后一个参数绑定已有布局
+        });
+        add_elabel3.setClickedListener(component -> {
+            new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .asConfirm("确认删除", "要删除" + add_elabel3.getText() + "这个标签吗?",
+                            "返回", "删除", new OnConfirmListener() {
+                                @Override
+                                public void onConfirm() {
+                                    add_elabel3.setText("测试标签");
+                                    add_elabel3.setVisibility(Component.HIDE);
+                                    elabelcount.addAndGet(-1);
+                                    add_elabel_title.setText("添加药效标签("+elabelcount+"/5)");
+
+                                }
+                            }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
+                    .show(); // 最后一个参数绑定已有布局
+        });
+        add_elabel4.setClickedListener(component -> {
+            new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .asConfirm("确认删除", "要删除" + add_elabel4.getText() + "这个标签吗?",
+                            "返回", "删除", new OnConfirmListener() {
+                                @Override
+                                public void onConfirm() {
+                                    add_elabel4.setText("测试标签");
+                                    add_elabel4.setVisibility(Component.HIDE);
+                                    elabelcount.addAndGet(-1);
+                                    add_elabel_title.setText("添加药效标签("+elabelcount+"/5)");
+
+                                }
+                            }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
+                    .show(); // 最后一个参数绑定已有布局
+        });
+        add_elabel5.setClickedListener(component -> {
+            new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .asConfirm("确认删除", "要删除" + add_elabel5.getText() + "这个标签吗?",
+                            "返回", "删除", new OnConfirmListener() {
+                                @Override
+                                public void onConfirm() {
+                                    add_elabel5.setText("测试标签");
+                                    add_elabel5.setVisibility(Component.HIDE);
+                                    elabelcount.addAndGet(-1);
+                                    add_elabel_title.setText("添加药效标签("+elabelcount+"/5)");
+
+                                }
+                            }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
+                    .show(); // 最后一个参数绑定已有布局
+        });
+
+        //TODO：改为数组
+        btn_addNewLabel.setClickedListener(l -> {
+            //是否已经达到5个标签
+            if (elabelcount.get() > 5) {
+                new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .asConfirm("数量受限", "已达到标签最大数量(5)",
+                                " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                        .show(); // 最后一个参数绑定已有布局
+            //未达到5个标签则判断
+            } else {
+                if (add_elabelBox.length() == 0 || add_elabelBox.length() >= 5 || add_elabelBox.getText().equals(" ") || add_elabelBox.getText().equals("  ")) {
+                    new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                            .dismissOnTouchOutside(false)
+                            .dismissOnBackPressed(false)
+                            .isDestroyOnDismiss(true)
+                            .asConfirm("格式受限", "您在一个标签内只能添加1到4个中(英)文字符",
+                                    " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                            .show(); // 最后一个参数绑定已有布局
+                } else if (add_elabelBox.length() > 0 && add_elabelBox.length() < 5) {
+                    for (Text text : add_elabel) {
+                        if (text.getText() == null || text.getText().equals("测试标签")) {
+                            elabelcount.addAndGet(1);
+                            text.setText(add_elabelBox.getText().trim());
+                            text.setVisibility(Component.VISIBLE);
+                            add_elabelBox.setText("");
+                            add_elabel_title.setText("添加药效标签(" + elabelcount + "/5)");
+                            break;
+                        }
+                    }
+
+
+                }
+            }
+        });
 
         Text method1 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_1);
 
@@ -242,7 +388,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     "3-片-3-次-1-天",
                     "大马猴",
                     "2459",
-                    "超级无敌@@超级无敌");
+                    "超级无敌@@嘟嘟嘟@@大大大@@DADAD@@ADAD");
             /*if (imgpath == null) {
                 view.fluentScrollTo(0, addimg.getTop() - 100);
                 ToastUtil.showToast(this, "图片不能为空");
@@ -375,151 +521,9 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
 
-//    本地键值对数据库相关
-//    public static class PreferenceUtils {
-//
-//        private static String PREFERENCE_FILE_NAME = "mgconfig";
-//        private static Preferences preferences;
-//        private static DatabaseHelper databaseHelper;
-//        private static Preferences.PreferencesObserver mPreferencesObserver;
-//
-//        private static void initPreference(Context context){
-//            if(databaseHelper==null){
-//                databaseHelper = new DatabaseHelper(context);
-//            }
-//            if(preferences==null){
-//                preferences = databaseHelper.getPreferences(PREFERENCE_FILE_NAME);
-//            }
-//
-//        }
-//
-//        //存放、获取时传入的context必须是同一个context,否则存入的数据无法获取
-//        public static void putString(Context context, String key, String value) {
-//            initPreference(context);
-//            preferences.putString(key, value);
-//            preferences.flush();
-//        }
-//
-//        /**
-//         * @param context 上下文
-//         * @param key  键
-//         * @return 获取的String 默认值为:null
-//         */
-//        public static String getString(Context context, String key) {
-//            initPreference(context);
-//            return preferences.getString(key, null);
-//        }
-//
-//
-//        public static void putInt(Context context, String key, int value) {
-//            initPreference(context);
-//            preferences.putInt(key, value);
-//            preferences.flush();
-//        }
-//
-//        /**
-//         * @param context 上下文
-//         * @param key 键
-//         * @return 获取int的默认值为：0
-//         */
-//        public static int getInt(Context context, String key) {
-//            initPreference(context);
-//            return preferences.getInt(key, 0);
-//        }
-//
-//
-//        public static void putLong(Context context, String key, long value) {
-//            initPreference(context);
-//            preferences.putLong(key, value);
-//            preferences.flush();
-//        }
-//
-//        /**
-//         * @param context 上下文
-//         * @param key  键
-//         * @return 获取long的默认值为：-1
-//         */
-//        public static long getLong(Context context, String key) {
-//            initPreference(context);
-//            return preferences.getLong(key, -1L);
-//        }
-//
-//
-//        public static void putBoolean(Context context, String key, boolean value) {
-//            initPreference(context);
-//            preferences.putBoolean(key, value);
-//            preferences.flush();
-//        }
-//
-//        /**
-//         * @param context  上下文
-//         * @param key  键
-//         * @return 获取boolean的默认值为：false
-//         */
-//        public static boolean getBoolean(Context context, String key) {
-//            initPreference(context);
-//            return preferences.getBoolean(key, false);
-//        }
-//
-//
-//        public static void putFloat(Context context, String key, float value) {
-//            initPreference(context);
-//            preferences.putFloat(key, value);
-//            preferences.flush();
-//        }
-//
-//        /**
-//         * @param context 上下文
-//         * @param key   键
-//         * @return 获取float的默认值为：0.0
-//         */
-//        public static float getFloat(Context context, String key) {
-//            initPreference(context);
-//            return preferences.getFloat(key, 0.0F);
-//        }
-//
-//
-//        public static void putStringSet(Context context, String key, Set<String> set) {
-//            initPreference(context);
-//            preferences.putStringSet(key, set);
-//            preferences.flush();
-//        }
-//
-//        /**
-//         * @param context  上下文
-//         * @param key 键
-//         * @return 获取set集合的默认值为：null
-//         */
-//        public static Set<String> getStringSet(Context context, String key) {
-//            initPreference(context);
-//            return preferences.getStringSet(key, null);
-//        }
-//
-//
-//        public static boolean deletePreferences(Context context) {
-//            initPreference(context);
-//            boolean isDelete= databaseHelper.deletePreferences(PREFERENCE_FILE_NAME);
-//            return isDelete;
-//        }
-//
-//
-//        public static void registerObserver(Context context, Preferences.PreferencesObserver preferencesObserver){
-//            initPreference(context);
-//            mPreferencesObserver=preferencesObserver;
-//            preferences.registerObserver(mPreferencesObserver);
-//        }
-//
-//        public static void unregisterObserver(){
-//            if(mPreferencesObserver!=null){
-//                // 向preferences实例注销观察者
-//                preferences.unregisterObserver(mPreferencesObserver);
-//            }
-//        }
-//
-//    }
-
     //清空添加药品的列表
     private void clearAddTextfield() {
+        //TODO：elabel列表清理
         imgpath = null;
         eLABEL = null;
         TextField textfield = (TextField)findComponentById(ResourceTable.Id_add_newName);
@@ -1228,7 +1232,7 @@ public class MainAbilitySlice extends AbilitySlice {
                                     public void onConfirm() {
                                         clearAddTextfield();
                                     }
-                                }, null, false, ResourceTable.Layout_popup_comfrim_with_cancel)
+                                }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_blueconfirm)
                         .show(); // 最后一个参数绑定已有布局
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {

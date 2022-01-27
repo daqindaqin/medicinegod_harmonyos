@@ -1,5 +1,6 @@
-package com.daqin.medicinegod;
+package com.daqin.medicinegod.slice;
 
+import com.daqin.medicinegod.ResourceTable;
 import com.lxj.xpopup.core.BottomPopupView;
 import com.lxj.xpopup.util.XPopupUtils;
 import ohos.agp.components.ListContainer;

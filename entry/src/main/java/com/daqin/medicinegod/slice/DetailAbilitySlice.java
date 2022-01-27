@@ -8,24 +8,19 @@ import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.lxj.xpopup.util.ToastUtil;
-import ohos.aafwk.ability.Ability;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.content.Intent;
 import ohos.agp.components.Component;
 import ohos.agp.components.Image;
 import ohos.agp.components.Text;
-import ohos.agp.components.TextField;
 import ohos.agp.components.element.ElementScatter;
 import ohos.agp.utils.Color;
 import ohos.eventhandler.EventHandler;
 import ohos.eventhandler.EventRunner;
 import ohos.media.image.PixelMap;
-import ohos.miscservices.inputmethodability.KeyboardController;
 import ohos.miscservices.pasteboard.PasteData;
 import ohos.miscservices.pasteboard.SystemPasteboard;
-import ohos.utils.PacMap;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 
@@ -149,8 +144,15 @@ public class DetailAbilitySlice extends AbilitySlice {
         mdc_desp.setText("        "+(String) mdc_SingleData.get("description"));
 
 
-        String[] otclist = mdc_SingleData.get("elabel").toString().split("@@");
-        System.out.println("66666666666"+Arrays.toString(otclist));
+        String[] tmplist = mdc_SingleData.get("elabel").toString().split("@@");
+        String[] otclist = new String[]{"","","","",""};
+        System.out.println("6666666666替换6"+Arrays.toString(tmplist));
+        if (tmplist.length > 5 ){
+            System.arraycopy(tmplist,0,otclist,0,5);
+            System.out.println("66666666666"+Arrays.toString(otclist));
+        }else if(tmplist.length > 0 && tmplist.length <= 5){
+            otclist = tmplist;
+        }
         Text[] Texts = {mdc_elabel1,mdc_elabel2,mdc_elabel3,mdc_elabel4,mdc_elabel5};
         for (int i = 0;i < otclist.length ;i++){
             Texts[i].setVisibility(Component.VISIBLE);
@@ -284,7 +286,16 @@ public class DetailAbilitySlice extends AbilitySlice {
                 ToastUtil.showToast(getContext(),"已记为使用一次该药品  ");
                 break;
             case 1:
-                //编辑
+                //弹出弹框编辑后再返回
+                util.PreferenceUtils.putString(getContext(),"editid",localKEY);
+                new XPopup.Builder(getContext())
+                        .hasStatusBarShadow(true)
+                        .autoOpenSoftInput(false)
+                        .isDestroyOnDismiss(true)
+                        .dismissOnBackPressed(true)
+                        .setComponent(mdc_more) // 用于获取页面根容器，监听页面高度变化，解决输入法盖住弹窗的问题
+                        .asCustom(new Popup_Edit(getContext()))
+                        .show();
                 break;
             case 2:
                 //分享
@@ -294,10 +305,24 @@ public class DetailAbilitySlice extends AbilitySlice {
                 break;
             case 4:
                 //删除
-                Intent intent = new Intent();
-                intent.setParam("confirmDelete",new String[]{"confirm",localKEY});
-                getAbility().setResult(200,intent);
-                terminate();
+                new XPopup.Builder(getContext())
+                        //.setPopupCallback(new XPopupListener())
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .asConfirm("是否删除", "        您正在进行删除" + mdc_name + "的操作，是否确认删除？\n" +
+                                        "        注意：此操作不可逆！",
+                                "返回", "确认删除",
+                                new OnConfirmListener() {
+                                    @Override
+                                    public void onConfirm() {
+                                        Intent intent = new Intent();
+                                        intent.setParam("confirmDelete",new String[]{"confirm",localKEY});
+                                        getAbility().setResult(200,intent);
+                                        terminate();
+                                    }
+                                }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
+                        .show(); // 最后一个参数绑定已有布局
                 break;
         }
 
