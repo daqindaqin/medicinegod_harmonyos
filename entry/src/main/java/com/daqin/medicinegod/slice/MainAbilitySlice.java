@@ -48,18 +48,15 @@ public class MainAbilitySlice extends AbilitySlice {
     private static final int RESULTCODE_IMAGE_CROPED = 101;
     private static final int RESULTCODE_STARTDETAIL = 200;
 
-    static int newUsage_utils_1 = 0,newUsage_utils_3 = 0;
-    BasePopupView DIALOG;
+    private static int newUsage_utils_1 = 0,newUsage_utils_3 = 0,elabelCount = 0;
     /**
-     * @param lowKey 第一条key，查询所用
-     * @param highKey 最后一条key，查询所用
+     * @param  lowKey 第一条key，查询所用
+     * @param  highKey 最后一条key，查询所用
      */
     private String lowKey ;
     private String highKey ;
     private String imgpath = null;
-    private String eLABEL = "headache,aligei,nb,666";
-//    BasePopupView popupView;
-
+    private String eLABEL = "";
     private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "MainAbilitySlice");
     private static final String BASE_URI = "dataability:///com.daqin.medicinegod.utils.PersonDataAbility";
     private static final String DATA_PATH = "/mg";
@@ -76,59 +73,93 @@ public class MainAbilitySlice extends AbilitySlice {
     private static final String DB_COLUMN_ELABEL = "ELABEL";
 
 
-
-
-    @Override
-    public void onStart(Intent intent) {
-        super.onStart(intent);
-        super.setUIContent(ResourceTable.Layout_ability_main);
-//        mflowLayout = (FlowLayout) findComponentById(ResourceTable.Id_flow_layout);
-//        labelList.clear();
-        databaseHelper = DataAbilityHelper.creator(this);
-        lowKey = util.PreferenceUtils.getString(this,"lowKey");
-        highKey = util.PreferenceUtils.getString(this,"highKey");
-        if (lowKey==null){
-            lowKey = "";
-        }if (highKey==null){
-            highKey = "";
-        }
-        query();
-        intPageStart();
-
-        initHomepageListContainer();
-        if (verifySelfPermission("ohos.permission.READ_MEDIA") != IBundleManager.PERMISSION_GRANTED) {
-            // 应用未被授予权限
-            if (canRequestPermission("ohos.permission.READ_MEDIA")) {
-                // 是否可以申请弹框授权(首次申请或者用户未选择禁止且不再提示)
-                requestPermissionsFromUser(
-                        new String[]{"ohos.permission.READ_MEDIA"}, MY_PERMISSIONS_REQUEST_READ_MEDIA);
-            }
-        }
-        Image img_thinghead = (Image) findComponentById(ResourceTable.Id_things_image_head);
-        img_thinghead.setCornerRadius(100);
-//        Image img_homehead = (Image) findComponentById(ResourceTable.Id_home_image_head);
-//        img_homehead.setCornerRadius(150);
-//        initCommunityListContainer();
-//        initChatListContainer();
+    Image img_thing_head;
+    Image btn_add_img;
+    Button btn_add_clear_context;
+    Text btn_add_otc_question;
+    Text btn_add_newUsage_utils_1;
+    Text btn_add_newUsage_utils_2;
+    Text btn_add_newUsage_utils_3;
+    Text btn_add_yu_title;
 
 
 
+    ScrollView view_add ;
+    TextField tf_add_name ;
+    TextField tf_add_desp ;
+    Picker tf_add_outdate_year ;
+    Picker tf_add_outdate_month ;
+    Picker tf_add_otc ;
+    TextField tf_add_barcode ;
+    TextField tf_add_usage_total ;
+    TextField tf_add_usage_time ;
+    TextField tf_add_usage_day ;
+    TextField tf_add_company ;
+    TextField tf_add_yu ;
+    Button btn_add_ok ;
+    Button btn_addNewLabel ;
+    TextField tf_add_elabelBox ;
+    Text t_add_elabel_title ;
+    Text t_add_elabel1 ;
+    Text t_add_elabel2 ;
+    Text t_add_elabel3 ;
+    Text t_add_elabel4 ;
+    Text t_add_elabel5 ;
+
+
+
+    Text[] add_elabelview;
+    TextField[] add_tf_list ;
+
+
+    public void iniView(){
+        img_thing_head = (Image) findComponentById(ResourceTable.Id_things_image_head);
+        img_thing_head.setCornerRadius(100);
+        btn_add_clear_context = (Button)findComponentById(ResourceTable.Id_add_clear);
+        btn_add_otc_question = (Text)findComponentById(ResourceTable.Id_add_newOtc_question);
+        btn_add_img = (Image)findComponentById(ResourceTable.Id_add_newImg);
+        btn_add_newUsage_utils_1 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_1);
+        btn_add_newUsage_utils_2 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_2);
+        btn_add_newUsage_utils_3 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_3);
+        btn_add_yu_title = (Text)findComponentById(ResourceTable.Id_add_newYu_title);
+        view_add = (ScrollView)findComponentById(ResourceTable.Id_add_scrollview);
+        tf_add_name = (TextField)findComponentById(ResourceTable.Id_add_newName);
+        tf_add_desp = (TextField)findComponentById(ResourceTable.Id_add_newDescription);
+        tf_add_outdate_year = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_year);
+        tf_add_outdate_month = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_month);
+        tf_add_otc = (Picker)findComponentById(ResourceTable.Id_add_newOtc);
+        tf_add_barcode = (TextField)findComponentById(ResourceTable.Id_add_newbarCode);
+        tf_add_usage_total = (TextField)findComponentById(ResourceTable.Id_add_newUsage_1);
+        tf_add_usage_time = (TextField)findComponentById(ResourceTable.Id_add_newUsage_2);
+        tf_add_usage_day = (TextField)findComponentById(ResourceTable.Id_add_newUsage_3);
+        tf_add_company = (TextField)findComponentById(ResourceTable.Id_add_newCompany);
+        tf_add_yu = (TextField)findComponentById(ResourceTable.Id_add_newYu);
+        btn_add_ok = (Button)findComponentById(ResourceTable.Id_add_addOk);
+        btn_addNewLabel = (Button)findComponentById(ResourceTable.Id_add_newLabel_addButton);
+        tf_add_elabelBox = (TextField)findComponentById(ResourceTable.Id_add_newLabel_addTextFiled);
+        t_add_elabel_title = (Text)findComponentById(ResourceTable.Id_add_newLabel_title);
+        t_add_elabel1 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label1);
+        t_add_elabel2 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label2);
+        t_add_elabel3 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label3);
+        t_add_elabel4 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label4);
+        t_add_elabel5 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label5);
+
+        add_elabelview = new Text[]{t_add_elabel1,t_add_elabel2,t_add_elabel3,t_add_elabel4,t_add_elabel5};
+        add_tf_list = new TextField[]{tf_add_name,tf_add_desp,tf_add_barcode,tf_add_usage_total,tf_add_usage_time,tf_add_usage_day,tf_add_company,tf_add_yu};
+    }
+    public void iniClicklistener(){
         //清空添加药品的列表
-        Button btn_clear= (Button)findComponentById(ResourceTable.Id_add_clear);
-        btn_clear.setClickedListener(l->clearAddTextfield());
+        btn_add_clear_context.setClickedListener(component -> clearAddTextfield());
         //otc疑问按钮
-        Text btn_otc_question = (Text)findComponentById(ResourceTable.Id_add_newOtc_question);
-        btn_otc_question.setClickedListener(l->{
+        btn_add_otc_question.setClickedListener(component -> {
             new XPopup.Builder(getContext())
                     .moveUpToKeyboard(false) // 如果不加这个，评论弹窗会移动到软键盘上面
                     .enableDrag(true)
                     .asCustom(new Popup_OTCQuestion(getContext()))
                     .show();
-
         });
         //添加图片的图片按钮
-        Image addimg=(Image)findComponentById(ResourceTable.Id_add_newImg);
-        addimg.setClickedListener(new Component.ClickedListener(){
+        btn_add_img.setClickedListener(new Component.ClickedListener(){
             @Override
             public void onClick(Component component) {
                 if (verifySelfPermission("ohos.permission.READ_MEDIA") != IBundleManager.PERMISSION_GRANTED) {
@@ -145,10 +176,6 @@ public class MainAbilitySlice extends AbilitySlice {
                         intent.setType("image/*");
 //                        intent.setBundle("com.huawei.photos");
                         startAbilityForResult(intent,RESULTCODE_IMAGE_STARTCROP);
-
-
-
-
                     } else {
                         // 显示应用需要权限的理由，提示用户进入设置授权
                         ToastUtil.showToast(getContext(),"请进入系统设置进行授权");
@@ -166,197 +193,168 @@ public class MainAbilitySlice extends AbilitySlice {
                 }
             }
         });
-
         //用法用量单位变换
-        Text btn_newUsage_utils_1 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_1);
-        Text settitle = (Text)findComponentById(ResourceTable.Id_add_newYu_title) ;
-        btn_newUsage_utils_1.setClickedListener(l->{
+        btn_add_newUsage_utils_1.setClickedListener(component->{
             newUsage_utils_1 += 1;
             switch (newUsage_utils_1){
                 case 1:
-                    btn_newUsage_utils_1.setText("克");
-                    settitle.setText("剩余余量(单位:克)");
+                    btn_add_newUsage_utils_1.setText("克");
+                    btn_add_yu_title.setText("剩余余量(单位:克)");
                     break;
                 case 2:
-                    btn_newUsage_utils_1.setText("包");
-                    settitle.setText("剩余余量(单位:包)");
+                    btn_add_newUsage_utils_1.setText("包");
+                    btn_add_yu_title.setText("剩余余量(单位:包)");
                     break;
                 case 3:
-                    btn_newUsage_utils_1.setText("片");
-                    settitle.setText("剩余余量(单位:片)");
+                    btn_add_newUsage_utils_1.setText("片");
+                    btn_add_yu_title.setText("剩余余量(单位:片)");
                     newUsage_utils_1 = 0;
                     break;
             }
         });
-        Text btn_newUsage_utils_3 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_3);
-        btn_newUsage_utils_3.setClickedListener(l->{
+        btn_add_newUsage_utils_3.setClickedListener(component->{
             newUsage_utils_3 += 1;
             switch (newUsage_utils_3){
                 case 1:
-                    btn_newUsage_utils_3.setText("时");
+                    btn_add_newUsage_utils_3.setText("时");
                     break;
                 case 2:
-                    btn_newUsage_utils_3.setText("天");
+                    btn_add_newUsage_utils_3.setText("天");
                     newUsage_utils_3 = 0;
                     break;
             }
         });
-
-
-        ScrollView view = (ScrollView)findComponentById(ResourceTable.Id_add_scrollview);
-        TextField add_name = (TextField)findComponentById(ResourceTable.Id_add_newName);
-        TextField add_desp = (TextField)findComponentById(ResourceTable.Id_add_newDescription);
-        Picker add_outdate_year = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_year);
-        Picker add_outdate_month = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_month);
-        Picker add_otc = (Picker)findComponentById(ResourceTable.Id_add_newOtc);
-        TextField add_barcode = (TextField)findComponentById(ResourceTable.Id_add_newbarCode);
-        TextField add_usage_total = (TextField)findComponentById(ResourceTable.Id_add_newUsage_1);
-        TextField add_usage_time = (TextField)findComponentById(ResourceTable.Id_add_newUsage_2);
-        TextField add_usage_day = (TextField)findComponentById(ResourceTable.Id_add_newUsage_3);
-        TextField add_company = (TextField)findComponentById(ResourceTable.Id_add_newCompany);
-        TextField add_yu = (TextField)findComponentById(ResourceTable.Id_add_newYu);
-        Button btn_ok = (Button)findComponentById(ResourceTable.Id_add_addOk);
-
-        //添加药效标签
-        AtomicInteger elabelcount = new AtomicInteger();
-        Button btn_addNewLabel = (Button)findComponentById(ResourceTable.Id_add_newLabel_addButton);
-        TextField add_elabelBox = (TextField)findComponentById(ResourceTable.Id_add_newLabel_addTextFiled);
-        Text add_elabel1 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label1);
-        Text add_elabel_title = (Text)findComponentById(ResourceTable.Id_add_newLabel_title);
-
-        Text add_elabel2 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label2);
-        Text add_elabel3 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label3);
-        Text add_elabel4 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label4);
-        Text add_elabel5 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label5);
-        Text[] add_elabel = new Text[]{add_elabel1,add_elabel2,add_elabel3,add_elabel4,add_elabel5};
-
-        add_elabel1.setClickedListener(component -> {
+        //标签栏目删除事件
+        t_add_elabel1.setClickedListener(component -> {
             new XPopup.Builder(getContext())
 //                        .setPopupCallback(new XPopupListener())
                     .dismissOnTouchOutside(false)
                     .dismissOnBackPressed(false)
                     .isDestroyOnDismiss(true)
-                    .asConfirm("确认删除", "要删除" + add_elabel1.getText() + "这个标签吗?",
+                    .asConfirm("确认删除", "要删除" + t_add_elabel1.getText() + "这个标签吗?",
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
-                                    add_elabel1.setText("测试标签");
-                                    add_elabel1.setVisibility(Component.HIDE);
-                                    elabelcount.addAndGet(-1);
-                                    add_elabel_title.setText("添加药效标签("+elabelcount+"/5)");
+                                    t_add_elabel1.setText("测试标签");
+                                    t_add_elabel1.setVisibility(Component.HIDE);
+                                    elabelCount -= 1;
+                                    t_add_elabel_title.setText("添加药效标签(" + elabelCount + "/5)");
 
                                 }
                             }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
                     .show(); // 最后一个参数绑定已有布局
         });
-        add_elabel2.setClickedListener(component -> {
+        t_add_elabel2.setClickedListener(component -> {
             new XPopup.Builder(getContext())
 //                        .setPopupCallback(new XPopupListener())
                     .dismissOnTouchOutside(false)
                     .dismissOnBackPressed(false)
                     .isDestroyOnDismiss(true)
-                    .asConfirm("确认删除", "要删除" + add_elabel2.getText() + "这个标签吗?",
+                    .asConfirm("确认删除", "要删除" + t_add_elabel2.getText() + "这个标签吗?",
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
-                                    add_elabel2.setText("测试标签");
-                                    add_elabel2.setVisibility(Component.HIDE);
-                                    elabelcount.addAndGet(-1);
-                                    add_elabel_title.setText("添加药效标签("+elabelcount+"/5)");
+                                    t_add_elabel2.setText("测试标签");
+                                    t_add_elabel2.setVisibility(Component.HIDE);
+                                    elabelCount -= 1;
+                                    t_add_elabel_title.setText("添加药效标签(" + elabelCount + "/5)");
 
                                 }
                             }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
                     .show(); // 最后一个参数绑定已有布局
         });
-        add_elabel3.setClickedListener(component -> {
+        t_add_elabel3.setClickedListener(component -> {
             new XPopup.Builder(getContext())
 //                        .setPopupCallback(new XPopupListener())
                     .dismissOnTouchOutside(false)
                     .dismissOnBackPressed(false)
                     .isDestroyOnDismiss(true)
-                    .asConfirm("确认删除", "要删除" + add_elabel3.getText() + "这个标签吗?",
+                    .asConfirm("确认删除", "要删除" + t_add_elabel3.getText() + "这个标签吗?",
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
-                                    add_elabel3.setText("测试标签");
-                                    add_elabel3.setVisibility(Component.HIDE);
-                                    elabelcount.addAndGet(-1);
-                                    add_elabel_title.setText("添加药效标签("+elabelcount+"/5)");
+                                    t_add_elabel3.setText("测试标签");
+                                    t_add_elabel3.setVisibility(Component.HIDE);
+                                    elabelCount -= 1;
+                                    t_add_elabel_title.setText("添加药效标签("+elabelCount+"/5)");
 
                                 }
                             }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
                     .show(); // 最后一个参数绑定已有布局
         });
-        add_elabel4.setClickedListener(component -> {
+        t_add_elabel4.setClickedListener(component -> {
             new XPopup.Builder(getContext())
 //                        .setPopupCallback(new XPopupListener())
                     .dismissOnTouchOutside(false)
                     .dismissOnBackPressed(false)
                     .isDestroyOnDismiss(true)
-                    .asConfirm("确认删除", "要删除" + add_elabel4.getText() + "这个标签吗?",
+                    .asConfirm("确认删除", "要删除" + t_add_elabel4.getText() + "这个标签吗?",
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
-                                    add_elabel4.setText("测试标签");
-                                    add_elabel4.setVisibility(Component.HIDE);
-                                    elabelcount.addAndGet(-1);
-                                    add_elabel_title.setText("添加药效标签("+elabelcount+"/5)");
+                                    t_add_elabel4.setText("测试标签");
+                                    t_add_elabel4.setVisibility(Component.HIDE);
+                                    elabelCount += 1;
+                                    t_add_elabel_title.setText("添加药效标签(" + elabelCount + "/5)");
 
                                 }
                             }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
                     .show(); // 最后一个参数绑定已有布局
         });
-        add_elabel5.setClickedListener(component -> {
+        t_add_elabel5.setClickedListener(component -> {
             new XPopup.Builder(getContext())
 //                        .setPopupCallback(new XPopupListener())
                     .dismissOnTouchOutside(false)
                     .dismissOnBackPressed(false)
                     .isDestroyOnDismiss(true)
-                    .asConfirm("确认删除", "要删除" + add_elabel5.getText() + "这个标签吗?",
+                    .asConfirm("确认删除", "要删除" + t_add_elabel5.getText() + "这个标签吗?",
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
-                                    add_elabel5.setText("测试标签");
-                                    add_elabel5.setVisibility(Component.HIDE);
-                                    elabelcount.addAndGet(-1);
-                                    add_elabel_title.setText("添加药效标签("+elabelcount+"/5)");
+                                    t_add_elabel5.setText("测试标签");
+                                    t_add_elabel5.setVisibility(Component.HIDE);
+                                    elabelCount += 1;
+                                    t_add_elabel_title.setText("添加药效标签(" + elabelCount + "/5)");
 
                                 }
                             }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
                     .show(); // 最后一个参数绑定已有布局
         });
-
-        //TODO：改为数组
-        btn_addNewLabel.setClickedListener(l -> {
+        //添加标签事件
+        btn_addNewLabel.setClickedListener(component -> {
             //是否已经达到5个标签
-            if (elabelcount.get() > 5) {
+            if (elabelCount > 5) {
                 new XPopup.Builder(getContext())
-//                        .setPopupCallback(new XPopupListener())
+                        //.setPopupCallback(new XPopupListener())
                         .dismissOnTouchOutside(false)
                         .dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .asConfirm("数量受限", "已达到标签最大数量(5)",
                                 " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
                         .show(); // 最后一个参数绑定已有布局
-            //未达到5个标签则判断
+                //未达到5个标签则判断
             } else {
-                if (add_elabelBox.length() == 0 || add_elabelBox.length() >= 5 || add_elabelBox.getText().equals(" ") || add_elabelBox.getText().equals("  ")) {
+                if (tf_add_elabelBox.length() == 0
+                        || tf_add_elabelBox.length() >= 5
+                        || tf_add_elabelBox.getText().equals(" ")
+                        || tf_add_elabelBox.getText().equals("  ")) {
+                    //输入框内条件标签不满足则提示
                     new XPopup.Builder(getContext())
-//                        .setPopupCallback(new XPopupListener())
+                            //.setPopupCallback(new XPopupListener())
                             .dismissOnTouchOutside(false)
                             .dismissOnBackPressed(false)
                             .isDestroyOnDismiss(true)
-                            .asConfirm("格式受限", "您在一个标签内只能添加1到4个中(英)文字符",
+                            .asConfirm("格式受限", "您在一个标签内只能添加1到4个中文字符",
                                     " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
                             .show(); // 最后一个参数绑定已有布局
-                } else if (add_elabelBox.length() > 0 && add_elabelBox.length() < 5) {
-                    for (Text text : add_elabel) {
+                } else if (tf_add_elabelBox.length() > 0 && tf_add_elabelBox.length() < 5) {
+                    for (Text text : add_elabelview) {
                         if (text.getText() == null || text.getText().equals("测试标签")) {
-                            elabelcount.addAndGet(1);
-                            text.setText(add_elabelBox.getText().trim());
+                            elabelCount += 1;
+                            text.setText(tf_add_elabelBox.getText().trim());
                             text.setVisibility(Component.VISIBLE);
-                            add_elabelBox.setText("");
-                            add_elabel_title.setText("添加药效标签(" + elabelcount + "/5)");
+                            tf_add_elabelBox.setText("");
+                            t_add_elabel_title.setText("添加药效标签(" + elabelCount + "/5)");
                             break;
                         }
                     }
@@ -365,19 +363,12 @@ public class MainAbilitySlice extends AbilitySlice {
                 }
             }
         });
-
-        Text method1 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_1);
-
-        Text method3 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_3);
-
-
-
-        TextField[] texttList = {add_name,add_desp,add_barcode,add_usage_total,add_usage_time,add_usage_day,add_company,add_yu};
-        AtomicInteger a = new AtomicInteger();
-        btn_ok.setClickedListener(l->{
+        //添加药品数据事件
+        final int[] a = {0};
+        btn_add_ok.setClickedListener(component -> {
             //检测已经选择图片
-            a.getAndIncrement();
-            insert("QWEY"+a,
+            a[0] +=1;
+            insert("QWEY"+ a[0],
                     "Name",
                     "imgpath",
                     "描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述",
@@ -433,19 +424,19 @@ public class MainAbilitySlice extends AbilitySlice {
                                     break;
                             }
                             *//*
-                            * insert(id
-                            *       name
-                            *       imgpath
-                            *       desp
-                            *       XXXX年-XX月
-                            *       OTC /  / Rx
-                            *       barcode
-                            *       XX-包/克/片-XX-次-XX-时/天
-                            *       company
-                            *       剩余：XX  包/克/片
-                            *       Elabel
-                            *       )
-                            * *//*
+             * insert(id
+             *       name
+             *       imgpath
+             *       desp
+             *       XXXX年-XX月
+             *       OTC /  / Rx
+             *       barcode
+             *       XX-包/克/片-XX-次-XX-时/天
+             *       company
+             *       剩余：XX  包/克/片
+             *       Elabel
+             *       )
+             * *//*
                             insert(idInsert,
                                     add_name.getText(),
                                     imgpath,
@@ -481,6 +472,43 @@ public class MainAbilitySlice extends AbilitySlice {
             DIALOG.show();
 */
         });
+
+
+    }
+    @Override
+    public void onStart(Intent intent) {
+        super.onStart(intent);
+        super.setUIContent(ResourceTable.Layout_ability_main);
+//        mflowLayout = (FlowLayout) findComponentById(ResourceTable.Id_flow_layout);
+//        labelList.clear();
+        databaseHelper = DataAbilityHelper.creator(this);
+        lowKey = util.PreferenceUtils.getString(this,"lowKey");
+        highKey = util.PreferenceUtils.getString(this,"highKey");
+        if (lowKey==null){
+            lowKey = "";
+        }if (highKey==null){
+            highKey = "";
+        }
+        query();
+        intPageStart();
+        initHomepageListContainer();
+        if (verifySelfPermission("ohos.permission.READ_MEDIA") != IBundleManager.PERMISSION_GRANTED) {
+            // 应用未被授予权限
+            if (canRequestPermission("ohos.permission.READ_MEDIA")) {
+                // 是否可以申请弹框授权(首次申请或者用户未选择禁止且不再提示)
+                requestPermissionsFromUser(
+                        new String[]{"ohos.permission.READ_MEDIA"}, MY_PERMISSIONS_REQUEST_READ_MEDIA);
+            }
+        }
+//        Image img_homehead = (Image) findComponentById(ResourceTable.Id_home_image_head);
+//        img_homehead.setCornerRadius(150);
+//        initCommunityListContainer();
+//        initChatListContainer();
+        iniView();
+        iniCalendarPicker();
+        iniClicklistener();
+
+
     }
 
     //对话框的监听事件
@@ -524,34 +552,36 @@ public class MainAbilitySlice extends AbilitySlice {
     //清空添加药品的列表
     private void clearAddTextfield() {
         //TODO：elabel列表清理
-        imgpath = null;
-        eLABEL = null;
-        TextField textfield = (TextField)findComponentById(ResourceTable.Id_add_newName);
-        textfield.setText("");
-        TextField textfield1 = (TextField)findComponentById(ResourceTable.Id_add_newDescription);
-        textfield1.setText("");
-        Image addimg = (Image)findComponentById(ResourceTable.Id_add_newImg);
-        addimg.setPixelMap(ResourceTable.Media_add_imgadd);
-        addimg.setScaleMode(Image.ScaleMode.CENTER);
-        TextField textfield2 = (TextField)findComponentById(ResourceTable.Id_add_newbarCode);
-        textfield2.setText("");
-        TextField textfield3 = (TextField)findComponentById(ResourceTable.Id_add_newCompany);
-        textfield3.setText("");
-        TextField textfield4 = (TextField)findComponentById(ResourceTable.Id_add_newUsage_1);
-        textfield4.setText("");
-        TextField textfield5 = (TextField)findComponentById(ResourceTable.Id_add_newUsage_2);
-        textfield5.setText("");
-        TextField textfield6 = (TextField)findComponentById(ResourceTable.Id_add_newUsage_3);
-        textfield6.setText("");
-        Text text1 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_1);
-        text1.setText("包");
-        Text text2 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_2);
-        text2.setText("次");
-        Text text3 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_3);
-        text3.setText("天");
+        imgpath = "";
+        eLABEL = "";
+        btn_add_img.setPixelMap(ResourceTable.Media_add_imgadd);
+        btn_add_img.setScaleMode(Image.ScaleMode.CENTER);
+        tf_add_name.setText("");
+        tf_add_desp.setText("");
+        tf_add_barcode.setText("");
+        tf_add_usage_total.setText("");
+        tf_add_usage_time.setText("");
+        tf_add_usage_day.setText("");
+        tf_add_company.setText("");
+        tf_add_yu.setText("");
+        btn_add_newUsage_utils_1.setText("包");
+        btn_add_newUsage_utils_2.setText("次");
+        btn_add_newUsage_utils_3.setText("天");
+        view_add.fluentScrollTo(0,0);
+        elabelCount = 0;
+        t_add_elabel1.setText("测试标签") ;
+        t_add_elabel1.setVisibility(Component.HIDE);
+        t_add_elabel2.setText("测试标签") ;
+        t_add_elabel2.setVisibility(Component.HIDE);
+        t_add_elabel3.setText("测试标签") ;
+        t_add_elabel3.setVisibility(Component.HIDE);
+        t_add_elabel4.setText("测试标签") ;
+        t_add_elabel4.setVisibility(Component.HIDE);
+        t_add_elabel5.setText("测试标签") ;
+        t_add_elabel5.setVisibility(Component.HIDE);
+        t_add_elabel_title.setText("添加药效标签(0/5)");
         iniCalendarPicker();
-        ScrollView s = (ScrollView)findComponentById(ResourceTable.Id_add_scrollview);
-        s.fluentScrollTo(0,0);
+
         ToastUtil.showToast(getContext(),"已清空内容  ");
     }
 
@@ -767,21 +797,16 @@ public class MainAbilitySlice extends AbilitySlice {
             yearList.add(i +"年");
         }
 
-        Picker pickerYear = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_year);
-        pickerYear.setHeight(util.getWindowWidthPx(MainAbilitySlice.this)/4);
-        pickerYear.setDisplayedData(yearList.toArray(new String[]{}));
-        pickerYear.setValue(0);
+        tf_add_outdate_year.setHeight(util.getWindowWidthPx(MainAbilitySlice.this)/4);
+        tf_add_outdate_year.setDisplayedData(yearList.toArray(new String[]{}));
+        tf_add_outdate_year.setValue(0);
 
-        Picker pickerMonth = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_month);
-        pickerMonth.setDisplayedData(new String[]{"1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"});
-        pickerMonth.setHeight(util.getWindowWidthPx(MainAbilitySlice.this)/4);
-        pickerMonth.setValue(0);
+        tf_add_outdate_month.setDisplayedData(new String[]{"1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"});
+        tf_add_outdate_month.setHeight(util.getWindowWidthPx(MainAbilitySlice.this)/4);
+        tf_add_outdate_month.setValue(0);
 
-        Picker pickerOtc = (Picker)findComponentById(ResourceTable.Id_add_newOtc);
-        pickerOtc.setDisplayedData(new String[]{"OTC(非处方药)-红","OTC(非处方药)-绿","(空)","RX(处方药)"});
-        pickerOtc.setValue(2);
-
-
+        tf_add_otc.setDisplayedData(new String[]{"OTC(非处方药)-红","OTC(非处方药)-绿","(留空)","RX(处方药)"});
+        tf_add_otc.setValue(2);
 
 
     }
@@ -822,8 +847,7 @@ public class MainAbilitySlice extends AbilitySlice {
         });
 
     }
-
-
+    //药品数据源
     private List<Map<String,Object>> queryData() {
         List<Map<String,Object>> list = new ArrayList<>();
         String[] columns = new String[] {
@@ -878,9 +902,6 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
                 list.add(map);
-                //map数据转文本存本地备用
-                //@?@是每单条map的分隔符
-
                 HiLog.info(LABEL_LOG, "query: Id :"  +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
                         + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
             } while (resultSet.goToNextRow());
@@ -890,6 +911,8 @@ public class MainAbilitySlice extends AbilitySlice {
             return new ArrayList<>();
         }
     }
+
+
 
     @Override
     public void onActive() {
@@ -912,7 +935,6 @@ public class MainAbilitySlice extends AbilitySlice {
 
     @Override
     public void onAbilityResult(int requestCode, int resultCode, Intent data) {
-        Image addimg=(Image)findComponentById(ResourceTable.Id_add_newImg);
         System.out.println("返回"+resultCode+":"+requestCode+":"+data);
         switch (requestCode) {
             case RESULTCODE_IMAGE_STARTCROP:
@@ -926,7 +948,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     DataAbilityHelper helper = DataAbilityHelper.creator(getContext());
 
                     //原组件是居中，这里给他选择填充
-                    addimg.setScaleMode(Image.ScaleMode.STRETCH);
+                    btn_add_img.setScaleMode(Image.ScaleMode.STRETCH);
 
                     //定义组件资源
                     ImageSource imageSource = null;
@@ -968,14 +990,16 @@ public class MainAbilitySlice extends AbilitySlice {
                 }
                 break;
             case RESULTCODE_IMAGE_CROPED:
-                addimg.setPixelMap(data.getSequenceableParam("cropedimage"));
+                btn_add_img.setPixelMap(data.getSequenceableParam("cropedimage"));
                 break;
             case RESULTCODE_STARTDETAIL:
+                System.out.println("运行到这里了1");
                 String[] confrimDelete = data.getStringArrayParam("confirmDelete");
                 //确认就删除
                 //confrimDelete = { "chancel" , null } 无操作
                 //confrimDelete = { "confirm" , keyid } 删除此条key指向的药品
                 if (confrimDelete[0].equals("confirm")) {
+                    System.out.println("运行到这里了2");
 
                     /**
                      * @param key 要被删除的key
@@ -1005,18 +1029,19 @@ public class MainAbilitySlice extends AbilitySlice {
                             HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
                             ToastUtil.showToast(getContext(),"未找到该条药品信息  ");
                         }else{
+                            System.out.println("运行到这里了3"+lowKey+highKey);
                             if (lowKey.equals(key)) {
                                 //这里要将存在的数量做判断，否则越界
-                                if (resultSet.getColumnCount()==1){
+                                if (resultSet.getRowCount()==1){
                                     //如果就剩一条信息，那就进这条信息(取key)
                                     resultSet.goToRow(0);
                                     lowKey = "";
+                                    highKey = "";
                                 }else{
                                     //如果不止一条信息，那就进这条下面的信息(取key)
                                     resultSet.goToRow(1);
                                     lowKey = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                                 }
-                                //删除目标key
                             } else if (highKey.equals(key)) {
                                 //因为goToRow命令从0开始，从x-1结束，而getRowCount从1开始，x结束
                                 //在要getRowCount()-1取倒数第二条信息时仅仅是取到了最后一条
@@ -1024,19 +1049,29 @@ public class MainAbilitySlice extends AbilitySlice {
                                 resultSet.goToRow(resultSet.getRowCount() - 2);
                                 highKey = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                             }
+                            System.out.println("运行到这里了4");
+                            util.PreferenceUtils.putString(getContext(),"lowKey",lowKey);
+                            util.PreferenceUtils.putString(getContext(),"highKey",highKey);
+                            System.out.println("运行到这里了5"+lowKey+highKey);
+
                             delete(key);
+                            System.out.println("运行到这里了6");
+
                             initHomepageListContainer();
                             System.out.println("开始"+lowKey+"-"+highKey);
+                            System.out.println("运行到这里了7");
+
                         }
                     } catch (DataAbilityRemoteException e) {
                         e.printStackTrace();
                     }
                 }
+                System.out.println("运行到这里了8");
 
                 break;
             default:
-                addimg.setScaleMode(Image.ScaleMode.CENTER);
-                addimg.setPixelMap(ResourceTable.Media_add_imgadd);
+                btn_add_img.setScaleMode(Image.ScaleMode.CENTER);
+                btn_add_img.setPixelMap(ResourceTable.Media_add_imgadd);
                 break;
         }
         super.onAbilityResult(requestCode, resultCode, data);
@@ -1073,7 +1108,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
 
 
-    //获取、刷新数据
+    //刷新数据
     public void query() {
         String[] columns = new String[] {
                 DB_COLUMN_KEYID,
@@ -1264,12 +1299,10 @@ public class MainAbilitySlice extends AbilitySlice {
             if (databaseHelper.update(Uri.parse(BASE_URI + DATA_PATH), valuesBucket, predicates) != -1) {
                 HiLog.info(LABEL_LOG, "update successful");
                 ToastUtil.showToast(this,"修改成功  ");
-
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
             ToastUtil.showToast(this,"修改失败，请重试  ");
-
         }
     }
     //删除
@@ -1279,11 +1312,7 @@ public class MainAbilitySlice extends AbilitySlice {
         try {
             if (databaseHelper.delete(Uri.parse(BASE_URI + DATA_PATH), predicates) != -1) {
                 HiLog.info(LABEL_LOG, "delete successful");
-                //TODO：删除之后id会空余，修复空余
-//                idInsert--;
-//                util.PreferenceUtils.putInt(this,"idInset",idInsert);
                 ToastUtil.showToast(this,"删除成功  ");
-
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "delete: dataRemote exception | illegalStateException");

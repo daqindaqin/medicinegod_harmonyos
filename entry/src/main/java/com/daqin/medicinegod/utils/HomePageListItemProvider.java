@@ -82,6 +82,9 @@ public class HomePageListItemProvider extends  BaseItemProvider{
         //OTC标识设置提醒
         String otc = (String)map.get("otc");
         switch (otc){
+            case "none":
+                textOtc.setVisibility(Component.HIDE);
+                break;
             case "OTC-G":
                 textOtc.setText("OTC");
                 textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_otc_green));

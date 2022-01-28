@@ -2,7 +2,7 @@
 <shape xmlns:ohos="http://schemas.huawei.com/res/ohos"
        ohos:shape="rectangle">
     <corners
-        ohos:radius="50vp"/>
+        ohos:radius="5vp"/>
 
     <solid
         ohos:color="$color:blue_clear"/>

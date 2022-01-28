@@ -45,9 +45,6 @@ public class DetailAbilitySlice extends AbilitySlice {
     Text mdc_elabel4 ;
     Text mdc_elabel5 ;
 
-    Text mdc_elabel_add1 ;
-    Text mdc_elabel_add2 ;
-
     Image mdc_img ;
     Image mdc_img_barcode ;
 
@@ -82,8 +79,6 @@ public class DetailAbilitySlice extends AbilitySlice {
         mdc_elabel4 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel4);
         mdc_elabel5 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel5);
 
-        mdc_elabel_add1 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel_add1);
-        mdc_elabel_add2 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel_add2);
 
 
         mdc_back = (Text) findComponentById(ResourceTable.Id_dtl_mdc_back);
@@ -128,7 +123,7 @@ public class DetailAbilitySlice extends AbilitySlice {
                     .dismissOnTouchOutside(true)
                     .dismissOnBackPressed(true)
                     .isDestroyOnDismiss(true)
-                    .asConfirm("错误", "不存在的药品",
+                    .asConfirm("错误", "药品信息不存在！或是内部发生错误！",
                             "", "好的",
                             new OnConfirmListener() {
                                 @Override
@@ -146,10 +141,8 @@ public class DetailAbilitySlice extends AbilitySlice {
 
         String[] tmplist = mdc_SingleData.get("elabel").toString().split("@@");
         String[] otclist = new String[]{"","","","",""};
-        System.out.println("6666666666替换6"+Arrays.toString(tmplist));
         if (tmplist.length > 5 ){
             System.arraycopy(tmplist,0,otclist,0,5);
-            System.out.println("66666666666"+Arrays.toString(otclist));
         }else if(tmplist.length > 0 && tmplist.length <= 5){
             otclist = tmplist;
         }
@@ -158,14 +151,7 @@ public class DetailAbilitySlice extends AbilitySlice {
             Texts[i].setVisibility(Component.VISIBLE);
             Texts[i].setText(otclist[i]);
         }
-        if (otclist.length < 3){
-            mdc_elabel_add1.setVisibility(Component.VISIBLE);
-            mdc_elabel_add2.setVisibility(Component.HIDE);
-        }else if (otclist.length == 3 || otclist.length == 4){
-            mdc_elabel_add2.setVisibility(Component.VISIBLE);
-            mdc_elabel_add1.setVisibility(Component.HIDE);
-        }
-        //TODO：点击添加标签
+
 
         //过期提醒
         //XXXX年X月
@@ -287,7 +273,6 @@ public class DetailAbilitySlice extends AbilitySlice {
                 break;
             case 1:
                 //弹出弹框编辑后再返回
-                util.PreferenceUtils.putString(getContext(),"editid",localKEY);
                 new XPopup.Builder(getContext())
                         .hasStatusBarShadow(true)
                         .autoOpenSoftInput(false)
@@ -310,7 +295,7 @@ public class DetailAbilitySlice extends AbilitySlice {
                         .dismissOnTouchOutside(false)
                         .dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
-                        .asConfirm("是否删除", "        您正在进行删除" + mdc_name + "的操作，是否确认删除？\n" +
+                        .asConfirm("是否删除", "        您正在进行删除" + mdc_name.getText() + "的操作，是否确认删除？\n" +
                                         "        注意：此操作不可逆！",
                                 "返回", "确认删除",
                                 new OnConfirmListener() {
