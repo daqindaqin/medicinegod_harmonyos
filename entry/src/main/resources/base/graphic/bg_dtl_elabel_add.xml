@@ -4,7 +4,7 @@
     <solid
         ohos:color="$color:purple_clear"/>
     <corners
-        ohos:radius="8vp"/>
+        ohos:radius="5vp"/>
 
 
 

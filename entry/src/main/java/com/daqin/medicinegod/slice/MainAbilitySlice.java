@@ -379,7 +379,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     "3-片-3-次-1-天",
                     "大马猴",
                     "2459",
-                    "超级无敌@@嘟嘟嘟@@大大大@@DADAD@@ADAD");
+                    "超级无敌@@嘟嘟嘟@@大大大@@DADAD");
             /*if (imgpath == null) {
                 view.fluentScrollTo(0, addimg.getTop() - 100);
                 ToastUtil.showToast(this, "图片不能为空");

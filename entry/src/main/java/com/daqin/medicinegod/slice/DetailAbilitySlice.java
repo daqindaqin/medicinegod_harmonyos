@@ -141,8 +141,11 @@ public class DetailAbilitySlice extends AbilitySlice {
 
         String[] tmplist = mdc_SingleData.get("elabel").toString().split("@@");
         String[] otclist = new String[]{"","","","",""};
+        String s = "";
         if (tmplist.length > 5 ){
             System.arraycopy(tmplist,0,otclist,0,5);
+            s = otclist[0] + "@@" + otclist[1] + "@@" + otclist[2] + "@@" + otclist[3] + "@@" + otclist[4];
+            mdc_SingleData.put("elabel",s);
         }else if(tmplist.length > 0 && tmplist.length <= 5){
             otclist = tmplist;
         }
@@ -151,7 +154,6 @@ public class DetailAbilitySlice extends AbilitySlice {
             Texts[i].setVisibility(Component.VISIBLE);
             Texts[i].setText(otclist[i]);
         }
-
 
         //过期提醒
         //XXXX年X月

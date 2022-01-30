@@ -87,14 +87,17 @@ public class HomePageListItemProvider extends  BaseItemProvider{
                 break;
             case "OTC-G":
                 textOtc.setText("OTC");
+                textOtc.setVisibility(Component.VISIBLE);
                 textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_otc_green));
                 break;
             case "OTC-R":
                 textOtc.setText("OTC");
+                textOtc.setVisibility(Component.VISIBLE);
                 textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_otc_red));
                 break;
             case "Rx":
                 textOtc.setText("Rx");
+                textOtc.setVisibility(Component.VISIBLE);
                 textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_rx));
                 break;
         }
