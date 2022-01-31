@@ -63,6 +63,12 @@
         "name": "com.daqin.medicinegod.ImageCropAbility",
         "description": "",
         "type": "page"
+      },
+      {
+        "icon": "$media:icon",
+        "name": "com.daqin.medicinegod.EditAbility",
+        "description": "",
+        "type": "page"
       }
     ],
     "metaData": {

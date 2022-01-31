@@ -22,6 +22,7 @@ import ohos.aafwk.content.Operation;
 import ohos.agp.components.*;
 import ohos.agp.utils.LayoutAlignment;
 import ohos.agp.window.dialog.ToastDialog;
+import ohos.app.Context;
 import ohos.bundle.IBundleManager;
 import ohos.data.dataability.DataAbilityPredicates;
 import ohos.data.rdb.ValuesBucket;
@@ -41,13 +42,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MainAbilitySlice extends AbilitySlice {
     public static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;   //自定义的一个权限请求识别码，用于处理权限回调
     private static DataAbilityHelper databaseHelper;
+    private static Context cont;
 
     private BubbleNavigationLinearView mBubbleNavigationLinearView;
 //    private List<String> labelList = new ArrayList<>();
     private static final int RESULTCODE_IMAGE_STARTCROP = 100;
     private static final int RESULTCODE_IMAGE_CROPED = 101;
     private static final int RESULTCODE_STARTDETAIL = 200;
-
     private static int newUsage_utils_1 = 0,newUsage_utils_3 = 0,elabelCount = 0;
     /**
      * @param  lowKey 第一条key，查询所用
@@ -369,7 +370,7 @@ public class MainAbilitySlice extends AbilitySlice {
             //检测已经选择图片
             a[0] +=1;
             insert("QWEY"+ a[0],
-                    "Name",
+                    "NameNameNameName",
                     "imgpath",
                     "描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述",
                     "2022年-2月",
@@ -377,7 +378,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     "6666666666",
                     //XX-包/克/片-XX-次-XX-时/天
                     "3-片-3-次-1-天",
-                    "大马猴",
+                    "大马猴大马猴大马猴大马猴",
                     "2459",
                     "超级无敌@@嘟嘟嘟@@大大大@@DADAD");
             /*if (imgpath == null) {
@@ -489,6 +490,7 @@ public class MainAbilitySlice extends AbilitySlice {
         }if (highKey==null){
             highKey = "";
         }
+        cont = getContext();
         query();
         intPageStart();
         initHomepageListContainer();
@@ -993,13 +995,11 @@ public class MainAbilitySlice extends AbilitySlice {
                 btn_add_img.setPixelMap(data.getSequenceableParam("cropedimage"));
                 break;
             case RESULTCODE_STARTDETAIL:
-                System.out.println("运行到这里了1");
                 String[] confrimDelete = data.getStringArrayParam("confirmDelete");
                 //确认就删除
                 //confrimDelete = { "chancel" , null } 无操作
                 //confrimDelete = { "confirm" , keyid } 删除此条key指向的药品
                 if (confrimDelete[0].equals("confirm")) {
-                    System.out.println("运行到这里了2");
 
                     /**
                      * @param key 要被删除的key
@@ -1049,24 +1049,19 @@ public class MainAbilitySlice extends AbilitySlice {
                                 resultSet.goToRow(resultSet.getRowCount() - 2);
                                 highKey = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                             }
-                            System.out.println("运行到这里了4");
                             util.PreferenceUtils.putString(getContext(),"lowKey",lowKey);
                             util.PreferenceUtils.putString(getContext(),"highKey",highKey);
-                            System.out.println("运行到这里了5"+lowKey+highKey);
 
                             delete(key);
-                            System.out.println("运行到这里了6");
 
                             initHomepageListContainer();
                             System.out.println("开始"+lowKey+"-"+highKey);
-                            System.out.println("运行到这里了7");
 
                         }
                     } catch (DataAbilityRemoteException e) {
                         e.printStackTrace();
                     }
                 }
-                System.out.println("运行到这里了8");
 
                 break;
             default:
@@ -1276,7 +1271,7 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
     //更新
-    public void update( String keyid, String name, String imagepath,
+    public static void update( String keyid, String name, String imagepath,
                         String description, String outdate, String otc,
                         String barcode, String usage, String company,
                         String yu ,String elabel) {
@@ -1298,11 +1293,11 @@ public class MainAbilitySlice extends AbilitySlice {
         try {
             if (databaseHelper.update(Uri.parse(BASE_URI + DATA_PATH), valuesBucket, predicates) != -1) {
                 HiLog.info(LABEL_LOG, "update successful");
-                ToastUtil.showToast(this,"修改成功  ");
+                ToastUtil.showToast(cont,"修改成功  ");
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
-            ToastUtil.showToast(this,"修改失败，请重试  ");
+            ToastUtil.showToast(cont,"修改失败，请重试  ");
         }
     }
     //删除

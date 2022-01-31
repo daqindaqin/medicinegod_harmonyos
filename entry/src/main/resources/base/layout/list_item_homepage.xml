@@ -16,12 +16,11 @@
         <Text
             ohos:id="$+id:text_name"
             ohos:height="match_content"
-            ohos:width="match_content"
+            ohos:width="210vp"
             ohos:text="一二三四五六七八九十胶囊"
             ohos:text_size="24fp"
             ohos:text_color="$color:black_clear"
             ohos:text_weight="700"
-            ohos:max_width="200vp"
             ohos:start_margin="10vp"
             ohos:end_margin="8vp"
             ohos:top_margin="10vp"
@@ -33,7 +32,8 @@
             ohos:height="match_parent"
             ohos:width="match_parent"
             ohos:orientation="horizontal"
-            ohos:alignment="left|vertical_center">
+            ohos:alignment="right|vertical_center"
+            ohos:end_padding="15vp">
             <Text
                 ohos:id="$+id:text_otc"
                 ohos:height="match_content"

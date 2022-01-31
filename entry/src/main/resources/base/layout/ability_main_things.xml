@@ -59,9 +59,9 @@
                                     ohos:width="match_content"
                                     ohos:text_size="14fp"
                                     ohos:text_alignment="left|vertical_center"
-                                    ohos:text_color="$color:black_clear"
+                                    ohos:text_color="$color:red_clear"
                                     ohos:text_weight="500"
-                                    ohos:text="● 离线"
+                                    ohos:text="● 未启用云端"
                                     ohos:start_margin="5vp"/>
                         </DirectionalLayout>
                         <DirectionalLayout

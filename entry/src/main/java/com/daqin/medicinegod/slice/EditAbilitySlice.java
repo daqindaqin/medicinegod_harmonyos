@@ -3,24 +3,17 @@ package com.daqin.medicinegod.slice;
 import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.utils.util;
 import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.impl.FullScreenPopupView;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.OnInputConfirmListener;
 import com.lxj.xpopup.interfaces.OnSelectListener;
-import ohos.aafwk.ability.Ability;
+import ohos.aafwk.ability.AbilitySlice;
+import ohos.aafwk.content.Intent;
 import ohos.agp.components.*;
-import ohos.agp.components.element.ElementScatter;
-import ohos.app.Context;
 
-import java.lang.reflect.Array;
-import java.sql.PreparedStatement;
 import java.util.*;
 
-/**
- * Description: 自定义全屏弹窗
- * Create by lxj, at 2019/3/12
- */
-public class Popup_Edit extends FullScreenPopupView {
+
+public class EditAbilitySlice extends AbilitySlice {
     Text edit_back;
     Text edit_ok;
 
@@ -51,29 +44,21 @@ public class Popup_Edit extends FullScreenPopupView {
     Text edit_elabel_add2;
     Text edit_elabel_title;
     Map<String, Object> mgDdata;
-    String keyid;
+    String keyid, outdate_year, outdate_month, otc;
     List<String> elabel = new ArrayList<>();
     Text[] elabelview;
     TextField[] textFieldlist;
     int countElabel = 0;
     int newUsage_utils_1 = 0, newUsage_utils_3 = 0;
+    String[] usage;
 
-    public Popup_Edit(Context context) {
-        super(context, null);
-    }
 
-    @Override
-    protected int getImplLayoutId() {
-        return ResourceTable.Layout_popup_edit;
-    }
 
     public void iniView() {
         edit_back = (Text) findComponentById(ResourceTable.Id_dtl_edit_back);
         edit_ok = (Text) findComponentById(ResourceTable.Id_dtl_edit_editok);
         edit_img = (Image) findComponentById(ResourceTable.Id_dtl_edit_img);
-        edit_img.setCornerRadius(25);
         edit_name = (TextField) findComponentById(ResourceTable.Id_dtl_edit_name);
-        //TODO:完善这里
         edit_usage_total = (TextField) findComponentById(ResourceTable.Id_dtl_edit_newUsage_1);
         edit_usage_time = (TextField) findComponentById(ResourceTable.Id_dtl_edit_newUsage_2);
         edit_usage_day = (TextField) findComponentById(ResourceTable.Id_dtl_edit_newUsage_3);
@@ -99,16 +84,17 @@ public class Popup_Edit extends FullScreenPopupView {
         edit_elabel3 = (Text) findComponentById(ResourceTable.Id_dtl_edit_elabel3);
         edit_elabel4 = (Text) findComponentById(ResourceTable.Id_dtl_edit_elabel4);
         edit_elabel5 = (Text) findComponentById(ResourceTable.Id_dtl_edit_elabel5);
+
     }
 
     @Override
-    protected void onCreate() {
-        super.onCreate();
+    protected void onStart(Intent intent) {
+        super.onStart(intent);
+        super.setUIContent(ResourceTable.Layout_ability_main_edit);
         keyid = util.PreferenceUtils.getString(getContext(), "mglocalkey");
         mgDdata = MainAbilitySlice.querySingleData(keyid);
         if (keyid == null || keyid.equals("null") || mgDdata == null) {
             //当不存在ID和KEY时打开了屏幕则关闭屏幕并展示弹窗信息
-            dismiss();
             new XPopup.Builder(getContext())
                     //.setPopupCallback(new XPopupListener())
                     .dismissOnTouchOutside(true)
@@ -122,16 +108,20 @@ public class Popup_Edit extends FullScreenPopupView {
                                 }
                             }, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
                     .show(); // 最后一个参数绑定已有布局
+            terminate();
         }
         iniView();
         intclicklistener();
         iniCalendarPicker();
+
+
         textFieldlist = new TextField[]{edit_name, edit_desp, edit_usage_total, edit_usage_time, edit_usage_day, edit_company, edit_yu, edit_barcode};
+        edit_img.setCornerRadius(25);
 
         edit_name.setHint((String) mgDdata.get("name"));
         edit_desp.setHint((String) mgDdata.get("description"));
         edit_barcode.setHint((String) mgDdata.get("barcode"));
-        String[] usage = ((String) mgDdata.get("usage")).split("-");
+        usage = ((String) mgDdata.get("usage")).split("-");
         edit_usage_total.setHint(usage[0]);
         edit_usage_u1.setText(usage[1]);
         edit_usage_time.setHint(usage[2]);
@@ -147,29 +137,95 @@ public class Popup_Edit extends FullScreenPopupView {
         //刷新标签显示
         refreshElabel();
         System.out.println("数组" + elabel);
-
     }
+
+
 
     private void intclicklistener() {
         edit_ok.setClickedListener(component -> {
 
+            //TODO:加入图片的修改
+            String text = "";
+            String name;
+            String desp;
+            String outdate;
+            String otctmp;
+            String barcode;
+            String usag1;
+            String usag2;
+            String usag3;
+            String yu;
+            String company;
+            String imgpath = "";
+            StringBuilder label = new StringBuilder();
+            text = (edit_name.length() == 0 || edit_name.getText().equals(edit_name.getHint()) ? (edit_name.getHint().substring(0, 4) + "...    =>    -\n") : (edit_name.getHint().substring(0, 4) + "    =>    " + edit_name.getText().substring(0, 4) + "...\n"));
+            text = text + (edit_desp.length() == 0 || edit_desp.getText().equals(edit_desp.getHint()) ? (edit_desp.getHint().substring(0, 4) + "...     =>     -  \n") : (edit_desp.getHint().substring(0, 4) + "...     =>     " + edit_desp.getText().substring(0, 4) + "..." + "\n"));
+            text = text + ((edit_outdate_year.getDisplayedData()[edit_outdate_year.getValue()].equals(outdate_year)) && (edit_outdate_month.getDisplayedData()[edit_outdate_month.getValue()].equals(outdate_month))
+                    ? (outdate_year + outdate_month + "     =>     -  \n")
+                    : (outdate_year + outdate_month + "     =>     " + edit_outdate_year.getDisplayedData()[edit_outdate_year.getValue()] + edit_outdate_month.getDisplayedData()[edit_outdate_month.getValue()] + "\n"));
+            switch (otc) {
+                case "none":
+//                    "OTC(非处方药)-红", "OTC(非处方药)-绿", "(留空)", "RX(处方药)"
+                    text = text + (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("(留空)") ? ("    -    =>    -    \n") : "(留空)    =>     " + edit_otc.getDisplayedData()[edit_otc.getValue()] + "   \n");
+                    break;
+                case "OTC-G":
+                    text = text + (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-绿") ? (" OTC(绿)    =>     -   \n") : "OTC(绿)    =>     " + edit_otc.getDisplayedData()[edit_otc.getValue()] + "   \n");
+                    break;
+                case "OTC-R":
+                    text = text + (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-红") ? (" OTC(红)    =>     -   \n") : "OTC(红)    =>     " + edit_otc.getDisplayedData()[edit_otc.getValue()] + "   \n");
+                    break;
+                case "Rx":
+                    text = text + (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("RX(处方药)") ? (" Rx    =>     -   \n") : "Rx    =>     " + edit_otc.getDisplayedData()[edit_otc.getValue()] + "   \n");
+                    break;
+            }
+            text = text + (edit_barcode.length() == 0 || edit_barcode.getText().equals(edit_barcode.getHint()) ? (edit_barcode.getHint().substring(0, 4) + "...     =>     -  \n") : (edit_barcode.getHint().substring(0, 4) + "...     =>     " + edit_barcode.getText().substring(0, 4) + "..." + "\n"));
+            text = text + usage[0] + usage[1] + usage[2] + usage[3] + usage[4] + usage[5] + "  =>  " + edit_usage_total.getText() + edit_usage_u1.getText() + edit_usage_time.getText() + edit_usage_u2.getText() + edit_usage_day.getText() + edit_usage_u3.getText() + "\n";
+            text = text + (edit_yu.length() == 0 || edit_yu.getText().equals(edit_yu.getHint()) ?  edit_yu.getHint() + usage[1] + "   =>     -\n" : edit_yu.getHint() + usage[1] + "     =>    " + edit_yu.getText() + edit_usage_u1.getText() + "\n");
+            text = text + (edit_company.length() == 0 || edit_company.getText().equals(edit_company.getHint()) ? edit_company.getHint().substring(0,4) + "...     =>     -\n" : edit_company.getHint().substring(0,4) + "...     =>     " + edit_company.getText().substring(0,4) + "...\n");
 
-            //TODO:更改完后点这里提交
 
-            String text="";
-            text = (edit_name.length() == 0 ? (edit_name.getHint().substring(0,4) + "...     =>     -  \n") : (edit_name.getHint().substring(0,4) + "     =>     " + edit_name.getText().substring(0,4)+"...\n"));
-            text = text + (edit_desp.length() == 0 ? (edit_desp.getHint().substring(0,4) + "...     =>     -  \n") : (edit_desp.getHint().substring(0,4) + "...     =>     " + edit_desp.getText().substring(0,4)+"..."+"\n"));
+            name = (edit_name.length() == 0 || edit_name.getText().equals(edit_name.getHint()) ? edit_name.getHint(): edit_name.getText().trim());
+            desp =  (edit_desp.length() == 0 || edit_desp.getText().equals(edit_desp.getHint()) ? edit_desp.getHint(): edit_desp.getText().trim());
+            outdate =
+            otctmp = (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("(留空)")?"none":edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-绿")?"OTC-G":edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-红")?"OTC-R":"Rx");
+            barcode = (edit_name.length() == 0 || edit_name.getText().equals(edit_name.getHint()))?edit_barcode.getHint():edit_barcode.getText().trim();
+            usag1 = (edit_usage_total.length()==0||edit_usage_total.getText().equals(edit_usage_total.getHint())?edit_usage_total.getHint():edit_usage_total.getText().trim());
+            usag2 = (edit_usage_time.length()==0||edit_usage_time.getText().equals(edit_usage_time.getHint())?edit_usage_time.getHint():edit_usage_time.getText().trim());
+            usag3 = (edit_usage_day.length()==0||edit_usage_day.getText().equals(edit_usage_day.getHint())?edit_usage_day.getHint():edit_usage_day.getText().trim());
+            yu = (edit_yu.length()==0||edit_yu.getText().equals(edit_yu.getHint())?edit_yu.getHint():edit_yu.getText().trim());
+            company = (edit_company.length()==0||edit_company.getText().equals(edit_company.getHint())?edit_company.getHint():edit_company.getText().trim());
 
-            new XPopup.Builder(getContext())
-                    //.setPopupCallback(new XPopupListener())
-                    .dismissOnTouchOutside(false)
-                    .dismissOnBackPressed(false)
-                    .isDestroyOnDismiss(true)
-                    .asConfirm("更改确认", "        您本地做出了以下更改，请您再次确认：\n\n     类型   =>   更改后内容\n" + text,
-                            "返回", "确认修改", null, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_blueconfirm)
-                    .show(); // 最后一个参数绑定已有布局
+            for(String s : elabel){
+                label.append(s).append("@@");
+            }
+            label.substring(0,label.length()-2);
+                new XPopup.Builder(getContext())
+                        //.setPopupCallback(new XPopupListener())
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .asConfirm("更改确认", "        您本地做出了以下更改，请您再次确认：\n\n更改前内容   =>   更改后内容\n" + text,
+                                "返回", "确认修改", new OnConfirmListener() {
+                                    @Override
+                                    public void onConfirm() {
+                                        MainAbilitySlice.update(keyid,name,
+                                                imgpath,
+                                                desp,
+                                                outdate,
+                                                otctmp,
+                                                barcode,
+                                                usag1+"-"+edit_usage_u1.getText()+"-"+usag2+"-"+edit_usage_u2.getText()+"-"+usag3+"-"+edit_usage_u3,
+                                                company,
+                                                yu,
+                                                label.toString()
+                                                );
+                                        terminate();
+                                    }
+                                }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_blueconfirm)
+                        .show(); // 最后一个参数绑定已有布局
+
         });
-        edit_back.setClickedListener(component -> dismiss());
+        edit_back.setClickedListener(component -> terminate());
         edit_elabel_add1.setClickedListener(component -> {
             new XPopup.Builder(getContext())
                     .hasStatusBarShadow(true)
@@ -312,8 +368,8 @@ public class Popup_Edit extends FullScreenPopupView {
                     .asConfirm("数量受限", "已达到标签最大数量(5)",
                             " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
                     .show(); // 最后一个参数绑定已有布局
-            edit_elabel_add1.setVisibility(HIDE);
-            edit_elabel_add2.setVisibility(HIDE);
+            edit_elabel_add1.setVisibility(Component.HIDE);
+            edit_elabel_add2.setVisibility(Component.HIDE);
         } else if (elabel.contains(text.trim())) {
             new XPopup.Builder(getContext())
                     //.setPopupCallback(new XPopupListener())
@@ -421,7 +477,7 @@ public class Popup_Edit extends FullScreenPopupView {
         //小于5则补足5，大于5则删除至5
         for (Text t : elabelview) {
             t.setText("测试标签");
-            t.setVisibility(HIDE);
+            t.setVisibility(Component.HIDE);
         }
         if (elabel.size() < 5) {
             for (int i = 0; i < 5 - elabel.size(); i++) {
@@ -464,7 +520,7 @@ public class Popup_Edit extends FullScreenPopupView {
         //设置显示
         for (int i = 0; i < elabel.size(); i++) {
             if (!elabel.get(i).equals("测试标签")) {
-                elabelview[i].setVisibility(VISIBLE);
+                elabelview[i].setVisibility(Component.VISIBLE);
                 elabelview[i].setText(elabel.get(i));
                 countElabel++;
             }
@@ -472,14 +528,14 @@ public class Popup_Edit extends FullScreenPopupView {
         edit_elabel_title.setText("药品标签(" + countElabel + "/5)");
         //设置添加按钮的显示
         if (countElabel < 3) {
-            edit_elabel_add1.setVisibility(VISIBLE);
-            edit_elabel_add2.setVisibility(HIDE);
+            edit_elabel_add1.setVisibility(Component.VISIBLE);
+            edit_elabel_add2.setVisibility(Component.HIDE);
         } else if (countElabel == 3 || countElabel == 4) {
-            edit_elabel_add1.setVisibility(HIDE);
-            edit_elabel_add2.setVisibility(VISIBLE);
+            edit_elabel_add1.setVisibility(Component.HIDE);
+            edit_elabel_add2.setVisibility(Component.HIDE);
         } else if (countElabel == 5) {
-            edit_elabel_add1.setVisibility(HIDE);
-            edit_elabel_add2.setVisibility(HIDE);
+            edit_elabel_add1.setVisibility(Component.HIDE);
+            edit_elabel_add2.setVisibility(Component.HIDE);
         }
         System.out.println("数组" + elabel);
 
@@ -488,9 +544,11 @@ public class Popup_Edit extends FullScreenPopupView {
     //定义选择器
     private void iniCalendarPicker() {
         String[] dateAll = ((String) mgDdata.get("outdate")).split("-");
-        String year, month, otc;
+        String year, month;
         year = dateAll[0];
         month = dateAll[1];
+        outdate_month = month;
+        outdate_year = year;
         int value = 0;
         Calendar cal = Calendar.getInstance();
         List<String> yearList = new ArrayList<>();

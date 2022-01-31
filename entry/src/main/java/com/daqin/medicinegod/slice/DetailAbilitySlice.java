@@ -10,6 +10,7 @@ import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.lxj.xpopup.util.ToastUtil;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.content.Intent;
+import ohos.aafwk.content.Operation;
 import ohos.agp.components.Component;
 import ohos.agp.components.Image;
 import ohos.agp.components.Text;
@@ -28,7 +29,7 @@ public class DetailAbilitySlice extends AbilitySlice {
     private Map<String,Object> mdc_SingleData;
     private String localKEY = null;
     private String[] textUagesAll;
-
+    private int RESULTCODE_STARTEDIT = 300;
 
     Text mdc_name ;
     Text mdc_desp ;
@@ -55,86 +56,7 @@ public class DetailAbilitySlice extends AbilitySlice {
     protected void onStop() {
         super.onStop();
     }
-
-    @Override
-    protected void onStart(Intent intent) {
-        super.onStart(intent);
-        super.setUIContent(ResourceTable.Layout_ability_main_detail);
-
-        mdc_img = (Image)findComponentById(ResourceTable.Id_dtl_mdc_img);
-        mdc_img.setCornerRadius(25);
-        mdc_img_barcode = (Image)findComponentById(ResourceTable.Id_dtl_mdc_barcode_img);
-        mdc_name = (Text) findComponentById(ResourceTable.Id_dtl_mdc_name);
-        mdc_desp = (Text) findComponentById(ResourceTable.Id_dtl_mdc_desp);
-        mdc_outdate = (Text) findComponentById(ResourceTable.Id_dtl_mdc_outdate);
-        mdc_outdate_day = (Text) findComponentById(ResourceTable.Id_dtl_mdc_outdate_day);
-        mdc_otc = (Text) findComponentById(ResourceTable.Id_dtl_mdc_otc);
-        mdc_barcode = (Text) findComponentById(ResourceTable.Id_dtl_mdc_barcode);
-        mdc_usage = (Text) findComponentById(ResourceTable.Id_dtl_mdc_usage);
-        mdc_yu = (Text) findComponentById(ResourceTable.Id_dtl_mdc_yu);
-        mdc_company = (Text) findComponentById(ResourceTable.Id_dtl_mdc_company);
-        mdc_elabel1 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel1);
-        mdc_elabel2 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel2);
-        mdc_elabel3 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel3);
-        mdc_elabel4 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel4);
-        mdc_elabel5 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel5);
-
-
-
-        mdc_back = (Text) findComponentById(ResourceTable.Id_dtl_mdc_back);
-        mdc_back.setClickedListener(l-> {
-            Intent intentback = new Intent();
-            intentback.setParam("confirmDelete",new String[]{"chancel",null});
-            getAbility().setResult(200,intentback);
-            terminate();
-        });
-        mdc_more = (Text) findComponentById(ResourceTable.Id_dtl_mdc_more);
-        mdc_more.setClickedListener(l->{
-            new XPopup.Builder(getContext())
-                    .hasShadowBg(true)
-                    .isDestroyOnDismiss(true) // 对于只使用一次的弹窗，推荐设置这个
-                    .atView(mdc_more)  // 依附于所点击的Commonent，内部会自动判断在上方或者下方显示
-                    .isComponentMode(true, mdc_more) // Component实现模式
-                    .asAttachList(new String[]{"  使 用  ","  编 辑  ","  分 享  ", "  复 制  ", "  删 除  "},
-                            new int[]{ResourceTable.Media_dtl_mdc_use,
-                                    ResourceTable.Media_dtl_mdc_edit,
-                                    ResourceTable.Media_dtl_mdc_share,
-                                    ResourceTable.Media_dtl_mdc_copy,
-                                    ResourceTable.Media_dtl_mdc_delete},
-                            new OnSelectListener() {
-                                @Override
-                                public void onSelect(int position, String text) {
-                                    popupClick(position);
-                                }
-                            }, 0, 0).show();
-        });
-
-
-
-
-
-        localKEY = util.PreferenceUtils.getString(getContext(), "mglocalkey");
-        mdc_SingleData = MainAbilitySlice.querySingleData(localKEY);
-        if (localKEY == null || localKEY.equals("null") || mdc_SingleData == null ) {
-            //当不存在ID和KEY时打开了屏幕则关闭屏幕并展示弹窗信息
-            DetailAbilitySlice.super.terminate();
-            new XPopup.Builder(getContext())
-                    //.setPopupCallback(new XPopupListener())
-                    .dismissOnTouchOutside(true)
-                    .dismissOnBackPressed(true)
-                    .isDestroyOnDismiss(true)
-                    .asConfirm("错误", "药品信息不存在！或是内部发生错误！",
-                            "", "好的",
-                            new OnConfirmListener() {
-                                @Override
-                                public void onConfirm() {
-                                }
-                            }, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
-                    .show(); // 最后一个参数绑定已有布局
-        }
-
-
-        System.out.println("DADADAD" +  mdc_SingleData);
+    public void iniContext(){
         mdc_name.setText((String) mdc_SingleData.get("name"));
         mdc_desp.setText("        "+(String) mdc_SingleData.get("description"));
 
@@ -258,6 +180,85 @@ public class DetailAbilitySlice extends AbilitySlice {
                 + "或再使用预计"+(yuall/yuus)+"次后购买新药品。");
 
 
+    };
+    @Override
+    protected void onStart(Intent intent) {
+        super.onStart(intent);
+        super.setUIContent(ResourceTable.Layout_ability_main_detail);
+
+        mdc_img = (Image)findComponentById(ResourceTable.Id_dtl_mdc_img);
+        mdc_img.setCornerRadius(25);
+        mdc_img_barcode = (Image)findComponentById(ResourceTable.Id_dtl_mdc_barcode_img);
+        mdc_name = (Text) findComponentById(ResourceTable.Id_dtl_mdc_name);
+        mdc_desp = (Text) findComponentById(ResourceTable.Id_dtl_mdc_desp);
+        mdc_outdate = (Text) findComponentById(ResourceTable.Id_dtl_mdc_outdate);
+        mdc_outdate_day = (Text) findComponentById(ResourceTable.Id_dtl_mdc_outdate_day);
+        mdc_otc = (Text) findComponentById(ResourceTable.Id_dtl_mdc_otc);
+        mdc_barcode = (Text) findComponentById(ResourceTable.Id_dtl_mdc_barcode);
+        mdc_usage = (Text) findComponentById(ResourceTable.Id_dtl_mdc_usage);
+        mdc_yu = (Text) findComponentById(ResourceTable.Id_dtl_mdc_yu);
+        mdc_company = (Text) findComponentById(ResourceTable.Id_dtl_mdc_company);
+        mdc_elabel1 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel1);
+        mdc_elabel2 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel2);
+        mdc_elabel3 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel3);
+        mdc_elabel4 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel4);
+        mdc_elabel5 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel5);
+
+
+
+        mdc_back = (Text) findComponentById(ResourceTable.Id_dtl_mdc_back);
+        mdc_back.setClickedListener(l-> {
+            Intent intentback = new Intent();
+            intentback.setParam("confirmDelete",new String[]{"chancel",null});
+            getAbility().setResult(200,intentback);
+            terminate();
+        });
+        mdc_more = (Text) findComponentById(ResourceTable.Id_dtl_mdc_more);
+        mdc_more.setClickedListener(l->{
+            new XPopup.Builder(getContext())
+                    .hasShadowBg(true)
+                    .isDestroyOnDismiss(true) // 对于只使用一次的弹窗，推荐设置这个
+                    .atView(mdc_more)  // 依附于所点击的Commonent，内部会自动判断在上方或者下方显示
+                    .isComponentMode(true, mdc_more) // Component实现模式
+                    .asAttachList(new String[]{"  使 用  ","  编 辑  ","  分 享  ", "  复 制  ", "  删 除  "},
+                            new int[]{ResourceTable.Media_dtl_mdc_use,
+                                    ResourceTable.Media_dtl_mdc_edit,
+                                    ResourceTable.Media_dtl_mdc_share,
+                                    ResourceTable.Media_dtl_mdc_copy,
+                                    ResourceTable.Media_dtl_mdc_delete},
+                            new OnSelectListener() {
+                                @Override
+                                public void onSelect(int position, String text) {
+                                    popupClick(position);
+                                }
+                            }, 0, 0).show();
+        });
+
+
+
+
+
+        localKEY = util.PreferenceUtils.getString(getContext(), "mglocalkey");
+        mdc_SingleData = MainAbilitySlice.querySingleData(localKEY);
+        if (localKEY == null || localKEY.equals("null") || mdc_SingleData == null ) {
+            //当不存在ID和KEY时打开了屏幕则关闭屏幕并展示弹窗信息
+            DetailAbilitySlice.super.terminate();
+            new XPopup.Builder(getContext())
+                    //.setPopupCallback(new XPopupListener())
+                    .dismissOnTouchOutside(true)
+                    .dismissOnBackPressed(true)
+                    .isDestroyOnDismiss(true)
+                    .asConfirm("错误", "药品信息不存在！或是内部发生错误！",
+                            "", "好的",
+                            new OnConfirmListener() {
+                                @Override
+                                public void onConfirm() {
+                                }
+                            }, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                    .show(); // 最后一个参数绑定已有布局
+        }
+        iniContext();
+
     }
 
 
@@ -275,14 +276,15 @@ public class DetailAbilitySlice extends AbilitySlice {
                 break;
             case 1:
                 //弹出弹框编辑后再返回
-                new XPopup.Builder(getContext())
-                        .hasStatusBarShadow(true)
-                        .autoOpenSoftInput(false)
-                        .isDestroyOnDismiss(true)
-                        .dismissOnBackPressed(true)
-                        .setComponent(mdc_more) // 用于获取页面根容器，监听页面高度变化，解决输入法盖住弹窗的问题
-                        .asCustom(new Popup_Edit(getContext()))
-                        .show();
+                Intent intentEdit = new Intent();
+                Operation operation = new Intent.OperationBuilder()
+                        .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                        .withBundleName(getBundleName())    // 包名
+                        .withAbilityName("com.daqin.medicinegod.EditAbility")
+                        // Ability页面的名称，在本地可以缺省前面的路径
+                        .build();    // 构建代码
+                intentEdit.setOperation(operation);    // 将operation存入到intent中
+                startAbility(intentEdit);    // 实现Ability跳转
                 break;
             case 2:
                 //分享
@@ -329,6 +331,14 @@ public class DetailAbilitySlice extends AbilitySlice {
             });
         });
     }
+
+    @Override
+    protected void onActive() {
+        super.onActive();
+
+    }
+
+
 
     @Override
     protected void onBackPressed() {
