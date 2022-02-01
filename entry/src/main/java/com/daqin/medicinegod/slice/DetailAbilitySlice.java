@@ -5,6 +5,7 @@ import com.bingoogolapple.qrcode.zxing.QRCodeEncoder;
 import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.utils.util;
 import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.interfaces.OnCancelListener;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.lxj.xpopup.util.ToastUtil;
@@ -30,7 +31,7 @@ public class DetailAbilitySlice extends AbilitySlice {
     private String localKEY = null;
     private String[] textUagesAll;
     private int RESULTCODE_STARTEDIT = 300;
-
+    private boolean isEdit = false;
     Text mdc_name ;
     Text mdc_desp ;
     Text mdc_outdate ;
@@ -60,7 +61,6 @@ public class DetailAbilitySlice extends AbilitySlice {
         mdc_name.setText((String) mdc_SingleData.get("name"));
         mdc_desp.setText("        "+(String) mdc_SingleData.get("description"));
 
-
         String[] tmplist = mdc_SingleData.get("elabel").toString().split("@@");
         String[] otclist = new String[]{"","","","",""};
         String s = "";
@@ -80,33 +80,36 @@ public class DetailAbilitySlice extends AbilitySlice {
         //过期提醒
         //XXXX年X月
         Calendar cl = Calendar.getInstance();
-        cl.setTimeZone(TimeZone.getTimeZone("GMT-8:00"));
         String[] outdateAll =  ((String)mdc_SingleData.get("outdate")).split("-");
+        String res_text;
         int outyear,outmonth,res_out;
         int[] res_date;
         outyear = Integer.parseInt(outdateAll[0].replace("年",""));
         outmonth = Integer.parseInt(outdateAll[1].replace("月",""));
-        String timeA,timeB,res_text = "";
-        //timeA  2020-1 药品的时间
+        //timeA  2020-1 过期的时间
         //timeB  2022-1 现在的时间
-        timeA = outyear + "-" + outmonth + "-1";
-        timeB = cl.get(Calendar.YEAR) + "-" + (cl.get(Calendar.MONTH)+1) + "-"+cl.get(Calendar.DAY_OF_MONTH);
-        res_out = util.isTimeOut(timeA,timeB);//返回是否过期
+        String timeA = outyear + "-" + outmonth + "-1";
+        String timeB = cl.get(Calendar.YEAR) + "-" + (cl.get(Calendar.MONTH)+1)+ "-1";
+
+        res_out = util.isTimeOut(timeA,timeB);
+
         switch (res_out){
             case -1:
-                mdc_outdate.setText("[药品过期]"+"\n"+"禁止服用 请妥善处理。" );
+                mdc_outdate.setText("[药品过期]"+"\n"+"禁止服用 请妥善处理。");
                 mdc_outdate.setTextColor(new Color(Color.rgb(255,67,54)));
                 break;
             case 0:
-                mdc_outdate.setText("[即将过期]"+"\n"+"请提前准备新的药品。" );
+                mdc_outdate.setText("[即将过期]"+"\n"+"请提前准备新的药品。");
                 mdc_outdate.setTextColor(new Color(Color.rgb(255,152,0)));
                 break;
             case 1:
-                mdc_outdate.setText("[正常使用]"+"\n"+"请遵医嘱、说明书使用。" );
+                mdc_outdate.setText("[正常使用]"+"\n"+"请遵医嘱、说明书使用。");
                 mdc_outdate.setTextColor(new Color(Color.rgb(76,175,80)));
                 break;
         }
+
         res_date = util.getRemainTime(timeA,timeB);//返回包含结束日期的数组（年月天时分秒）
+        System.out.println(res_out+"输出了"+timeA+"-"+timeB+"-"+ Arrays.toString(res_date));
 //        System.out.println(res_date[0]+" "+res_date[1]+" "+res_date[2]+" "+res_date[3]+" "+res_date[4]+" "+res_date[5]);
         res_text = "药品将于" + ((res_date[0]==0)?"":res_date[0]+"年");
         res_text = res_text + ((res_date[1]==0)?"":res_date[1]+"月");
@@ -115,7 +118,9 @@ public class DetailAbilitySlice extends AbilitySlice {
 //        res_text = res_text + ((res_date[4]==0)?"":res_date[4]+"分");
 //        res_text = res_text + ((res_date[5]==0)?"":res_date[5]+"秒");
 //        System.out.println(res_text);
-        if (res_text.equals("药品将于后过期")){
+        if (Arrays.toString(res_date).equals("[0, 0, 0, 0, 0, 0]")){
+            res_text = "请注意：药品已过期！！！";
+        } else if (res_text.equals("药品将于后过期")){
             //数组出错就不管了
             res_text = "";
         }
@@ -208,6 +213,10 @@ public class DetailAbilitySlice extends AbilitySlice {
 
         mdc_back = (Text) findComponentById(ResourceTable.Id_dtl_mdc_back);
         mdc_back.setClickedListener(l-> {
+            //editok属性包括{ ok (修改完成), done (修改确认反馈) , none(无) }
+            if (isEdit){
+                util.PreferenceUtils.putString(getContext(),"editok","done");
+            }
             Intent intentback = new Intent();
             intentback.setParam("confirmDelete",new String[]{"chancel",null});
             getAbility().setResult(200,intentback);
@@ -242,21 +251,34 @@ public class DetailAbilitySlice extends AbilitySlice {
         mdc_SingleData = MainAbilitySlice.querySingleData(localKEY);
         if (localKEY == null || localKEY.equals("null") || mdc_SingleData == null ) {
             //当不存在ID和KEY时打开了屏幕则关闭屏幕并展示弹窗信息
-            DetailAbilitySlice.super.terminate();
+            //editok属性包括{ ok (修改完成), done (修改确认反馈) , none(无) }
+            if (isEdit){
+                util.PreferenceUtils.putString(getContext(),"editok","done");
+            }
+            Intent intentback = new Intent();
+            intentback.setParam("confirmDelete",new String[]{"chancel",null});
+            getAbility().setResult(200,intentback);
             new XPopup.Builder(getContext())
                     //.setPopupCallback(new XPopupListener())
-                    .dismissOnTouchOutside(true)
-                    .dismissOnBackPressed(true)
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
                     .isDestroyOnDismiss(true)
                     .asConfirm("错误", "药品信息不存在！或是内部发生错误！",
                             "", "好的",
                             new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
+                                    terminate();
                                 }
-                            }, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                            }, new OnCancelListener() {
+                                @Override
+                                public void onCancel() {
+                                    terminate();
+                                }
+                            }, false, ResourceTable.Layout_popup_comfrim_without_cancel)
                     .show(); // 最后一个参数绑定已有布局
         }
+
         iniContext();
 
     }
@@ -335,7 +357,16 @@ public class DetailAbilitySlice extends AbilitySlice {
     @Override
     protected void onActive() {
         super.onActive();
+        //editok属性包括{ ok (修改完成), done (修改确认反馈) , none(无) }
+        String editok = util.PreferenceUtils.getString(getContext(),"editok");
+        if (editok.equals("ok")){
+            isEdit = true;
+            util.PreferenceUtils.putString(getContext(),"editok","none");
+            mdc_SingleData = MainAbilitySlice.querySingleData(localKEY);
+            iniContext();
 
+
+        }
     }
 
 
@@ -343,6 +374,10 @@ public class DetailAbilitySlice extends AbilitySlice {
     @Override
     protected void onBackPressed() {
         super.onBackPressed();
+        //editok属性包括{ ok (修改完成), done (修改确认反馈) , none(无) }
+        if (isEdit){
+            util.PreferenceUtils.putString(getContext(),"editok","done");
+        }
         Intent intentback = new Intent();
         intentback.setParam("confirmDelete",new String[]{"chancel",null});
         getAbility().setResult(200,intentback);

@@ -38,7 +38,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-//TODO：图片处理、otc为空的判断、变量整理
+//TODO：图片处理、otc为空的判断、update数据库
 public class MainAbilitySlice extends AbilitySlice {
     public static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;   //自定义的一个权限请求识别码，用于处理权限回调
     private static DataAbilityHelper databaseHelper;
@@ -491,6 +491,7 @@ public class MainAbilitySlice extends AbilitySlice {
             highKey = "";
         }
         cont = getContext();
+        util.PreferenceUtils.putString(getContext(),"editok","none");
         query();
         intPageStart();
         initHomepageListContainer();
@@ -834,7 +835,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
             //单击打开详情弹窗
             util.PreferenceUtils.putString(this,"mglocalkey", res.getOrDefault("keyid","null").toString());
-
+            System.out.println("输出"+res.getOrDefault("keyid","null").toString());
             Intent intentDetail = new Intent();
             Operation operation = new Intent.OperationBuilder()
                     .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
@@ -919,6 +920,10 @@ public class MainAbilitySlice extends AbilitySlice {
     @Override
     public void onActive() {
         super.onActive();
+        String editdone = util.PreferenceUtils.getString(getContext(),"editok");
+        if (editdone.equals("done")){
+            initHomepageListContainer();
+        }
     }
 
     @Override
@@ -996,6 +1001,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 break;
             case RESULTCODE_STARTDETAIL:
                 String[] confrimDelete = data.getStringArrayParam("confirmDelete");
+                if (confrimDelete != null){
                 //确认就删除
                 //confrimDelete = { "chancel" , null } 无操作
                 //confrimDelete = { "confirm" , keyid } 删除此条key指向的药品
@@ -1061,7 +1067,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     } catch (DataAbilityRemoteException e) {
                         e.printStackTrace();
                     }
-                }
+                }}
 
                 break;
             default:
@@ -1278,8 +1284,6 @@ public class MainAbilitySlice extends AbilitySlice {
         DataAbilityPredicates predicates = new DataAbilityPredicates();
         predicates.equalTo(DB_COLUMN_KEYID, keyid);
         ValuesBucket valuesBucket = new ValuesBucket();
-        valuesBucket.putString(DB_COLUMN_KEYID, keyid);
-        valuesBucket.putString(DB_COLUMN_NAME, name);
         valuesBucket.putString(DB_COLUMN_NAME, name);
         valuesBucket.putString(DB_COLUMN_IMAGEPATH, imagepath);
         valuesBucket.putString(DB_COLUMN_DESCRIPTION, description);

@@ -53,7 +53,6 @@ public class EditAbilitySlice extends AbilitySlice {
     String[] usage;
 
 
-
     public void iniView() {
         edit_back = (Text) findComponentById(ResourceTable.Id_dtl_edit_back);
         edit_ok = (Text) findComponentById(ResourceTable.Id_dtl_edit_editok);
@@ -132,97 +131,82 @@ public class EditAbilitySlice extends AbilitySlice {
         edit_company.setHint((String) mgDdata.get("company"));
         elabel.addAll(Arrays.asList(mgDdata.get("elabel").toString().split("@@")));
         countElabel = elabel.size();
-        System.out.println("数组" + elabel);
         elabelview = new Text[]{edit_elabel1, edit_elabel2, edit_elabel3, edit_elabel4, edit_elabel5};
         //刷新标签显示
         refreshElabel();
-        System.out.println("数组" + elabel);
     }
-
 
 
     private void intclicklistener() {
         edit_ok.setClickedListener(component -> {
 
             //TODO:加入图片的修改
-            String text = "";
-            String name;
-            String desp;
-            String outdate;
-            String otctmp;
-            String barcode;
-            String usag1;
-            String usag2;
-            String usag3;
-            String yu;
-            String company;
-            String imgpath = "";
+            String name, desp, outdate, otctmp, barcodetmp = "", usageall, usa1, usa2, usa3, yu, company, imgpath = "";
             StringBuilder label = new StringBuilder();
-            text = (edit_name.length() == 0 || edit_name.getText().equals(edit_name.getHint()) ? (edit_name.getHint().substring(0, 4) + "...    =>    -\n") : (edit_name.getHint().substring(0, 4) + "    =>    " + edit_name.getText().substring(0, 4) + "...\n"));
-            text = text + (edit_desp.length() == 0 || edit_desp.getText().equals(edit_desp.getHint()) ? (edit_desp.getHint().substring(0, 4) + "...     =>     -  \n") : (edit_desp.getHint().substring(0, 4) + "...     =>     " + edit_desp.getText().substring(0, 4) + "..." + "\n"));
-            text = text + ((edit_outdate_year.getDisplayedData()[edit_outdate_year.getValue()].equals(outdate_year)) && (edit_outdate_month.getDisplayedData()[edit_outdate_month.getValue()].equals(outdate_month))
-                    ? (outdate_year + outdate_month + "     =>     -  \n")
-                    : (outdate_year + outdate_month + "     =>     " + edit_outdate_year.getDisplayedData()[edit_outdate_year.getValue()] + edit_outdate_month.getDisplayedData()[edit_outdate_month.getValue()] + "\n"));
-            switch (otc) {
-                case "none":
-//                    "OTC(非处方药)-红", "OTC(非处方药)-绿", "(留空)", "RX(处方药)"
-                    text = text + (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("(留空)") ? ("    -    =>    -    \n") : "(留空)    =>     " + edit_otc.getDisplayedData()[edit_otc.getValue()] + "   \n");
-                    break;
-                case "OTC-G":
-                    text = text + (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-绿") ? (" OTC(绿)    =>     -   \n") : "OTC(绿)    =>     " + edit_otc.getDisplayedData()[edit_otc.getValue()] + "   \n");
-                    break;
-                case "OTC-R":
-                    text = text + (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-红") ? (" OTC(红)    =>     -   \n") : "OTC(红)    =>     " + edit_otc.getDisplayedData()[edit_otc.getValue()] + "   \n");
-                    break;
-                case "Rx":
-                    text = text + (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("RX(处方药)") ? (" Rx    =>     -   \n") : "Rx    =>     " + edit_otc.getDisplayedData()[edit_otc.getValue()] + "   \n");
-                    break;
+            name = (edit_name.getText().length() == 0 || edit_name.getText().equals(" ") || edit_name.getText().equals(edit_name.getHint())) ? edit_name.getHint() : edit_name.getText();
+            desp = (edit_desp.getText().length() == 0 || edit_desp.getText().equals(" ") || edit_desp.getText().equals(edit_desp.getHint())) ? edit_desp.getHint() : edit_desp.getText();
+            outdate = edit_outdate_year.getDisplayedData()[edit_outdate_year.getValue()] + "-" + edit_outdate_month.getDisplayedData()[edit_outdate_month.getValue()];
+            otctmp = (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-绿") ? "OTC-G" : ((edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-红") ? "OTC-R" : (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("RX(处方药)") ? "Rx" : "none"))));
+
+            if (edit_barcode.getText().equals("") || edit_barcode.getText().equals(" ")) {
+                barcodetmp = edit_barcode.getHint();
+            } else {
+                if (edit_barcode.getText().length() == 13) {
+                    barcodetmp = edit_barcode.getText();
+                } else {
+                    new XPopup.Builder(getContext())
+                            //.setPopupCallback(new XPopupListener())
+                            .dismissOnTouchOutside(false)
+                            .dismissOnBackPressed(false)
+                            .isDestroyOnDismiss(true)
+                            .asConfirm("格式不正确", "条码格式不正确(13)",
+                                    " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                            .show(); // 最后一个参数绑定已有布局
+                }
+
             }
-            text = text + (edit_barcode.length() == 0 || edit_barcode.getText().equals(edit_barcode.getHint()) ? (edit_barcode.getHint().substring(0, 4) + "...     =>     -  \n") : (edit_barcode.getHint().substring(0, 4) + "...     =>     " + edit_barcode.getText().substring(0, 4) + "..." + "\n"));
-            text = text + usage[0] + usage[1] + usage[2] + usage[3] + usage[4] + usage[5] + "  =>  " + edit_usage_total.getText() + edit_usage_u1.getText() + edit_usage_time.getText() + edit_usage_u2.getText() + edit_usage_day.getText() + edit_usage_u3.getText() + "\n";
-            text = text + (edit_yu.length() == 0 || edit_yu.getText().equals(edit_yu.getHint()) ?  edit_yu.getHint() + usage[1] + "   =>     -\n" : edit_yu.getHint() + usage[1] + "     =>    " + edit_yu.getText() + edit_usage_u1.getText() + "\n");
-            text = text + (edit_company.length() == 0 || edit_company.getText().equals(edit_company.getHint()) ? edit_company.getHint().substring(0,4) + "...     =>     -\n" : edit_company.getHint().substring(0,4) + "...     =>     " + edit_company.getText().substring(0,4) + "...\n");
 
 
-            name = (edit_name.length() == 0 || edit_name.getText().equals(edit_name.getHint()) ? edit_name.getHint(): edit_name.getText().trim());
-            desp =  (edit_desp.length() == 0 || edit_desp.getText().equals(edit_desp.getHint()) ? edit_desp.getHint(): edit_desp.getText().trim());
-            outdate =
-            otctmp = (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("(留空)")?"none":edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-绿")?"OTC-G":edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-红")?"OTC-R":"Rx");
-            barcode = (edit_name.length() == 0 || edit_name.getText().equals(edit_name.getHint()))?edit_barcode.getHint():edit_barcode.getText().trim();
-            usag1 = (edit_usage_total.length()==0||edit_usage_total.getText().equals(edit_usage_total.getHint())?edit_usage_total.getHint():edit_usage_total.getText().trim());
-            usag2 = (edit_usage_time.length()==0||edit_usage_time.getText().equals(edit_usage_time.getHint())?edit_usage_time.getHint():edit_usage_time.getText().trim());
-            usag3 = (edit_usage_day.length()==0||edit_usage_day.getText().equals(edit_usage_day.getHint())?edit_usage_day.getHint():edit_usage_day.getText().trim());
-            yu = (edit_yu.length()==0||edit_yu.getText().equals(edit_yu.getHint())?edit_yu.getHint():edit_yu.getText().trim());
-            company = (edit_company.length()==0||edit_company.getText().equals(edit_company.getHint())?edit_company.getHint():edit_company.getText().trim());
-
-            for(String s : elabel){
+            usa1 = (edit_usage_total.getText().length() == 0 || edit_usage_total.getText().equals(" ") || edit_usage_total.getText().equals(edit_usage_total.getHint())) ? edit_usage_total.getHint() : edit_usage_total.getText();
+            usa2 = (edit_usage_time.getText().length() == 0 || edit_usage_time.getText().equals(" ") || edit_usage_time.getText().equals(edit_usage_time.getHint())) ? edit_usage_time.getHint() : edit_usage_time.getText();
+            usa3 = (edit_usage_day.getText().length() == 0 || edit_usage_day.getText().equals(" ") || edit_usage_day.getText().equals(edit_usage_day.getHint())) ? edit_usage_day.getHint() : edit_usage_day.getText();
+            usageall = usa1 + "-" + edit_usage_u1.getText() + "-" + usa2 + "-" + edit_usage_u2.getText() + "-" + usa3 + "-" + edit_usage_u3.getText();
+            yu = (edit_yu.getText().length() == 0 || edit_yu.getText().equals(" ") || edit_yu.getText().equals(edit_yu.getHint())) ? edit_yu.getHint() : edit_yu.getText();
+            company = (edit_company.getText().length() == 0 || edit_company.getText().equals(" ") || edit_company.getText().equals(edit_company.getHint())) ? edit_company.getHint() : edit_company.getText();
+            for (String s : elabel) {
                 label.append(s).append("@@");
             }
-            label.substring(0,label.length()-2);
-                new XPopup.Builder(getContext())
-                        //.setPopupCallback(new XPopupListener())
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
-                        .isDestroyOnDismiss(true)
-                        .asConfirm("更改确认", "        您本地做出了以下更改，请您再次确认：\n\n更改前内容   =>   更改后内容\n" + text,
-                                "返回", "确认修改", new OnConfirmListener() {
-                                    @Override
-                                    public void onConfirm() {
-                                        MainAbilitySlice.update(keyid,name,
-                                                imgpath,
-                                                desp,
-                                                outdate,
-                                                otctmp,
-                                                barcode,
-                                                usag1+"-"+edit_usage_u1.getText()+"-"+usag2+"-"+edit_usage_u2.getText()+"-"+usag3+"-"+edit_usage_u3,
-                                                company,
-                                                yu,
-                                                label.toString()
-                                                );
-                                        terminate();
-                                    }
-                                }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_blueconfirm)
-                        .show(); // 最后一个参数绑定已有布局
+
+            String finalBarcodetmp = barcodetmp;
+            System.out.println("输出了" + keyid + name + imgpath + desp + outdate + otctmp + finalBarcodetmp + usageall + company + yu + label.toString().substring(0, label.length() - 2));
+
+            new XPopup.Builder(getContext())
+                    //.setPopupCallback(new XPopupListener())
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .asConfirm("更改确认", "您做出了更改，请您再次确认。",
+                            "返回", "确认修改", new OnConfirmListener() {
+                                @Override
+                                public void onConfirm() {
+                                    MainAbilitySlice.update(keyid,
+                                            name,
+                                            imgpath,
+                                            desp,
+                                            outdate,
+                                            otctmp,
+                                            finalBarcodetmp,
+                                            usageall,
+                                            company,
+                                            yu,
+                                            label.toString()
+                                    );
+                                    //editok属性包括{ ok (修改完成), done (修改确认反馈) , none(无) }
+                                    util.PreferenceUtils.putString(getContext(), "editok", "ok");
+                                    terminate();
+                                }
+                            }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_blueconfirm)
+                    .show(); // 最后一个参数绑定已有布局
 
         });
         edit_back.setClickedListener(component -> terminate());
@@ -503,7 +487,6 @@ public class EditAbilitySlice extends AbilitySlice {
         }
         //把'测试标签'的标识全部集中到最后
 
-        System.out.println("之前数组" + elabel);
         int count = 0;
         for (int i = 0; i < elabel.size(); i++) {
             if (elabel.get(i).equals("测试标签")) {
@@ -515,7 +498,6 @@ public class EditAbilitySlice extends AbilitySlice {
         for (int i = 0; i < count; i++) {
             elabel.add("测试标签");
         }
-        System.out.println(count + "之后数组" + elabel);
 
         //设置显示
         for (int i = 0; i < elabel.size(); i++) {
@@ -537,7 +519,6 @@ public class EditAbilitySlice extends AbilitySlice {
             edit_elabel_add1.setVisibility(Component.HIDE);
             edit_elabel_add2.setVisibility(Component.HIDE);
         }
-        System.out.println("数组" + elabel);
 
     }
 
