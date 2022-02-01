@@ -38,7 +38,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-//TODO：图片处理、otc为空的判断、update数据库
+//TODO：图片处理、otc为空的判断
 public class MainAbilitySlice extends AbilitySlice {
     public static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;   //自定义的一个权限请求识别码，用于处理权限回调
     private static DataAbilityHelper databaseHelper;
@@ -82,7 +82,7 @@ public class MainAbilitySlice extends AbilitySlice {
     Text btn_add_newUsage_utils_2;
     Text btn_add_newUsage_utils_3;
     Text btn_add_yu_title;
-
+    Text btn_things_seach;
 
 
     ScrollView view_add ;
@@ -123,6 +123,7 @@ public class MainAbilitySlice extends AbilitySlice {
         btn_add_newUsage_utils_2 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_2);
         btn_add_newUsage_utils_3 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_3);
         btn_add_yu_title = (Text)findComponentById(ResourceTable.Id_add_newYu_title);
+        btn_things_seach = (Text)findComponentById(ResourceTable.Id_things_textField_search);
         view_add = (ScrollView)findComponentById(ResourceTable.Id_add_scrollview);
         tf_add_name = (TextField)findComponentById(ResourceTable.Id_add_newName);
         tf_add_desp = (TextField)findComponentById(ResourceTable.Id_add_newDescription);
@@ -158,6 +159,18 @@ public class MainAbilitySlice extends AbilitySlice {
                     .enableDrag(true)
                     .asCustom(new Popup_OTCQuestion(getContext()))
                     .show();
+        });
+        //搜索按钮
+        btn_things_seach.setClickedListener(component -> {
+            Intent intentSearch = new Intent();
+            Operation operation = new Intent.OperationBuilder()
+                    .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                    .withBundleName(getBundleName())    // 包名
+                    .withAbilityName("com.daqin.medicinegod.SearchAbility")
+                    // Ability页面的名称，在本地可以缺省前面的路径
+                    .build();    // 构建代码
+            intentSearch.setOperation(operation);    // 将operation存入到intent中
+            startAbility(intentSearch);
         });
         //添加图片的图片按钮
         btn_add_img.setClickedListener(new Component.ClickedListener(){

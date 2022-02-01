@@ -508,13 +508,14 @@ public class EditAbilitySlice extends AbilitySlice {
             }
         }
         edit_elabel_title.setText("药品标签(" + countElabel + "/5)");
+
         //设置添加按钮的显示
         if (countElabel < 3) {
             edit_elabel_add1.setVisibility(Component.VISIBLE);
             edit_elabel_add2.setVisibility(Component.HIDE);
         } else if (countElabel == 3 || countElabel == 4) {
             edit_elabel_add1.setVisibility(Component.HIDE);
-            edit_elabel_add2.setVisibility(Component.HIDE);
+            edit_elabel_add2.setVisibility(Component.VISIBLE);
         } else if (countElabel == 5) {
             edit_elabel_add1.setVisibility(Component.HIDE);
             edit_elabel_add2.setVisibility(Component.HIDE);

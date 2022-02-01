@@ -55,19 +55,25 @@
       {
         "icon": "$media:icon",
         "name": "com.daqin.medicinegod.DetailAbility",
-        "description": "药品详情",
+        "description": "药品详情，支持删改",
         "type": "page"
       },
       {
         "icon": "$media:icon",
         "name": "com.daqin.medicinegod.ImageCropAbility",
-        "description": "",
+        "description": "药品图片的裁剪",
         "type": "page"
       },
       {
         "icon": "$media:icon",
         "name": "com.daqin.medicinegod.EditAbility",
-        "description": "",
+        "description": "药品修改",
+        "type": "page"
+      },
+      {
+        "icon": "$media:icon",
+        "name": "com.daqin.medicinegod.SearchAbility",
+        "description": "药品的查找",
         "type": "page"
       }
     ],
