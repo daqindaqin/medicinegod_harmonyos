@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.daqin.medicinegod.utils;
+package com.daqin.medicinegod.provider;
 
 import ohos.agp.components.Component;
 import ohos.agp.components.ComponentContainer;

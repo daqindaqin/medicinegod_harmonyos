@@ -46,11 +46,11 @@
         "permissions": [
           "com.huawei.codelab.DataAbilityShellProvider.PROVIDER"
         ],
-        "name": "com.daqin.medicinegod.utils.PersonDataAbility",
+        "name": "com.daqin.medicinegod.PersonDataAbility",
         "icon": "$media:icon",
         "description": "数据库",
         "type": "data",
-        "uri": "dataability://com.daqin.medicinegod.utils.PersonDataAbility"
+        "uri": "dataability://com.daqin.medicinegod.PersonDataAbility"
       },
       {
         "icon": "$media:icon",

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_content"
+    ohos:width="match_parent"
+    ohos:orientation="horizontal"
+    ohos:alignment="left|vertical_center"
+    ohos:margin="5vp"
+    ohos:top_padding="10vp"
+    ohos:bottom_padding="10vp"
+    >
+    <Image
+        ohos:id="$+id:srced_image_png"
+        ohos:height="45vp"
+        ohos:width="80vp"
+        ohos:start_margin="10vp"
+        ohos:end_margin="10vp"
+        ohos:image_src="$media:test"
+        ohos:scale_mode="stretch"
+        />
+    <Text
+        ohos:id="$+id:srced_name"
+        ohos:height="match_content"
+        ohos:width="match_parent"
+        ohos:text="一二三四五六七八九十胶囊"
+        ohos:text_size="24fp"
+        ohos:text_color="$color:black_clear"
+        ohos:text_weight="700"
+        ohos:start_margin="5vp"
+        ohos:end_margin="10vp"
+        ohos:top_margin="10vp"
+        ohos:bottom_margin="10vp"
+        ohos:scrollable="true"
+        ohos:text_alignment="left"
+        />
+
+
+</DirectionalLayout>

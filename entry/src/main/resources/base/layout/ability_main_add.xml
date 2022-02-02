@@ -526,6 +526,7 @@
                     ohos:text_color="$color:white"
                     ohos:text_size="16fp"
                     ohos:text_weight="500"
+                    ohos:altitude="3vp"
                     />
             </DirectionalLayout>
             <!--标签显示的布局-->
@@ -644,6 +645,7 @@
                 ohos:text_color="$color:white"
                 ohos:text_size="18fp"
                 ohos:text_weight="500"
+                ohos:altitude="3vp"
                 />
 
                 </DependentLayout>

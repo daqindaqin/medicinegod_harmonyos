@@ -104,7 +104,7 @@
                 ohos:id="$+id:text_outdate"
                 ohos:height="match_content"
                 ohos:width="match_parent"
-                ohos:end_margin="5vp"
+                ohos:end_margin="3vp"
                 ohos:max_text_lines="2"
                 ohos:multiple_lines="true"
                 ohos:start_margin="5vp"

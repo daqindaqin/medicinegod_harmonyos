@@ -1,4 +1,4 @@
-package com.daqin.medicinegod.utils;
+package com.daqin.medicinegod;
 
 
 import ohos.aafwk.ability.Ability;

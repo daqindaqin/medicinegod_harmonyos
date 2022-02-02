@@ -1,8 +1,9 @@
-package com.daqin.medicinegod.utils;
+package com.daqin.medicinegod.provider;
 
 
 import com.daqin.medicinegod.ResourceTable;
 
+import com.daqin.medicinegod.utils.util;
 import ohos.aafwk.ability.AbilitySlice;
 
 

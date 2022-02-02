@@ -7,6 +7,9 @@ package com.daqin.medicinegod.slice;
  */
 
 import com.daqin.medicinegod.ResourceTable;
+import com.daqin.medicinegod.provider.ChatListItemProvider;
+import com.daqin.medicinegod.provider.HomePageListItemProvider;
+import com.daqin.medicinegod.provider.ScreenSlidePagerProvider;
 import com.daqin.medicinegod.utils.*;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
 import com.lxj.xpopup.XPopup;
@@ -35,7 +38,6 @@ import ohos.utils.net.Uri;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 //TODO：图片处理、otc为空的判断
@@ -59,7 +61,7 @@ public class MainAbilitySlice extends AbilitySlice {
     private String imgpath = null;
     private String eLABEL = "";
     private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "MainAbilitySlice");
-    private static final String BASE_URI = "dataability:///com.daqin.medicinegod.utils.PersonDataAbility";
+    private static final String BASE_URI = "dataability:///com.daqin.medicinegod.PersonDataAbility";
     private static final String DATA_PATH = "/mg";
     private static final String DB_COLUMN_KEYID = "KEYID";
     private static final String DB_COLUMN_NAME = "NAME";
@@ -83,7 +85,6 @@ public class MainAbilitySlice extends AbilitySlice {
     Text btn_add_newUsage_utils_3;
     Text btn_add_yu_title;
     Text btn_things_seach;
-
 
     ScrollView view_add ;
     TextField tf_add_name ;
@@ -157,7 +158,7 @@ public class MainAbilitySlice extends AbilitySlice {
             new XPopup.Builder(getContext())
                     .moveUpToKeyboard(false) // 如果不加这个，评论弹窗会移动到软键盘上面
                     .enableDrag(true)
-                    .asCustom(new Popup_OTCQuestion(getContext()))
+                    .asCustom(new OTCQuestionAbilitySlice(getContext()))
                     .show();
         });
         //搜索按钮
@@ -607,7 +608,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
         LayoutScatter layoutScatter = LayoutScatter.getInstance(getContext());
         DependentLayout inflatedView = (DependentLayout) layoutScatter.parse(
-                ResourceTable.Layout_ability_main_things, null, false);
+                ResourceTable.Layout_ability_main_homepage, null, false);
         fragList.add(inflatedView);
 
         LayoutScatter layoutScatter1 = LayoutScatter.getInstance(getContext());
@@ -627,7 +628,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
         LayoutScatter layoutScatter4 = LayoutScatter.getInstance(getContext());
         DependentLayout inflatedView4 = (DependentLayout) layoutScatter4.parse(
-                ResourceTable.Layout_ability_main_home, null, false);
+                ResourceTable.Layout_ability_main_me, null, false);
         fragList.add(inflatedView4);
         initPagerSlider(fragList);
 
@@ -865,6 +866,7 @@ public class MainAbilitySlice extends AbilitySlice {
     }
     //药品数据源
     private List<Map<String,Object>> queryData() {
+        String nameALl = "";
         List<Map<String,Object>> list = new ArrayList<>();
         String[] columns = new String[] {
                 DB_COLUMN_KEYID,
@@ -918,6 +920,71 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
                 list.add(map);
+                nameALl = nameALl + name + "@@";
+                HiLog.info(LABEL_LOG, "query: Id :"  +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
+                        + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
+            } while (resultSet.goToNextRow());
+            util.PreferenceUtils.putString(getContext(),"nameALL",nameALl);
+            return list;
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "query: dataRemote exception | illegalStateException");
+            return new ArrayList<>();
+        }
+    }
+    //药品搜索界面数据源
+    public static List<Map<String,Object>> querySearchData(String lowKey,String highKey) {
+        List<Map<String,Object>> list = new ArrayList<>();
+        String[] columns = new String[] {
+                DB_COLUMN_KEYID,
+                DB_COLUMN_NAME,
+                DB_COLUMN_IMAGEPATH,
+                DB_COLUMN_DESCRIPTION,
+                DB_COLUMN_OUTDATE,
+                DB_COLUMN_OTC,
+                DB_COLUMN_BARCODE,
+                DB_COLUMN_USAGE,
+                DB_COLUMN_COMPANY,
+                DB_COLUMN_YU,
+                DB_COLUMN_ELABEL
+        };
+        // 构造查询条件
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.between(DB_COLUMN_KEYID, lowKey, highKey);
+        try {
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
+                    columns, predicates);
+            if (resultSet == null || resultSet.getRowCount() == 0) {
+                HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
+                return null;
+            }
+            resultSet.goToFirstRow();
+            do {
+                Map<String, Object> map = new HashMap<>();
+//            Map<String, Object> map = new HashMap<String, Object>();
+                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
+                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
+                String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
+                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
+                String outdate = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
+                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
+                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
+                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
+                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
+                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
+                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
+                map.put("keyid",keyid);
+                map.put("imgpath", imagepath);
+                map.put("name", name);
+                map.put("description",description);
+                map.put("outdate", outdate);
+                map.put("otc", otc);
+                map.put("barcode", barcode);
+                map.put("usage", usage);
+                map.put("company",company);
+                map.put("yu", yu);
+                map.put("elabel", elabel);
+                map.put("image", ResourceTable.Media_test);
+                list.add(map);
                 HiLog.info(LABEL_LOG, "query: Id :"  +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
                         + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
             } while (resultSet.goToNextRow());
@@ -927,7 +994,6 @@ public class MainAbilitySlice extends AbilitySlice {
             return new ArrayList<>();
         }
     }
-
 
 
     @Override
