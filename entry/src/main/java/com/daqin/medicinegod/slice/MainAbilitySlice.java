@@ -931,7 +931,70 @@ public class MainAbilitySlice extends AbilitySlice {
             return new ArrayList<>();
         }
     }
-    //药品搜索界面数据源
+    //药品搜索返回数据
+    public static List<Map<String,Object>> queryAssignData(String field,String value) {
+        List<Map<String,Object>> list = new ArrayList<>();
+        String[] columns = new String[] {
+                DB_COLUMN_KEYID,
+                DB_COLUMN_NAME,
+                DB_COLUMN_IMAGEPATH,
+                DB_COLUMN_DESCRIPTION,
+                DB_COLUMN_OUTDATE,
+                DB_COLUMN_OTC,
+                DB_COLUMN_BARCODE,
+                DB_COLUMN_USAGE,
+                DB_COLUMN_COMPANY,
+                DB_COLUMN_YU,
+                DB_COLUMN_ELABEL
+        };
+        // 构造查询条件
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.contains(field,value);
+        try {
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
+                    columns, predicates);
+            if (resultSet == null || resultSet.getRowCount() == 0) {
+                HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
+                return null;
+            }
+            resultSet.goToFirstRow();
+            do {
+                Map<String, Object> map = new HashMap<>();
+//            Map<String, Object> map = new HashMap<String, Object>();
+                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
+                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
+                String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
+                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
+                String outdate = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
+                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
+                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
+                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
+                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
+                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
+                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
+                map.put("keyid",keyid);
+                map.put("imgpath", imagepath);
+                map.put("name", name);
+                map.put("description",description);
+                map.put("outdate", outdate);
+                map.put("otc", otc);
+                map.put("barcode", barcode);
+                map.put("usage", usage);
+                map.put("company",company);
+                map.put("yu", yu);
+                map.put("elabel", elabel);
+                map.put("image", ResourceTable.Media_test);
+                list.add(map);
+                HiLog.info(LABEL_LOG, "query: Id :"  +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
+                        + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
+            } while (resultSet.goToNextRow());
+            return list;
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "query: dataRemote exception | illegalStateException");
+            return new ArrayList<>();
+        }
+    }
+    //药品搜索界面总数据源
     public static List<Map<String,Object>> querySearchData(String lowKey,String highKey) {
         List<Map<String,Object>> list = new ArrayList<>();
         String[] columns = new String[] {

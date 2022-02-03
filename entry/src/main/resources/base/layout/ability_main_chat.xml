@@ -146,7 +146,6 @@
                                     ohos:id="$+id:chat_chatlist"
                                     ohos:height="match_content"
                                     ohos:width="match_parent"
-                                    ohos:below="$id:head_of_top"
                                     ohos:layout_alignment="horizontal_center"
                                     ohos:margin="10vp"
                                     />

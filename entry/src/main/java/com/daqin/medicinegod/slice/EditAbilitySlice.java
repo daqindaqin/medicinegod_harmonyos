@@ -139,7 +139,7 @@ public class EditAbilitySlice extends AbilitySlice {
 
     private void intclicklistener() {
         edit_ok.setClickedListener(component -> {
-
+            boolean canEdit;
             //TODO:加入图片的修改
             String name, desp, outdate, otctmp, barcodetmp = "", usageall, usa1, usa2, usa3, yu, company, imgpath = "";
             StringBuilder label = new StringBuilder();
@@ -150,10 +150,13 @@ public class EditAbilitySlice extends AbilitySlice {
 
             if (edit_barcode.getText().equals("") || edit_barcode.getText().equals(" ")) {
                 barcodetmp = edit_barcode.getHint();
+                canEdit = true;
             } else {
                 if (edit_barcode.getText().length() == 13) {
                     barcodetmp = edit_barcode.getText();
+                    canEdit = true;
                 } else {
+                    canEdit = false;
                     new XPopup.Builder(getContext())
                             //.setPopupCallback(new XPopupListener())
                             .dismissOnTouchOutside(false)
@@ -166,48 +169,48 @@ public class EditAbilitySlice extends AbilitySlice {
 
             }
 
+            if (canEdit) {
+                usa1 = (edit_usage_total.getText().length() == 0 || edit_usage_total.getText().equals(" ") || edit_usage_total.getText().equals(edit_usage_total.getHint())) ? edit_usage_total.getHint() : edit_usage_total.getText();
+                usa2 = (edit_usage_time.getText().length() == 0 || edit_usage_time.getText().equals(" ") || edit_usage_time.getText().equals(edit_usage_time.getHint())) ? edit_usage_time.getHint() : edit_usage_time.getText();
+                usa3 = (edit_usage_day.getText().length() == 0 || edit_usage_day.getText().equals(" ") || edit_usage_day.getText().equals(edit_usage_day.getHint())) ? edit_usage_day.getHint() : edit_usage_day.getText();
+                usageall = usa1 + "-" + edit_usage_u1.getText() + "-" + usa2 + "-" + edit_usage_u2.getText() + "-" + usa3 + "-" + edit_usage_u3.getText();
+                yu = (edit_yu.getText().length() == 0 || edit_yu.getText().equals(" ") || edit_yu.getText().equals(edit_yu.getHint())) ? edit_yu.getHint() : edit_yu.getText();
+                company = (edit_company.getText().length() == 0 || edit_company.getText().equals(" ") || edit_company.getText().equals(edit_company.getHint())) ? edit_company.getHint() : edit_company.getText();
+                for (String s : elabel) {
+                    label.append(s).append("@@");
+                }
 
-            usa1 = (edit_usage_total.getText().length() == 0 || edit_usage_total.getText().equals(" ") || edit_usage_total.getText().equals(edit_usage_total.getHint())) ? edit_usage_total.getHint() : edit_usage_total.getText();
-            usa2 = (edit_usage_time.getText().length() == 0 || edit_usage_time.getText().equals(" ") || edit_usage_time.getText().equals(edit_usage_time.getHint())) ? edit_usage_time.getHint() : edit_usage_time.getText();
-            usa3 = (edit_usage_day.getText().length() == 0 || edit_usage_day.getText().equals(" ") || edit_usage_day.getText().equals(edit_usage_day.getHint())) ? edit_usage_day.getHint() : edit_usage_day.getText();
-            usageall = usa1 + "-" + edit_usage_u1.getText() + "-" + usa2 + "-" + edit_usage_u2.getText() + "-" + usa3 + "-" + edit_usage_u3.getText();
-            yu = (edit_yu.getText().length() == 0 || edit_yu.getText().equals(" ") || edit_yu.getText().equals(edit_yu.getHint())) ? edit_yu.getHint() : edit_yu.getText();
-            company = (edit_company.getText().length() == 0 || edit_company.getText().equals(" ") || edit_company.getText().equals(edit_company.getHint())) ? edit_company.getHint() : edit_company.getText();
-            for (String s : elabel) {
-                label.append(s).append("@@");
+                String finalBarcodetmp = barcodetmp;
+                System.out.println("输出了" + keyid + name + imgpath + desp + outdate + otctmp + finalBarcodetmp + usageall + company + yu + label.toString().substring(0, label.length() - 2));
+
+                new XPopup.Builder(getContext())
+                        //.setPopupCallback(new XPopupListener())
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .asConfirm("更改确认", "您做出了更改，请您再次确认。",
+                                "返回", "确认修改", new OnConfirmListener() {
+                                    @Override
+                                    public void onConfirm() {
+                                        MainAbilitySlice.update(keyid,
+                                                name,
+                                                imgpath,
+                                                desp,
+                                                outdate,
+                                                otctmp,
+                                                finalBarcodetmp,
+                                                usageall,
+                                                company,
+                                                yu,
+                                                label.toString()
+                                        );
+                                        //editok属性包括{ ok (修改完成), done (修改确认反馈) , none(无) }
+                                        util.PreferenceUtils.putString(getContext(), "editok", "ok");
+                                        terminate();
+                                    }
+                                }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_blueconfirm)
+                        .show(); // 最后一个参数绑定已有布局
             }
-
-            String finalBarcodetmp = barcodetmp;
-            System.out.println("输出了" + keyid + name + imgpath + desp + outdate + otctmp + finalBarcodetmp + usageall + company + yu + label.toString().substring(0, label.length() - 2));
-
-            new XPopup.Builder(getContext())
-                    //.setPopupCallback(new XPopupListener())
-                    .dismissOnTouchOutside(false)
-                    .dismissOnBackPressed(false)
-                    .isDestroyOnDismiss(true)
-                    .asConfirm("更改确认", "您做出了更改，请您再次确认。",
-                            "返回", "确认修改", new OnConfirmListener() {
-                                @Override
-                                public void onConfirm() {
-                                    MainAbilitySlice.update(keyid,
-                                            name,
-                                            imgpath,
-                                            desp,
-                                            outdate,
-                                            otctmp,
-                                            finalBarcodetmp,
-                                            usageall,
-                                            company,
-                                            yu,
-                                            label.toString()
-                                    );
-                                    //editok属性包括{ ok (修改完成), done (修改确认反馈) , none(无) }
-                                    util.PreferenceUtils.putString(getContext(), "editok", "ok");
-                                    terminate();
-                                }
-                            }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_blueconfirm)
-                    .show(); // 最后一个参数绑定已有布局
-
         });
         edit_back.setClickedListener(component -> terminate());
         edit_elabel_add1.setClickedListener(component -> {

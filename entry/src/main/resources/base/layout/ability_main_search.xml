@@ -27,7 +27,9 @@
             ohos:hint_color="$color:black_line"
             ohos:text_size="22vp"
             ohos:text_weight="700"
-            ohos:multiple_lines="false"
+            ohos:multiple_lines="true"
+            ohos:input_enter_key_type="enter_key_type_done"
+            ohos:max_text_lines="3"
             ohos:background_element="$graphic:bg_src_textfield_search"
             ohos:start_margin="5vp"
             ohos:end_margin="5vp"/>
