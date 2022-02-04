@@ -44,7 +44,7 @@ public class EditAbilitySlice extends AbilitySlice {
     Text edit_elabel_add2;
     Text edit_elabel_title;
     Map<String, Object> mgDdata;
-    String keyid, outdate_year, outdate_month, otc;
+    String keyid, otc;
     List<String> elabel = new ArrayList<>();
     Text[] elabelview;
     TextField[] textFieldlist;
@@ -145,9 +145,8 @@ public class EditAbilitySlice extends AbilitySlice {
             StringBuilder label = new StringBuilder();
             name = (edit_name.getText().length() == 0 || edit_name.getText().equals(" ") || edit_name.getText().equals(edit_name.getHint())) ? edit_name.getHint() : edit_name.getText();
             desp = (edit_desp.getText().length() == 0 || edit_desp.getText().equals(" ") || edit_desp.getText().equals(edit_desp.getHint())) ? edit_desp.getHint() : edit_desp.getText();
-            outdate = edit_outdate_year.getDisplayedData()[edit_outdate_year.getValue()] + "-" + edit_outdate_month.getDisplayedData()[edit_outdate_month.getValue()];
+            outdate = edit_outdate_year.getDisplayedData()[edit_outdate_year.getValue()].replace("年","") + "-" + edit_outdate_month.getDisplayedData()[edit_outdate_month.getValue()].replace("月","")+"-1";
             otctmp = (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-绿") ? "OTC-G" : ((edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-红") ? "OTC-R" : (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("RX(处方药)") ? "Rx" : "none"))));
-
             if (edit_barcode.getText().equals("") || edit_barcode.getText().equals(" ")) {
                 barcodetmp = edit_barcode.getHint();
                 canEdit = true;
@@ -181,7 +180,7 @@ public class EditAbilitySlice extends AbilitySlice {
                 }
 
                 String finalBarcodetmp = barcodetmp;
-                System.out.println("输出了" + keyid + name + imgpath + desp + outdate + otctmp + finalBarcodetmp + usageall + company + yu + label.toString().substring(0, label.length() - 2));
+                System.out.println("输出了" + keyid + name + imgpath + desp +util.getDateFromString(outdate)+ outdate + otctmp + finalBarcodetmp + usageall + company + yu + label.toString().substring(0, label.length() - 2));
 
                 new XPopup.Builder(getContext())
                         //.setPopupCallback(new XPopupListener())
@@ -204,7 +203,7 @@ public class EditAbilitySlice extends AbilitySlice {
                                                 yu,
                                                 label.toString()
                                         );
-                                        //editok属性包括{ ok (修改完成), done (修改确认反馈) , none(无) }
+                                        //editok属性包括{ ok (修改完成) , none(无) }
                                         util.PreferenceUtils.putString(getContext(), "editok", "ok");
                                         terminate();
                                     }
@@ -528,12 +527,18 @@ public class EditAbilitySlice extends AbilitySlice {
 
     //定义选择器
     private void iniCalendarPicker() {
-        String[] dateAll = ((String) mgDdata.get("outdate")).split("-");
+        long data0 = (long) mgDdata.get("outdate");
+        String[] dateAll = util.getStringFromDate(data0).split("-");
         String year, month;
-        year = dateAll[0];
-        month = dateAll[1];
-        outdate_month = month;
-        outdate_year = year;
+        year = dateAll[0]+"年";
+        if (Integer.parseInt(dateAll[1])<10){
+            month = dateAll[1].substring(1)+"月";
+        }else {
+            month = dateAll[1]+"月";
+        }
+
+
+        System.out.println("输出了"+year+"-"+month);
         int value = 0;
         Calendar cal = Calendar.getInstance();
         List<String> yearList = new ArrayList<>();

@@ -132,17 +132,19 @@ public class HomePageListItemProvider extends  BaseItemProvider{
 
 
         //过期提醒
-        //XXXX年X月
+        //示例：
+        //date0  1646064000000
+        //date1  2022-03-01
         Calendar cl = Calendar.getInstance();
-        String[] outdateAll =  ((String)map.get("outdate")).split("-");
-        int outyear,outmonth,res;
-        outyear = Integer.parseInt(outdateAll[0].replace("年",""));
-        outmonth = Integer.parseInt(outdateAll[1].replace("月",""));
-        //timeA  2020-1 过期的时间
-        //timeB  2022-1 现在的时间
-        String timeA = outyear + "-" + outmonth + "-1";
+        long date0 = Long.valueOf((long)map.get("outdate"));
+        String date1 = util.getStringFromDate(date0);
+        int res;
+
+        //date1  2022-03-01 药品的时间
+        //timeB  2022-01-01 现在的时间
         String timeB = cl.get(Calendar.YEAR) + "-" + (cl.get(Calendar.MONTH)+1) + "-1";
-        res = util.isTimeOut(timeA,timeB);
+        res = util.isTimeOut(date1,timeB);
+        System.out.println("输出了"+date1+"-"+timeB);
         switch (res){
             case -1:
                 textOutdate.setText("[药品过期]"+"\n"+"禁止服用 请妥善处理。");

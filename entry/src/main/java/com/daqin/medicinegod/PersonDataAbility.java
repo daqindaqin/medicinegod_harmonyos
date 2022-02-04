@@ -51,7 +51,7 @@ public class PersonDataAbility extends Ability {
                     + DB_COLUMN_NAME + " text not null, "
                     + DB_COLUMN_IMAGEPATH + " long text not null, "
                     + DB_COLUMN_DESCRIPTION + " long text not null, "
-                    + DB_COLUMN_OUTDATE + " text not null, "
+                    + DB_COLUMN_OUTDATE + " long int not null, "
                     + DB_COLUMN_OTC + " text not null, "
                     + DB_COLUMN_BARCODE + " text not null, "
                     + DB_COLUMN_USAGE + " text not null, "
@@ -98,7 +98,7 @@ public class PersonDataAbility extends Ability {
         values.putString(DB_COLUMN_NAME, value.getString(DB_COLUMN_NAME));
         values.putString(DB_COLUMN_IMAGEPATH, value.getString(DB_COLUMN_IMAGEPATH));
         values.putString(DB_COLUMN_DESCRIPTION, value.getString(DB_COLUMN_DESCRIPTION));
-        values.putString(DB_COLUMN_OUTDATE, value.getString(DB_COLUMN_OUTDATE));
+        values.putLong(DB_COLUMN_OUTDATE, value.getLong(DB_COLUMN_OUTDATE));
         values.putString(DB_COLUMN_OTC, value.getString(DB_COLUMN_OTC));
         values.putString(DB_COLUMN_BARCODE, value.getString(DB_COLUMN_BARCODE));
         values.putString(DB_COLUMN_USAGE, value.getString(DB_COLUMN_USAGE));

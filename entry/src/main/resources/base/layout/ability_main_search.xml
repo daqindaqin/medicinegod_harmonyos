@@ -126,6 +126,9 @@
         ohos:width="match_parent"
         ohos:height="match_parent"
         ohos:scrollbar_color="$color:blue"
+        ohos:start_padding="5vp"
+        ohos:end_padding="5vp"
+        ohos:bottom_padding="10vp"
         ohos:background_element="$color:purple_light"/>
 
 </DirectionalLayout>

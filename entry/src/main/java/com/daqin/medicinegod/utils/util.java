@@ -221,6 +221,28 @@ public class util extends AbilitySlice {
     public static int getWindowWidthPx(Context context) {
         return context.getResourceManager().getDeviceCapability().width * context.getResourceManager().getDeviceCapability().screenDensity / 160;
     }
+
+    public static long getDateFromString(String Value){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        long time = 0;
+        try {
+            //将日期转成Date对象作比较
+            Date fomatDate = dateFormat.parse(Value);
+            time =  fomatDate.getTime();
+
+            System.out.println("输出了"+time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
+    public static String getStringFromDate(long Value){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date(Value);
+        return dateFormat.format(date);
+    }
+
+
     public static int isTimeOut(String timeA,String timeB){
         /**
          * @param timeA 第一个时间

@@ -71,28 +71,33 @@ public class BarCodeProvider extends BaseItemProvider {
 
         textName.setText((String) map.get("name"));
         textBarcode.setText((String) map.get("barcode")+"(长按复制)");
+
+
         //过期提醒,红色过期，黑色正常，黄色临期，蓝色搜索到的内容
+        //过期提醒
+        //示例：
+        //date0  1646064000000
+        //date1  2022-03-01
         Calendar cl = Calendar.getInstance();
-        String[] outdateAll = ((String) map.get("outdate")).split("-");
-        int outyear, outmonth, res;
-        outyear = Integer.parseInt(outdateAll[0].replace("年", ""));
-        outmonth = Integer.parseInt(outdateAll[1].replace("月", ""));
-        //timeA  2020-1 过期的时间
-        //timeB  2022-1 现在的时间
-        String timeA = outyear + "-" + outmonth + "-1";
-        String timeB = cl.get(Calendar.YEAR) + "-" + (cl.get(Calendar.MONTH) + 1) + "-1";
-        res = util.isTimeOut(timeA, timeB);
-        switch (res) {
+        long date0 = Long.parseLong(map.get("outdate").toString());
+        String date1 = util.getStringFromDate(date0);
+        int res;
+        //date1  2022-03-01 药品的时间
+        //timeB  2022-01-01 现在的时间
+        String timeB = cl.get(Calendar.YEAR) + "-" + (cl.get(Calendar.MONTH)+1) + "-1";
+        res = util.isTimeOut(date1,timeB);
+        switch (res){
             case -1:
-                textName.setTextColor(new Color(Color.rgb(255, 67, 54)));
+                textName.setTextColor(new Color(Color.rgb(255,67,54)));
                 break;
             case 0:
-                textName.setTextColor(new Color(Color.rgb(255, 152, 0)));
+                textName.setTextColor(new Color(Color.rgb(255,152,0)));
                 break;
             case 1:
                 textName.setTextColor(new Color(Color.rgb(106, 104, 94)));
                 break;
         }
+
 
 
 //        DataAbilityHelper helper = DataAbilityHelper.creator(slice.getContext());
