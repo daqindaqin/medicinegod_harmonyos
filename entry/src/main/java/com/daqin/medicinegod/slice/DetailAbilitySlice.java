@@ -24,7 +24,6 @@ import ohos.data.rdb.ValuesBucket;
 import ohos.data.resultset.ResultSet;
 import ohos.eventhandler.EventHandler;
 import ohos.eventhandler.EventRunner;
-import ohos.hiviewdfx.HiLog;
 import ohos.media.image.PixelMap;
 import ohos.miscservices.pasteboard.PasteData;
 import ohos.miscservices.pasteboard.SystemPasteboard;
@@ -293,7 +292,7 @@ public class DetailAbilitySlice extends AbilitySlice {
                                 public void onCancel() {
                                     terminate();
                                 }
-                            }, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                            }, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                     .show(); // 最后一个参数绑定已有布局
         }
 

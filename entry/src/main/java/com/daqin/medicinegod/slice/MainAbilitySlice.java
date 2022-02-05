@@ -37,8 +37,6 @@ import ohos.media.image.PixelMap;
 import ohos.utils.net.Uri;
 
 import java.io.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -346,7 +344,7 @@ public class MainAbilitySlice extends AbilitySlice {
                         .dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .asConfirm("数量受限", "已达到标签最大数量(5)",
-                                " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                                " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                         .show(); // 最后一个参数绑定已有布局
                 //未达到5个标签则判断
             } else {
@@ -361,7 +359,7 @@ public class MainAbilitySlice extends AbilitySlice {
                             .dismissOnBackPressed(false)
                             .isDestroyOnDismiss(true)
                             .asConfirm("格式受限", "您在一个标签内只能添加1到4个中文字符",
-                                    " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                                    " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                             .show(); // 最后一个参数绑定已有布局
                 } else if (tf_add_elabelBox.length() > 0 && tf_add_elabelBox.length() < 5) {
                     for (Text text : add_elabelview) {
@@ -928,7 +926,7 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
     //药品搜索返回数据【筛选搜索】
-    public static List<Map<String,Object>> queryScreenData(String field,long value) {
+    public static List<Map<String,Object>> queryScreenData(int method,String field,String value1,String value2) {
         List<Map<String,Object>> list = new ArrayList<>();
         String[] columns = new String[] {
                 DB_COLUMN_KEYID,
@@ -945,7 +943,15 @@ public class MainAbilitySlice extends AbilitySlice {
         };
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.lessThan(DB_COLUMN_OUTDATE,value);
+        switch (method){
+            case 11:predicates.lessThan(field,util.getDateFromString(value1));
+                break;
+            case 12:predicates.between(field,util.getDateFromString(value1),util.getDateFromString(value2));
+                break;
+            case 13:predicates.greaterThan(field,util.getDateFromString(value1));
+                break;
+        }
+
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
                     columns, predicates);

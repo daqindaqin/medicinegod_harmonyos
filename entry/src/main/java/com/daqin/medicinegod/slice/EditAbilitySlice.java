@@ -105,7 +105,7 @@ public class EditAbilitySlice extends AbilitySlice {
                                 @Override
                                 public void onConfirm() {
                                 }
-                            }, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                            }, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                     .show(); // 最后一个参数绑定已有布局
             terminate();
         }
@@ -162,7 +162,7 @@ public class EditAbilitySlice extends AbilitySlice {
                             .dismissOnBackPressed(false)
                             .isDestroyOnDismiss(true)
                             .asConfirm("格式不正确", "条码格式不正确(13)",
-                                    " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                                    " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                             .show(); // 最后一个参数绑定已有布局
                 }
 
@@ -225,7 +225,7 @@ public class EditAbilitySlice extends AbilitySlice {
                                 public void onConfirm(String text) {
                                     elabelClickAdd(text);
                                 }
-                            })
+                            },null,ResourceTable.Layout_popup_comfirm_with_input_word)
                     .show();
         });
         edit_elabel_add2.setClickedListener(component -> {
@@ -241,7 +241,7 @@ public class EditAbilitySlice extends AbilitySlice {
                                 public void onConfirm(String text) {
                                     elabelClickAdd(text);
                                 }
-                            })
+                            },null,ResourceTable.Layout_popup_comfirm_with_input_word)
                     .show();
         });
         edit_elabel1.setClickedListener(component -> {
@@ -352,7 +352,7 @@ public class EditAbilitySlice extends AbilitySlice {
                     .dismissOnBackPressed(false)
                     .isDestroyOnDismiss(true)
                     .asConfirm("数量受限", "已达到标签最大数量(5)",
-                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                     .show(); // 最后一个参数绑定已有布局
             edit_elabel_add1.setVisibility(Component.HIDE);
             edit_elabel_add2.setVisibility(Component.HIDE);
@@ -363,7 +363,7 @@ public class EditAbilitySlice extends AbilitySlice {
                     .dismissOnBackPressed(false)
                     .isDestroyOnDismiss(true)
                     .asConfirm("标签受限", "您只能添加同一种标签一次",
-                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                     .show(); // 最后一个参数绑定已有布局
         } else if (text.trim().length() == 0 || text.trim().length() >= 5) {
             new XPopup.Builder(getContext())
@@ -372,7 +372,7 @@ public class EditAbilitySlice extends AbilitySlice {
                     .dismissOnBackPressed(false)
                     .isDestroyOnDismiss(true)
                     .asConfirm("格式受限", "您在一个标签内只能添加1到4个中文字符且不能为空",
-                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                     .show(); // 最后一个参数绑定已有布局
         } else if (text.trim().length() > 0 && text.trim().length() < 5) {
             elabel.remove("测试标签");
@@ -388,10 +388,12 @@ public class EditAbilitySlice extends AbilitySlice {
             case 0:
                 //弹窗
                 new XPopup.Builder(getContext())
-                        .hasStatusBarShadow(true)
-                        .isDestroyOnDismiss(true)
-                        .autoOpenSoftInput(true)
+                        .hasStatusBarShadow(true) // 暂无实现
+                        .autoOpenSoftInput(false)
                         .isDarkTheme(false)
+                        .dismissOnBackPressed(false)
+                        .dismissOnTouchOutside(false)
+                        .isDestroyOnDismiss(true)
                         .setComponent(edit_elabel_title) // 用于获取页面根容器，监听页面高度变化，解决输入法盖住弹窗的问题
                         .asInputConfirm("编辑标签(1-4个字符)", null, null, textInLabel,
                                 new OnInputConfirmListener() {
@@ -404,7 +406,7 @@ public class EditAbilitySlice extends AbilitySlice {
                                                     .dismissOnBackPressed(false)
                                                     .isDestroyOnDismiss(true)
                                                     .asConfirm("格式受限", "您在一个标签内只能添加1到4个中文字符且不能为空",
-                                                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                                                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                                                     .show(); // 最后一个参数绑定已有布局
                                         } else if (elabel.contains(text.trim())) {
                                             new XPopup.Builder(getContext())
@@ -413,14 +415,14 @@ public class EditAbilitySlice extends AbilitySlice {
                                                     .dismissOnBackPressed(false)
                                                     .isDestroyOnDismiss(true)
                                                     .asConfirm("标签受限", "您只能添加同一种标签一次",
-                                                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                                                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                                                     .show(); // 最后一个参数绑定已有布局
                                         } else if (text.trim().length() > 0 && text.trim().length() < 5) {
                                             elabel.set(elabel.indexOf(textInLabel), text.trim());
                                             refreshElabel();
                                         }
                                     }
-                                })
+                                },null,ResourceTable.Layout_popup_comfirm_with_input_word)
                         .show();
                 break;
             case 1:
@@ -441,7 +443,7 @@ public class EditAbilitySlice extends AbilitySlice {
                                                     .dismissOnBackPressed(false)
                                                     .isDestroyOnDismiss(true)
                                                     .asConfirm("数量受限", "最少需要保留(1)个标签",
-                                                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfrim_without_cancel)
+                                                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                                                     .show(); // 最后一个参数绑定已有布局
                                         } else {
                                             elabel.remove(textInLabel);
