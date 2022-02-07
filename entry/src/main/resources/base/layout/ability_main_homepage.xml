@@ -103,6 +103,7 @@
             ohos:margin="5vp"
             ohos:rebound_effect="true"
             ohos:below="$id:things_head_of_top"
+            ohos:padding="5vp"
             ohos:background_element="$color:white"
             />
 

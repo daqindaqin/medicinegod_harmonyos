@@ -20,6 +20,8 @@ import ohos.miscservices.pasteboard.PasteData;
 import ohos.miscservices.pasteboard.SystemPasteboard;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //TODO:还差点击跳转到主页更改信息联动
 public class SearchAbilitySlice extends AbilitySlice {
@@ -35,9 +37,9 @@ public class SearchAbilitySlice extends AbilitySlice {
     private String src_screen_method = null;
     Text btn_src_method;
     Text tf_src_src_box;
-    Text btn_src;
     Text btn_src_screen;
     Text btn_src_back;
+    Text t_notice;
     String lowKey = null, highKey = null;
 
     private static final String DB_COLUMN_KEYID = "KEYID";
@@ -51,6 +53,9 @@ public class SearchAbilitySlice extends AbilitySlice {
     private static final String DB_COLUMN_COMPANY = "COMPANY";
     private static final String DB_COLUMN_YU = "YU";
     private static final String DB_COLUMN_ELABEL = "ELABEL";
+
+    private static Pattern pattern = Pattern.compile("-?[0-9]+(\\\\.[0-9]+)?");
+
 
     @Override
     protected void onStart(Intent intent) {
@@ -67,19 +72,66 @@ public class SearchAbilitySlice extends AbilitySlice {
         iniView();
         iniClicklistener();
         initSearchListContainer();
+        Text.TextObserver textUpdateObserver = new Text.TextObserver() {
+            @Override
+            public void onTextUpdated(String text, int start, int before, int count) {
+                // text：这次更新后，输入框文本内容字符串
+                // start：这次更新前，文本内容的起始位置
+                // before：这次更新前，文本内容长度
+                // count：这次更新的文本内容与更新前文本内容对比，变化的长度
+                if (text.length() == 0) {
+                    initSearchListContainer();
+                } else {
+                    btn_src_back.setText("◀ 返回上一级");
+                    switch (src_method) {
+                        case 0:
+                            searchAssign(src_method, DB_COLUMN_NAME, tf_src_src_box.getText().trim());
+                            break;
+                        case 1:
+                            searchAssign(src_method, DB_COLUMN_DESCRIPTION, tf_src_src_box.getText().trim());
+                            break;
+                        case 2:
+                            searchAssign(src_method, DB_COLUMN_BARCODE, tf_src_src_box.getText().trim());
+                            break;
+                        case 3:
+                            searchAssign(src_method, DB_COLUMN_COMPANY, tf_src_src_box.getText().trim());
+                            break;
+                        case 4:
+                            searchAssign(src_method, DB_COLUMN_ELABEL, tf_src_src_box.getText().trim());
+                            break;
+                    }
+                }
+            }
+        };
+        tf_src_src_box.setFocusChangedListener(new Component.FocusChangedListener() {
+            @Override
+            public void onFocusChange(Component component, boolean b) {
+                if (b) {
+                    clearScreen();
+                }
+
+            }
+        });
+        tf_src_src_box.addTextObserver(textUpdateObserver);
+
+
 
     }
-    public void clearMethod(){
+
+    public void clearMethod() {
         src_method = 0;
+        t_notice.setText("暂无新通知");
         btn_src_method.setText("药 名 ▼");
         btn_src_back.setText("◀ 退出");
         btn_src_method.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_search_method_select));
         btn_src_screen.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_search_method_normal));
         initSearchListContainer();
     }
-    public void clearScreen(){
+
+    public void clearScreen() {
         src_screen = 0;
         src_screen_method = "";
+        t_notice.setText("暂无新通知");
         btn_src_screen.setText("筛 选 ▼");
         btn_src_back.setText("◀ 退出");
         btn_src_screen.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_search_method_normal));
@@ -88,7 +140,9 @@ public class SearchAbilitySlice extends AbilitySlice {
         initSearchListContainer();
 
     }
+
     private void iniClicklistener() {
+
         //搜索方法切换
         btn_src_method.setClickedListener(component -> {
             new XPopup.Builder(getContext())
@@ -128,7 +182,7 @@ public class SearchAbilitySlice extends AbilitySlice {
                 new XPopup.Builder(getContext())
                         .maxHeight(850)
                         .isDestroyOnDismiss(true) // 对于只使用一次的弹窗，推荐设置这个
-                        .asCenterList("请选择筛选条件", new String[]{"以\"过期时间\"为条件筛选", "以\"药品余量\"为条件筛选", "以\"药品类型\"为条件筛选", "以\"药品标签\"为条件筛选"},
+                        .asCenterList("请选择筛选条件", new String[]{"以\"过期时间\"为条件筛选", "以\"药品余量\"为条件筛选", "以\"药品标识\"为条件筛选"},
                                 new OnSelectListener() {
                                     @Override
                                     public void onSelect(int position, String text) {
@@ -237,9 +291,9 @@ public class SearchAbilitySlice extends AbilitySlice {
                                                                                                                                                                             public void onSelect(int position, String text) {
                                                                                                                                                                                 src_screen_method = src_screen_method + "-" + text.replace("月", "") + "-1";
                                                                                                                                                                                 String[] list = src_screen_method.split(":");
-                                                                                                                                                                                if (list[0].equals(list[1])){
-                                                                                                                                                                                    btn_src_screen.setText("过期时间:在" + list[0].split("-")[0]+"-"+list[0].split("-")[1] + "之内 ▼");
-                                                                                                                                                                                }else {
+                                                                                                                                                                                if (list[0].equals(list[1])) {
+                                                                                                                                                                                    btn_src_screen.setText("过期时间:在" + list[0].split("-")[0] + "-" + list[0].split("-")[1] + "之内 ▼");
+                                                                                                                                                                                } else {
                                                                                                                                                                                     btn_src_screen.setText("过期时间:在" + list[0] + "与" + list[1] + "之间 ▼");
                                                                                                                                                                                 }
                                                                                                                                                                                 searchScreen(12, DB_COLUMN_OUTDATE, list[0], list[1]);
@@ -307,7 +361,7 @@ public class SearchAbilitySlice extends AbilitySlice {
                                                                 new OnSelectListener() {
                                                                     @Override
                                                                     public void onSelect(int position, String text) {
-                                                                        switch (position){
+                                                                        switch (position) {
                                                                             case 0:
                                                                                 new XPopup.Builder(getContext())
                                                                                         .hasStatusBarShadow(true) // 暂无实现
@@ -320,9 +374,28 @@ public class SearchAbilitySlice extends AbilitySlice {
                                                                                         .asInputConfirm("少于...(数量)", "请填入数量", null, "少于...", new OnInputConfirmListener() {
                                                                                             @Override
                                                                                             public void onConfirm(String s) {
-                                                                                                searchScreen(21, DB_COLUMN_YU, s, null);
+                                                                                                Matcher matcher = pattern.matcher(s);
+                                                                                                if (matcher.matches()) {
+                                                                                                    searchScreen(21, DB_COLUMN_YU, s, null);
+                                                                                                    btn_src_screen.setText("药品余量:少于" + s + " ▼");
+                                                                                                } else {
+                                                                                                    new XPopup.Builder(getContext())
+                                                                                                            //.setPopupCallback(new XPopupListener())
+                                                                                                            .dismissOnTouchOutside(false)
+                                                                                                            .dismissOnBackPressed(false)
+                                                                                                            .isDestroyOnDismiss(true)
+                                                                                                            .asConfirm("格式错误", "内容必须为数字",
+                                                                                                                    " ", "好", new OnConfirmListener() {
+                                                                                                                        @Override
+                                                                                                                        public void onConfirm() {
+                                                                                                                            clearScreen();
+                                                                                                                        }
+                                                                                                                    }, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
+                                                                                                            .show(); // 最后一个参数绑定已有布局
+                                                                                                }
+
                                                                                             }
-                                                                                        }, null,ResourceTable.Layout_popup_comfirm_with_input_number)
+                                                                                        }, null, ResourceTable.Layout_popup_comfirm_with_input_number)
                                                                                         .show();
                                                                                 break;
                                                                             case 1:
@@ -337,24 +410,60 @@ public class SearchAbilitySlice extends AbilitySlice {
                                                                                         .asInputConfirm("在...(数量)与", "请填入数量", null, "前数量...", new OnInputConfirmListener() {
                                                                                             @Override
                                                                                             public void onConfirm(String s) {
-                                                                                                src_screen_method = s;
-                                                                                                new XPopup.Builder(getContext())
-                                                                                                        .hasStatusBarShadow(true) // 暂无实现
-                                                                                                        .autoOpenSoftInput(true)
-                                                                                                        .isDarkTheme(false)
-                                                                                                        .dismissOnBackPressed(false)
-                                                                                                        .dismissOnTouchOutside(false)
-                                                                                                        .isDestroyOnDismiss(true)
-                                                                                                        .setComponent(component) // 用于获取页面根容器，监听页面高度变化，解决输入法盖住弹窗的问题
-                                                                                                        .asInputConfirm("在...(数量)与", "请填入数量", null, "前数量...", new OnInputConfirmListener() {
-                                                                                                            @Override
-                                                                                                            public void onConfirm(String s) {
-                                                                                                                searchScreen(22, DB_COLUMN_YU, src_screen_method, s);
-                                                                                                            }
-                                                                                                        }, null,ResourceTable.Layout_popup_comfirm_with_input_number)
-                                                                                                        .show();
+                                                                                                Matcher matcher = pattern.matcher(s);
+                                                                                                if (matcher.matches()) {
+                                                                                                    src_screen_method = s;
+                                                                                                    new XPopup.Builder(getContext())
+                                                                                                            .hasStatusBarShadow(true) // 暂无实现
+                                                                                                            .autoOpenSoftInput(true)
+                                                                                                            .isDarkTheme(false)
+                                                                                                            .dismissOnBackPressed(false)
+                                                                                                            .dismissOnTouchOutside(false)
+                                                                                                            .isDestroyOnDismiss(true)
+                                                                                                            .setComponent(component) // 用于获取页面根容器，监听页面高度变化，解决输入法盖住弹窗的问题
+                                                                                                            .asInputConfirm("在...(数量)与", "请填入数量", null, "后数量...", new OnInputConfirmListener() {
+                                                                                                                @Override
+                                                                                                                public void onConfirm(String s) {
+                                                                                                                    Matcher matcher = pattern.matcher(s);
+                                                                                                                    if (matcher.matches()) {
+                                                                                                                        searchScreen(22, DB_COLUMN_YU, src_screen_method, s);
+                                                                                                                        btn_src_screen.setText("药品余量:在" + src_screen_method+"与"+s+"间" + " ▼");
+                                                                                                                    } else {
+                                                                                                                        new XPopup.Builder(getContext())
+                                                                                                                                //.setPopupCallback(new XPopupListener())
+                                                                                                                                .dismissOnTouchOutside(false)
+                                                                                                                                .dismissOnBackPressed(false)
+                                                                                                                                .isDestroyOnDismiss(true)
+                                                                                                                                .asConfirm("格式错误", "内容必须为数字",
+                                                                                                                                        " ", "好", new OnConfirmListener() {
+                                                                                                                                            @Override
+                                                                                                                                            public void onConfirm() {
+                                                                                                                                                clearScreen();
+                                                                                                                                            }
+                                                                                                                                        }, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
+                                                                                                                                .show(); // 最后一个参数绑定已有布局
+                                                                                                                    }
+
+                                                                                                                }
+                                                                                                            }, null, ResourceTable.Layout_popup_comfirm_with_input_number)
+                                                                                                            .show();
+                                                                                                } else {
+                                                                                                    new XPopup.Builder(getContext())
+                                                                                                            //.setPopupCallback(new XPopupListener())
+                                                                                                            .dismissOnTouchOutside(false)
+                                                                                                            .dismissOnBackPressed(false)
+                                                                                                            .isDestroyOnDismiss(true)
+                                                                                                            .asConfirm("格式错误", "内容必须为数字",
+                                                                                                                    " ", "好", new OnConfirmListener() {
+                                                                                                                        @Override
+                                                                                                                        public void onConfirm() {
+                                                                                                                            clearScreen();
+                                                                                                                        }
+                                                                                                                    }, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
+                                                                                                            .show(); // 最后一个参数绑定已有布局
+                                                                                                }
                                                                                             }
-                                                                                        }, null,ResourceTable.Layout_popup_comfirm_with_input_number)
+                                                                                        }, null, ResourceTable.Layout_popup_comfirm_with_input_number)
                                                                                         .show();
                                                                                 break;
                                                                             case 2:
@@ -369,12 +478,65 @@ public class SearchAbilitySlice extends AbilitySlice {
                                                                                         .asInputConfirm("多于...(数量)", "请填入数量", null, "多于...", new OnInputConfirmListener() {
                                                                                             @Override
                                                                                             public void onConfirm(String s) {
-                                                                                                searchScreen(23, DB_COLUMN_YU, s, null);
+                                                                                                Matcher matcher = pattern.matcher(s);
+                                                                                                if (matcher.matches()) {
+                                                                                                    searchScreen(23, DB_COLUMN_YU, s, null);
+                                                                                                    btn_src_screen.setText("药品余量:多于" +s+ " ▼");
+
+                                                                                                } else {
+                                                                                                    new XPopup.Builder(getContext())
+                                                                                                            //.setPopupCallback(new XPopupListener())
+                                                                                                            .dismissOnTouchOutside(false)
+                                                                                                            .dismissOnBackPressed(false)
+                                                                                                            .isDestroyOnDismiss(true)
+                                                                                                            .asConfirm("格式错误", "内容必须为数字",
+                                                                                                                    " ", "好", new OnConfirmListener() {
+                                                                                                                        @Override
+                                                                                                                        public void onConfirm() {
+                                                                                                                            clearScreen();
+                                                                                                                        }
+                                                                                                                    }, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
+                                                                                                            .show(); // 最后一个参数绑定已有布局
+                                                                                                }
                                                                                             }
-                                                                                        }, null,ResourceTable.Layout_popup_comfirm_with_input_number)
+                                                                                        }, null, ResourceTable.Layout_popup_comfirm_with_input_number)
                                                                                         .show();
                                                                                 break;
                                                                         }
+                                                                    }
+                                                                })
+                                                        .show();
+                                                break;
+                                            case 3:
+                                                new XPopup.Builder(getContext())
+                                                        .isDarkTheme(false)
+                                                        .dismissOnBackPressed(false)
+                                                        .dismissOnTouchOutside(false)
+                                                        .isDestroyOnDismiss(true)
+                                                        .maxHeight(850)
+                                                        .asCenterList("请选择一项", new String[]{"OTC(全)", "OTC(绿)", "OTC(红)","Rx","留空"},
+                                                                new OnSelectListener() {
+                                                                    @Override
+                                                                    public void onSelect(int position, String text) {
+                                                                        btn_src_screen.setText("药品标识:"+text + " ▼");
+                                                                        switch (position){
+                                                                            case 0:
+                                                                                searchScreen(31,DB_COLUMN_OTC,"OTC",null);
+                                                                                break;
+                                                                            case 1:
+                                                                                searchScreen(32,DB_COLUMN_OTC,"OTC-G",null);
+                                                                                break;
+                                                                            case 2:
+                                                                                searchScreen(33,DB_COLUMN_OTC,"OTC-R",null);
+                                                                                break;
+                                                                            case 3:
+                                                                                searchScreen(34,DB_COLUMN_OTC,"Rx",null);
+                                                                                break;
+                                                                            case 4:
+                                                                                searchScreen(35,DB_COLUMN_OTC,"none",null);
+                                                                                break;
+                                                                        }
+
                                                                     }
                                                                 })
                                                         .show();
@@ -388,52 +550,13 @@ public class SearchAbilitySlice extends AbilitySlice {
         });
         //点击返回
         btn_src_back.setClickedListener(component -> {
-            if (src_screen!=0){
+            if (src_screen != 0) {
                 clearScreen();
-            }else if(src_method!=0){
+            } else if (src_method != 0) {
                 clearMethod();
-            }else{
+            } else {
                 terminate();
             }
-        });
-        //搜索方法
-        btn_src.setClickedListener(component -> {
-            //src_screen是筛选变量，当筛选条件存在时，不进行目标性搜索
-            //src_screen = 0时说明未进行筛选
-            if (src_screen != 0) {
-                switch (src_screen) {
-                    case 1:
-//                        searchScreen(src_screen,DB_COLUMN_OUTDATE,tf_src_src_box.getText().trim());
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                    case 4:
-                        break;
-
-                }
-            } else {
-                btn_src_back.setText("◀ 返回上一级");
-                switch (src_method) {
-                    case 0:
-                        searchAssign(src_method, DB_COLUMN_NAME, tf_src_src_box.getText().trim());
-                        break;
-                    case 1:
-                        searchAssign(src_method, DB_COLUMN_DESCRIPTION, tf_src_src_box.getText().trim());
-                        break;
-                    case 2:
-                        searchAssign(src_method, DB_COLUMN_BARCODE, tf_src_src_box.getText().trim());
-                        break;
-                    case 3:
-                        searchAssign(src_method, DB_COLUMN_COMPANY, tf_src_src_box.getText().trim());
-                        break;
-                    case 4:
-                        searchAssign(src_method, DB_COLUMN_ELABEL, tf_src_src_box.getText().trim());
-                        break;
-                }
-            }
-
         });
 
 
@@ -443,9 +566,9 @@ public class SearchAbilitySlice extends AbilitySlice {
     private void iniView() {
         btn_src_method = (Text) findComponentById(ResourceTable.Id_src_srcmethod);
         tf_src_src_box = (TextField) findComponentById(ResourceTable.Id_src_srcbox);
-        btn_src = (Text) findComponentById(ResourceTable.Id_src_src);
         btn_src_back = (Text) findComponentById(ResourceTable.Id_src_back);
         btn_src_screen = (Text) findComponentById(ResourceTable.Id_src_srceen);
+        t_notice = (Text)findComponentById(ResourceTable.Id_src_notice);
 
     }
 
@@ -456,67 +579,311 @@ public class SearchAbilitySlice extends AbilitySlice {
         // 2.实例化数据源
         List<Map<String, Object>> list = MainAbilitySlice.queryScreenData(method, field, value1, value2);
         if (list == null) {
-            new XPopup.Builder(getContext())
-                    //.setPopupCallback(new XPopupListener())
-                    .dismissOnTouchOutside(false)
-                    .dismissOnBackPressed(false)
-                    .isDestroyOnDismiss(true)
-                    .asConfirm("没有数据", "未搜索到任何数据",
-                            " ", "好", new OnConfirmListener() {
-                                @Override
-                                public void onConfirm() {
-                                    clearScreen();
-                                }
-                            }, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
-                    .show(); // 最后一个参数绑定已有布局
-        } else {
-            switch (method) {
-                case 11:
-                    //这里是早于...年份的筛选处理对象
-                    // 3.初始化Provider对象,
-                    NormalProvider listItemProvider_11 = new NormalProvider(list, this);
-                    // 4.适配要展示的内容数据
-                    listContainer.setItemProvider(listItemProvider_11);
-                    break;
-                case 12:
-                    //这里是在...与...间的筛选处理对象
-                    // 3.初始化Provider对象,
-                    NormalProvider listItemProvider_12 = new NormalProvider(list, this);
-                    // 4.适配要展示的内容数据
-                    listContainer.setItemProvider(listItemProvider_12);
-                case 13:
-                    //这里是晚于...年份的筛选处理对象
-                    // 3.初始化Provider对象,
-                    NormalProvider listItemProvider_13 = new NormalProvider(list, this);
-                    // 4.适配要展示的内容数据
-                    listContainer.setItemProvider(listItemProvider_13);
-
-                case 21:
-                    //这里是早于...年份的筛选处理对象
-                    // 3.初始化Provider对象,
-                    NormalProvider listItemProvider_21 = new NormalProvider(list, this);
-                    // 4.适配要展示的内容数据
-                    listContainer.setItemProvider(listItemProvider_21);
-                    break;
-                case 22:
-                    //这里是在...与...间的筛选处理对象
-                    // 3.初始化Provider对象,
-                    NormalProvider listItemProvider_22 = new NormalProvider(list, this);
-                    // 4.适配要展示的内容数据
-                    listContainer.setItemProvider(listItemProvider_22);
-                case 23:
-                    //这里是晚于...年份的筛选处理对象
-                    // 3.初始化Provider对象,
-                    NormalProvider listItemProvider_23 = new NormalProvider(list, this);
-                    // 4.适配要展示的内容数据
-                    listContainer.setItemProvider(listItemProvider_23);
-
-
-
-            }
-
+            list = getNullListNotice();
+            t_notice.setText("此次共筛选到 0 条数据");
+        }else {
+            t_notice.setText("此次共筛选到 "+ list.size() +" 条数据");
+        }
+        switch (method) {
+            case 11:
+                //这里是早于...年份的筛选处理对象
+                // 3.初始化Provider对象,
+                OutdateProvider listItemProvider_11 = new OutdateProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_11);
+                //5.链接对应的listener
+                List<Map<String, Object>> finalList11 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList11.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 12:
+                //这里是在...与...间的筛选处理对象
+                // 3.初始化Provider对象,
+                OutdateProvider listItemProvider_12 = new OutdateProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_12);
+                //5.链接对应的listener
+                List<Map<String, Object>> finalList12 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList12.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 13:
+                //这里是晚于...年份的筛选处理对象
+                // 3.初始化Provider对象,
+                OutdateProvider listItemProvider_13 = new OutdateProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_13);
+                //5.链接对应的listener
+                List<Map<String, Object>> finalList13 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList13.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 21:
+                //这里是少于...数量的筛选处理对象
+                // 3.初始化Provider对象,
+                YuProvider listItemProvider_21 = new YuProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_21);
+                //5.链接对应的listener
+                List<Map<String, Object>> finalList21 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList21.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 22:
+                //这里是数量在...与...间的筛选处理对象
+                // 3.初始化Provider对象,
+                YuProvider listItemProvider_22 = new YuProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_22);
+                //5.链接对应的listener
+                List<Map<String, Object>> finalList22 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList22.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 23:
+                //这里是多于...数量的筛选处理对象
+                // 3.初始化Provider对象,
+                YuProvider listItemProvider_23 = new YuProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_23);
+                //5.链接对应的listener
+                List<Map<String, Object>> finalList23 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList23.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 31:
+                //这里是otc全的筛选处理对象
+                // 3.初始化Provider对象,
+                OtcProvider listItemProvider_31 = new OtcProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_31);
+                //5.链接对应的listener
+                List<Map<String, Object>> finalList31 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList31.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 32:
+                //这里是otc绿的筛选处理对象
+                // 3.初始化Provider对象,
+                OtcProvider listItemProvider_32 = new OtcProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_32);
+                //5.链接对应的listener
+                List<Map<String, Object>> finalList32 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList32.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 33:
+                //这里是otc红的筛选处理对象
+                // 3.初始化Provider对象,
+                OtcProvider listItemProvider_33 = new OtcProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_33);
+                //5.链接对应的listener
+                List<Map<String, Object>> finalList33 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList33.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 34:
+                //这里是rx的筛选处理对象
+                // 3.初始化Provider对象,
+                OtcProvider listItemProvider_34 = new OtcProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_34);
+                //5.链接对应的listener
+                List<Map<String, Object>> finalList34 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList34.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 35:
+                //这里是留空的筛选处理对象
+                // 3.初始化Provider对象,
+                OtcProvider listItemProvider_35 = new OtcProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_35);
+                //5.链接对应的listener
+                List<Map<String, Object>> finalList35 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList35.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
 
         }
+
+
+    }
+
+    private List<Map<String, Object>> getNullListNotice() {
+        List<Map<String, Object>> list = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("keyid", null);
+        map.put("name","  失败:搜索到的结果为0");
+        list.add(map);
+        return list;
     }
 
     //指定搜索
@@ -526,61 +893,165 @@ public class SearchAbilitySlice extends AbilitySlice {
         // 2.实例化数据源
         List<Map<String, Object>> list = MainAbilitySlice.queryAssignData(field, value);
         if (list == null) {
-            new XPopup.Builder(getContext())
-                    //.setPopupCallback(new XPopupListener())
-                    .dismissOnTouchOutside(false)
-                    .dismissOnBackPressed(false)
-                    .isDestroyOnDismiss(true)
-                    .asConfirm("没有数据", "未搜索到任何数据",
-                            " ", "好", new OnConfirmListener() {
-                                @Override
-                                public void onConfirm() {
-                                    clearMethod();
-                                }
-                            }, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
-                    .show(); // 最后一个参数绑定已有布局
-        } else {
-            switch (method) {
-                case 0:
-                    //这里是药名的搜索处理对象
-                    // 3.初始化Provider对象,
-                    NormalProvider listItemProvider_name = new NormalProvider(list, this);
-                    // 4.适配要展示的内容数据
-                    listContainer.setItemProvider(listItemProvider_name);
-                    break;
-                case 1:
-                    //这里是描述的搜索处理对象
-                    // 3.初始化Provider对象,
-                    DespProvider listItemProvider_desp = new DespProvider(list, this);
-                    // 4.适配要展示的内容数据
-                    listContainer.setItemProvider(listItemProvider_desp);
-                    break;
-                case 2:
-                    //这里是条码的搜索处理对象
-                    // 3.初始化Provider对象,
-                    BarCodeProvider listItemProvider_barcode = new BarCodeProvider(list, this);
-                    // 4.适配要展示的内容数据
-                    listContainer.setItemProvider(listItemProvider_barcode);
-                    break;
-                case 3:
-                    //这里是公司的搜索处理对象
-                    // 3.初始化Provider对象,
-                    CompanyProvider listItemProvider_company = new CompanyProvider(list, this);
-                    // 4.适配要展示的内容数据
-                    listContainer.setItemProvider(listItemProvider_company);
-                    break;
-                case 4:
-                    //这里是标签的搜索处理对象
-                    // 3.初始化Provider对象,
-                    ElabelProvider listItemProvider_elabel = new ElabelProvider(list, this);
-                    // 4.适配要展示的内容数据
-                    listContainer.setItemProvider(listItemProvider_elabel);
-                    break;
+            list = getNullListNotice();
+            t_notice.setText("此次共搜索到 0 条数据");
+        }else {
+            t_notice.setText("此次共搜索到 "+ list.size() +" 条数据");
+        }
+        switch (method) {
+            case 0:
+                //这里是药名的搜索处理对象
+                // 3.初始化Provider对象,
+                NormalProvider listItemProvider_name = new NormalProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_name);
+                // 5.设置每个Item的点击事件
+                List<Map<String, Object>> finalList1 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList1.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 1:
+                //这里是描述的搜索处理对象
+                // 3.初始化Provider对象,
+                DespProvider listItemProvider_desp = new DespProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_desp);
+                // 5.设置每个Item的点击事件
+                List<Map<String, Object>> finalList2 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList2.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 2:
+                //这里是条码的搜索处理对象
+                // 3.初始化Provider对象,
+                BarCodeProvider listItemProvider_barcode = new BarCodeProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_barcode);
+                // 5.设置每个Item的点击事件
+                List<Map<String, Object>> finalList3 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList3.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                listContainer.setItemLongClickedListener(new ListContainer.ItemLongClickedListener() {
+                    @Override
+                    public boolean onItemLongClicked(ListContainer listContainer, Component component, int i, long l) {
+                        Map<String, Object> res = finalList3.get(i);
+                        if (res.get("keyid") != null) {
 
-            }
+                            //将编码放到剪贴板
+                            Map<String, Object> res_barcode = finalList3.get(i);
+                            SystemPasteboard mPasteboard = SystemPasteboard.getSystemPasteboard(getContext());
+                            ;
+                            PasteData pasteData = PasteData.creatPlainTextData((String) res_barcode.get("barcode"));
+                            mPasteboard.setPasteData(pasteData);
+                            ToastUtil.showToast(getContext(), "条码已复制  ");
+                        }
+                        return false;
 
+                    }
+
+                });
+                break;
+            case 3:
+                //这里是公司的搜索处理对象
+                // 3.初始化Provider对象,
+                CompanyProvider listItemProvider_company = new CompanyProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_company);
+                // 5.设置每个Item的点击事件
+                List<Map<String, Object>> finalList4 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList4.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
+            case 4:
+                //这里是标签的搜索处理对象
+                // 3.初始化Provider对象,
+                ElabelProvider listItemProvider_elabel = new ElabelProvider(list, this);
+                // 4.适配要展示的内容数据
+                listContainer.setItemProvider(listItemProvider_elabel);
+                // 5.设置每个Item的点击事件
+                List<Map<String, Object>> finalList5 = list;
+                listContainer.setItemClickedListener((container, component, position, id) -> {
+//                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                    Map<String, Object> res = finalList5.get(position);
+                    if (res.get("keyid") != null) {
+                        util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                        //弹出弹框查看详情后再返回
+                        Intent intentDeital = new Intent();
+                        Operation operation = new Intent.OperationBuilder()
+                                .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                                .withBundleName(getBundleName())    // 包名
+                                .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                                // Ability页面的名称，在本地可以缺省前面的路径
+                                .build();    // 构建代码
+                        intentDeital.setOperation(operation);    // 将operation存入到intent中
+                        startAbility(intentDeital);    // 实现Ability跳转
+                    }
+                });
+                break;
 
         }
+
+
     }
 
     // 初始化搜索页默认的的ListContainer
@@ -618,42 +1089,20 @@ public class SearchAbilitySlice extends AbilitySlice {
             listContainer.setItemClickedListener((container, component, position, id) -> {
 //                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
                 Map<String, Object> res = list.get(position);
-                util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
-                //弹出弹框查看详情后再返回
-                Intent intentDeital = new Intent();
-                Operation operation = new Intent.OperationBuilder()
-                        .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
-                        .withBundleName(getBundleName())    // 包名
-                        .withAbilityName("com.daqin.medicinegod.DetailAbility")
-                        // Ability页面的名称，在本地可以缺省前面的路径
-                        .build();    // 构建代码
-                intentDeital.setOperation(operation);    // 将operation存入到intent中
-                startAbilityForResult(intentDeital, 999);    // 实现Ability跳转
-            });
-            listContainer.setItemLongClickedListener(new ListContainer.ItemLongClickedListener() {
-                @Override
-                public boolean onItemLongClicked(ListContainer listContainer, Component component, int i, long l) {
-                    if (src_method == 2) {
-                        //将编码放到剪贴板
-                        Map<String, Object> res_barcode = list.get(i);
-                        SystemPasteboard mPasteboard = SystemPasteboard.getSystemPasteboard(getContext());
-                        ;
-                        PasteData pasteData = PasteData.creatPlainTextData((String) res_barcode.get("barcode"));
-                        mPasteboard.setPasteData(pasteData);
-                        ToastUtil.showToast(getContext(), "条码已复制  ");
-                    } else {
-                        //将编码放到剪贴板
-                        Map<String, Object> res_name = list.get(i);
-                        SystemPasteboard mPasteboard = SystemPasteboard.getSystemPasteboard(getContext());
-                        ;
-                        PasteData pasteData = PasteData.creatPlainTextData((String) res_name.get("name"));
-                        mPasteboard.setPasteData(pasteData);
-                        ToastUtil.showToast(getContext(), "名称已复制  ");
-                    }
-                    return false;
+                if (res.get("keyid") != null) {
+                    util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                    //弹出弹框查看详情后再返回
+                    Intent intentDeital = new Intent();
+                    Operation operation = new Intent.OperationBuilder()
+                            .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                            .withBundleName(getBundleName())    // 包名
+                            .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                            // Ability页面的名称，在本地可以缺省前面的路径
+                            .build();    // 构建代码
+                    intentDeital.setOperation(operation);    // 将operation存入到intent中
+                    startAbility(intentDeital);    // 实现Ability跳转
                 }
             });
-
 
         }
     }

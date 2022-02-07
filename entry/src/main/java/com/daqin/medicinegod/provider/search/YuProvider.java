@@ -7,16 +7,17 @@ import ohos.aafwk.ability.AbilitySlice;
 import ohos.agp.components.*;
 import ohos.agp.utils.Color;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-public class CompanyProvider extends BaseItemProvider {
+public class YuProvider extends BaseItemProvider {
 
     private List<Map<String, Object>> list;
     private AbilitySlice slice;
 
-    public CompanyProvider(List<Map<String, Object>> list, AbilitySlice slice) {
+    public YuProvider(List<Map<String, Object>> list, AbilitySlice slice) {
         this.list = list;
         this.slice = slice;
     }
@@ -45,7 +46,7 @@ public class CompanyProvider extends BaseItemProvider {
         // 如果还没有convertComponent对象，那么将xml布局文件转为一个Component对象。
         if (convertComponent == null) {
             //从当前的AbilitySlice对应的xml布局中，
-            cpt = LayoutScatter.getInstance(slice).parse(ResourceTable.Layout_list_item_search_method_company, null, false);
+            cpt = LayoutScatter.getInstance(slice).parse(ResourceTable.Layout_list_item_search_method_yu, null, false);
         } else {
             cpt = convertComponent;
         }
@@ -65,12 +66,21 @@ public class CompanyProvider extends BaseItemProvider {
         Map<String, Object> map = list.get(position);//获取数据
 
         Text textName = (Text) cpt.findComponentById(ResourceTable.Id_srced_name);
-        Text textCompany = (Text) cpt.findComponentById(ResourceTable.Id_srced_company);
+        Text textYu = (Text) cpt.findComponentById(ResourceTable.Id_srced_yu);
         Image image = (Image) cpt.findComponentById(ResourceTable.Id_srced_image_png);
-
         if (map.get("keyid") != null) {
+
+
+
             textName.setText((String) map.get("name"));
-            textCompany.setText((String) map.get("company"));
+
+
+            String[] textUagesAll = ((String) map.get("usage")).split("-");
+
+            int yuall = Integer.parseInt(map.get("yu").toString());
+            int yuus = Integer.parseInt(textUagesAll[0]);
+            textYu.setText("预计可再使用" + (String) map.get("yu") + textUagesAll[1] + "后购买;\n"
+                    + "或再使用预计" + (yuall / yuus) + "次后购买新药品。");
             //过期提醒,红色过期，黑色正常，黄色临期，蓝色搜索到的内容
             //过期提醒,红色过期，黑色正常，黄色临期，蓝色搜索到的内容
             //过期提醒
@@ -97,7 +107,6 @@ public class CompanyProvider extends BaseItemProvider {
                     break;
             }
 
-
 //        DataAbilityHelper helper = DataAbilityHelper.creator(slice.getContext());
 //        //定义文件
 //        FileDescriptor file = null;
@@ -116,10 +125,13 @@ public class CompanyProvider extends BaseItemProvider {
             image.setPixelMap(ResourceTable.Media_test);
             image.setCornerRadius(5);
 //        image.setPixelMap((int)map.get("image"));
+
         } else {
             textName.setText((String)map.get("name"));
             image.setVisibility(Component.HIDE);
+
         }
+
         return cpt;
     }
 

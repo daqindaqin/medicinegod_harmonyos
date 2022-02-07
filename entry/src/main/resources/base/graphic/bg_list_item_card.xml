@@ -4,15 +4,15 @@
     ohos:shape="rectangle">
 
     <solid
-        ohos:color="$color:white"/>
+        ohos:color="$color:black_light2"/>
 
     <corners
         ohos:radius="10vp"/>
 
-
+<!--
     <stroke
         ohos:width="2vp"
-        ohos:color="#887b7b7b"/>
+        ohos:color="#887b7b7b"/>-->
 
 
 </shape>

@@ -47,16 +47,16 @@ public class MainAbilitySlice extends AbilitySlice {
     private static Context cont;
 
     private BubbleNavigationLinearView mBubbleNavigationLinearView;
-//    private List<String> labelList = new ArrayList<>();
+    //    private List<String> labelList = new ArrayList<>();
     private static final int RESULTCODE_IMAGE_STARTCROP = 100;
     private static final int RESULTCODE_IMAGE_CROPED = 101;
-    private static int newUsage_utils_1 = 0,newUsage_utils_3 = 0,elabelCount = 0;
+    private static int newUsage_utils_1 = 0, newUsage_utils_3 = 0, elabelCount = 0;
     /**
-     * @param  lowKey 第一条key，查询所用
-     * @param  highKey 最后一条key，查询所用
+     * @param lowKey 第一条key，查询所用
+     * @param highKey 最后一条key，查询所用
      */
-    private static String lowKey ;
-    private static String highKey ;
+    private static String lowKey;
+    private static String highKey;
     private String imgpath = null;
     private String eLABEL = "";
     private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "MainAbilitySlice");
@@ -85,71 +85,71 @@ public class MainAbilitySlice extends AbilitySlice {
     Text btn_add_yu_title;
     Text btn_things_seach;
 
-    ScrollView view_add ;
-    TextField tf_add_name ;
-    TextField tf_add_desp ;
-    Picker tf_add_outdate_year ;
-    Picker tf_add_outdate_month ;
-    Picker tf_add_otc ;
-    TextField tf_add_barcode ;
-    TextField tf_add_usage_total ;
-    TextField tf_add_usage_time ;
-    TextField tf_add_usage_day ;
-    TextField tf_add_company ;
-    TextField tf_add_yu ;
-    Button btn_add_ok ;
-    Button btn_addNewLabel ;
-    TextField tf_add_elabelBox ;
-    Text t_add_elabel_title ;
-    Text t_add_elabel1 ;
-    Text t_add_elabel2 ;
-    Text t_add_elabel3 ;
-    Text t_add_elabel4 ;
-    Text t_add_elabel5 ;
-
+    ScrollView view_add;
+    TextField tf_add_name;
+    TextField tf_add_desp;
+    Picker tf_add_outdate_year;
+    Picker tf_add_outdate_month;
+    Picker tf_add_otc;
+    TextField tf_add_barcode;
+    TextField tf_add_usage_total;
+    TextField tf_add_usage_time;
+    TextField tf_add_usage_day;
+    TextField tf_add_company;
+    TextField tf_add_yu;
+    Button btn_add_ok;
+    Button btn_addNewLabel;
+    TextField tf_add_elabelBox;
+    Text t_add_elabel_title;
+    Text t_add_elabel1;
+    Text t_add_elabel2;
+    Text t_add_elabel3;
+    Text t_add_elabel4;
+    Text t_add_elabel5;
 
 
     Text[] add_elabelview;
-    TextField[] add_tf_list ;
+    TextField[] add_tf_list;
 
 
-    public void iniView(){
+    public void iniView() {
         img_thing_head = (Image) findComponentById(ResourceTable.Id_things_image_head);
         img_thing_head.setCornerRadius(100);
-        btn_add_clear_context = (Button)findComponentById(ResourceTable.Id_add_clear);
-        btn_add_otc_question = (Text)findComponentById(ResourceTable.Id_add_newOtc_question);
-        btn_add_img = (Image)findComponentById(ResourceTable.Id_add_newImg);
-        btn_add_newUsage_utils_1 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_1);
-        btn_add_newUsage_utils_2 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_2);
-        btn_add_newUsage_utils_3 = (Text)findComponentById(ResourceTable.Id_add_newUsage_utils_3);
-        btn_add_yu_title = (Text)findComponentById(ResourceTable.Id_add_newYu_title);
-        btn_things_seach = (Text)findComponentById(ResourceTable.Id_things_textField_search);
-        view_add = (ScrollView)findComponentById(ResourceTable.Id_add_scrollview);
-        tf_add_name = (TextField)findComponentById(ResourceTable.Id_add_newName);
-        tf_add_desp = (TextField)findComponentById(ResourceTable.Id_add_newDescription);
-        tf_add_outdate_year = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_year);
-        tf_add_outdate_month = (Picker)findComponentById(ResourceTable.Id_add_newOutdate_month);
-        tf_add_otc = (Picker)findComponentById(ResourceTable.Id_add_newOtc);
-        tf_add_barcode = (TextField)findComponentById(ResourceTable.Id_add_newbarCode);
-        tf_add_usage_total = (TextField)findComponentById(ResourceTable.Id_add_newUsage_1);
-        tf_add_usage_time = (TextField)findComponentById(ResourceTable.Id_add_newUsage_2);
-        tf_add_usage_day = (TextField)findComponentById(ResourceTable.Id_add_newUsage_3);
-        tf_add_company = (TextField)findComponentById(ResourceTable.Id_add_newCompany);
-        tf_add_yu = (TextField)findComponentById(ResourceTable.Id_add_newYu);
-        btn_add_ok = (Button)findComponentById(ResourceTable.Id_add_addOk);
-        btn_addNewLabel = (Button)findComponentById(ResourceTable.Id_add_newLabel_addButton);
-        tf_add_elabelBox = (TextField)findComponentById(ResourceTable.Id_add_newLabel_addTextFiled);
-        t_add_elabel_title = (Text)findComponentById(ResourceTable.Id_add_newLabel_title);
-        t_add_elabel1 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label1);
-        t_add_elabel2 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label2);
-        t_add_elabel3 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label3);
-        t_add_elabel4 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label4);
-        t_add_elabel5 = (Text)findComponentById(ResourceTable.Id_add_addNewlabel_label5);
+        btn_add_clear_context = (Button) findComponentById(ResourceTable.Id_add_clear);
+        btn_add_otc_question = (Text) findComponentById(ResourceTable.Id_add_newOtc_question);
+        btn_add_img = (Image) findComponentById(ResourceTable.Id_add_newImg);
+        btn_add_newUsage_utils_1 = (Text) findComponentById(ResourceTable.Id_add_newUsage_utils_1);
+        btn_add_newUsage_utils_2 = (Text) findComponentById(ResourceTable.Id_add_newUsage_utils_2);
+        btn_add_newUsage_utils_3 = (Text) findComponentById(ResourceTable.Id_add_newUsage_utils_3);
+        btn_add_yu_title = (Text) findComponentById(ResourceTable.Id_add_newYu_title);
+        btn_things_seach = (Text) findComponentById(ResourceTable.Id_things_textField_search);
+        view_add = (ScrollView) findComponentById(ResourceTable.Id_add_scrollview);
+        tf_add_name = (TextField) findComponentById(ResourceTable.Id_add_newName);
+        tf_add_desp = (TextField) findComponentById(ResourceTable.Id_add_newDescription);
+        tf_add_outdate_year = (Picker) findComponentById(ResourceTable.Id_add_newOutdate_year);
+        tf_add_outdate_month = (Picker) findComponentById(ResourceTable.Id_add_newOutdate_month);
+        tf_add_otc = (Picker) findComponentById(ResourceTable.Id_add_newOtc);
+        tf_add_barcode = (TextField) findComponentById(ResourceTable.Id_add_newbarCode);
+        tf_add_usage_total = (TextField) findComponentById(ResourceTable.Id_add_newUsage_1);
+        tf_add_usage_time = (TextField) findComponentById(ResourceTable.Id_add_newUsage_2);
+        tf_add_usage_day = (TextField) findComponentById(ResourceTable.Id_add_newUsage_3);
+        tf_add_company = (TextField) findComponentById(ResourceTable.Id_add_newCompany);
+        tf_add_yu = (TextField) findComponentById(ResourceTable.Id_add_newYu);
+        btn_add_ok = (Button) findComponentById(ResourceTable.Id_add_addOk);
+        btn_addNewLabel = (Button) findComponentById(ResourceTable.Id_add_newLabel_addButton);
+        tf_add_elabelBox = (TextField) findComponentById(ResourceTable.Id_add_newLabel_addTextFiled);
+        t_add_elabel_title = (Text) findComponentById(ResourceTable.Id_add_newLabel_title);
+        t_add_elabel1 = (Text) findComponentById(ResourceTable.Id_add_addNewlabel_label1);
+        t_add_elabel2 = (Text) findComponentById(ResourceTable.Id_add_addNewlabel_label2);
+        t_add_elabel3 = (Text) findComponentById(ResourceTable.Id_add_addNewlabel_label3);
+        t_add_elabel4 = (Text) findComponentById(ResourceTable.Id_add_addNewlabel_label4);
+        t_add_elabel5 = (Text) findComponentById(ResourceTable.Id_add_addNewlabel_label5);
 
-        add_elabelview = new Text[]{t_add_elabel1,t_add_elabel2,t_add_elabel3,t_add_elabel4,t_add_elabel5};
-        add_tf_list = new TextField[]{tf_add_name,tf_add_desp,tf_add_barcode,tf_add_usage_total,tf_add_usage_time,tf_add_usage_day,tf_add_company,tf_add_yu};
+        add_elabelview = new Text[]{t_add_elabel1, t_add_elabel2, t_add_elabel3, t_add_elabel4, t_add_elabel5};
+        add_tf_list = new TextField[]{tf_add_name, tf_add_desp, tf_add_barcode, tf_add_usage_total, tf_add_usage_time, tf_add_usage_day, tf_add_company, tf_add_yu};
     }
-    public void iniClicklistener(){
+
+    public void iniClicklistener() {
         //清空添加药品的列表
         btn_add_clear_context.setClickedListener(component -> clearAddTextfield());
         //otc疑问按钮
@@ -173,7 +173,7 @@ public class MainAbilitySlice extends AbilitySlice {
             startAbility(intentSearch);    // 实现Ability跳转
         });
         //添加图片的图片按钮
-        btn_add_img.setClickedListener(new Component.ClickedListener(){
+        btn_add_img.setClickedListener(new Component.ClickedListener() {
             @Override
             public void onClick(Component component) {
                 if (verifySelfPermission("ohos.permission.READ_MEDIA") != IBundleManager.PERMISSION_GRANTED) {
@@ -181,36 +181,36 @@ public class MainAbilitySlice extends AbilitySlice {
                     if (canRequestPermission("ohos.permission.READ_MEDIA")) {
                         // 是否可以申请弹框授权(首次申请或者用户未选择禁止且不再提示)
                         requestPermissionsFromUser(
-                                new String[] { "ohos.permission.READ_MEDIA" } , MY_PERMISSIONS_REQUEST_READ_MEDIA);
+                                new String[]{"ohos.permission.READ_MEDIA"}, MY_PERMISSIONS_REQUEST_READ_MEDIA);
 
                         Intent intent = new Intent();
-                        Operation opt=new Intent.OperationBuilder().withAction("android.intent.action.GET_CONTENT").build();
+                        Operation opt = new Intent.OperationBuilder().withAction("android.intent.action.GET_CONTENT").build();
                         intent.setOperation(opt);
                         intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
                         intent.setType("image/*");
 //                        intent.setBundle("com.huawei.photos");
-                        startAbilityForResult(intent,RESULTCODE_IMAGE_STARTCROP);
+                        startAbilityForResult(intent, RESULTCODE_IMAGE_STARTCROP);
                     } else {
                         // 显示应用需要权限的理由，提示用户进入设置授权
-                        ToastUtil.showToast(getContext(),"请进入系统设置进行授权");
+                        ToastUtil.showToast(getContext(), "请进入系统设置进行授权");
                     }
                 } else {
                     // 权限已被授予
                     //加载显示系统相册中的照片
                     Intent intent = new Intent();
-                    Operation opt=new Intent.OperationBuilder().withAction("android.intent.action.GET_CONTENT").build();
+                    Operation opt = new Intent.OperationBuilder().withAction("android.intent.action.GET_CONTENT").build();
                     intent.setOperation(opt);
                     intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
                     intent.setType("image/*");
                     intent.setBundle("com.huawei.photos");
-                    startAbilityForResult(intent,RESULTCODE_IMAGE_STARTCROP);
+                    startAbilityForResult(intent, RESULTCODE_IMAGE_STARTCROP);
                 }
             }
         });
         //用法用量单位变换
-        btn_add_newUsage_utils_1.setClickedListener(component->{
+        btn_add_newUsage_utils_1.setClickedListener(component -> {
             newUsage_utils_1 += 1;
-            switch (newUsage_utils_1){
+            switch (newUsage_utils_1) {
                 case 1:
                     btn_add_newUsage_utils_1.setText("克");
                     btn_add_yu_title.setText("剩余余量(单位:克)");
@@ -226,9 +226,9 @@ public class MainAbilitySlice extends AbilitySlice {
                     break;
             }
         });
-        btn_add_newUsage_utils_3.setClickedListener(component->{
+        btn_add_newUsage_utils_3.setClickedListener(component -> {
             newUsage_utils_3 += 1;
-            switch (newUsage_utils_3){
+            switch (newUsage_utils_3) {
                 case 1:
                     btn_add_newUsage_utils_3.setText("时");
                     break;
@@ -290,7 +290,7 @@ public class MainAbilitySlice extends AbilitySlice {
                                     t_add_elabel3.setText("测试标签");
                                     t_add_elabel3.setVisibility(Component.HIDE);
                                     elabelCount -= 1;
-                                    t_add_elabel_title.setText("添加药效标签("+elabelCount+"/5)");
+                                    t_add_elabel_title.setText("添加药效标签(" + elabelCount + "/5)");
 
                                 }
                             }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
@@ -381,8 +381,8 @@ public class MainAbilitySlice extends AbilitySlice {
         final int[] a = {0};
         btn_add_ok.setClickedListener(component -> {
             //检测已经选择图片
-            a[0] +=1;
-            insert("QWEY"+ a[0],
+            a[0] += 1;
+            insert("QWEY" + a[0],
                     "NameNameNameName",
                     "imgpath",
                     "描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述",
@@ -489,6 +489,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
 
     }
+
     @Override
     public void onStart(Intent intent) {
         super.onStart(intent);
@@ -496,15 +497,16 @@ public class MainAbilitySlice extends AbilitySlice {
 //        mflowLayout = (FlowLayout) findComponentById(ResourceTable.Id_flow_layout);
 //        labelList.clear();
         databaseHelper = DataAbilityHelper.creator(this);
-        lowKey = util.PreferenceUtils.getString(this,"lowKey");
-        highKey = util.PreferenceUtils.getString(this,"highKey");
-        if (lowKey==null){
+        lowKey = util.PreferenceUtils.getString(this, "lowKey");
+        highKey = util.PreferenceUtils.getString(this, "highKey");
+        if (lowKey == null) {
             lowKey = "";
-        }if (highKey==null){
+        }
+        if (highKey == null) {
             highKey = "";
         }
         cont = getContext();
-        util.PreferenceUtils.putString(getContext(),"editok","none");
+        util.PreferenceUtils.putString(getContext(), "editok", "none");
         query();
         intPageStart();
         initHomepageListContainer();
@@ -582,26 +584,26 @@ public class MainAbilitySlice extends AbilitySlice {
         btn_add_newUsage_utils_1.setText("包");
         btn_add_newUsage_utils_2.setText("次");
         btn_add_newUsage_utils_3.setText("天");
-        view_add.fluentScrollTo(0,0);
+        view_add.fluentScrollTo(0, 0);
         elabelCount = 0;
-        t_add_elabel1.setText("测试标签") ;
+        t_add_elabel1.setText("测试标签");
         t_add_elabel1.setVisibility(Component.HIDE);
-        t_add_elabel2.setText("测试标签") ;
+        t_add_elabel2.setText("测试标签");
         t_add_elabel2.setVisibility(Component.HIDE);
-        t_add_elabel3.setText("测试标签") ;
+        t_add_elabel3.setText("测试标签");
         t_add_elabel3.setVisibility(Component.HIDE);
-        t_add_elabel4.setText("测试标签") ;
+        t_add_elabel4.setText("测试标签");
         t_add_elabel4.setVisibility(Component.HIDE);
-        t_add_elabel5.setText("测试标签") ;
+        t_add_elabel5.setText("测试标签");
         t_add_elabel5.setVisibility(Component.HIDE);
         t_add_elabel_title.setText("添加药效标签(0/5)");
         iniCalendarPicker();
 
-        ToastUtil.showToast(getContext(),"已清空内容  ");
+        ToastUtil.showToast(getContext(), "已清空内容  ");
     }
 
     //导航栏和窗口初始化
-    private void intPageStart(){
+    private void intPageStart() {
         ArrayList<DependentLayout> fragList = new ArrayList<>();
 
         LayoutScatter layoutScatter = LayoutScatter.getInstance(getContext());
@@ -666,7 +668,7 @@ public class MainAbilitySlice extends AbilitySlice {
         {
             //添加药品的页面刷新多选框
             viewPager.setCurrentPage(position, true);
-            switch (position){
+            switch (position) {
                 case 0:
                     initHomepageListContainer();
                     break;
@@ -751,49 +753,50 @@ public class MainAbilitySlice extends AbilitySlice {
     */
 
     // 初始化聊天界面的ListContainer
-    private void initChatListContainer(){
+    private void initChatListContainer() {
         //1.获取xml布局中的ListContainer组件
         ListContainer listContainer = (ListContainer) findComponentById(ResourceTable.Id_chat_chatlist);
 
         // 2.实例化数据源
-        List<Map<String,Object>> list = getChatListData();
+        List<Map<String, Object>> list = getChatListData();
         // 3.初始化Provider对象
-        ChatListItemProvider listItemProvider = new ChatListItemProvider(list,this);
+        ChatListItemProvider listItemProvider = new ChatListItemProvider(list, this);
         // 4.适配要展示的内容数据
         listContainer.setItemProvider(listItemProvider);
         // 5.设置每个Item的点击事件
         listContainer.setItemClickedListener((container, component, position, id) -> {
-            Map<String,Object> item = (Map<String,Object>) listContainer.getItemProvider().getItem(position);
+            Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
             new ToastDialog(this)
                     .setDuration(2000)
-                    .setText("你点击了:" + item.get("name")+"，"+item.get("lastmsg"))
+                    .setText("你点击了:" + item.get("name") + "，" + item.get("lastmsg"))
                     .setAlignment(LayoutAlignment.BOTTOM)
                     .show();
         });
 //        setListContainerHeight(listContainer);
 
     }
+
     // 初始化聊天界面的数据源
-    private List<Map<String,Object>> getChatListData(){
-        List<Map<String,Object>> list;
+    private List<Map<String, Object>> getChatListData() {
+        List<Map<String, Object>> list;
         // icon图标
-        int[] images = {ResourceTable.Media_head,ResourceTable.Media_head,
-                ResourceTable.Media_head,ResourceTable.Media_head,
-                ResourceTable.Media_head,ResourceTable.Media_head,
-                ResourceTable.Media_head,ResourceTable.Media_head,
-                ResourceTable.Media_head,ResourceTable.Media_head};
+        int[] images = {ResourceTable.Media_head, ResourceTable.Media_head,
+                ResourceTable.Media_head, ResourceTable.Media_head,
+                ResourceTable.Media_head, ResourceTable.Media_head,
+                ResourceTable.Media_head, ResourceTable.Media_head,
+                ResourceTable.Media_head, ResourceTable.Media_head};
 
-        String[] names={"曹操","刘备","关羽","诸葛亮","小乔","貂蝉","吕布","赵云","黄盖","周瑜"};
-        String[] lastmsg={"一代枭雄","卖草鞋","财神","卧龙先生","周瑜媳妇","四大镁铝","天下无双","常胜将军","愿意挨打","愿意打人"};
-        String[] lasttime={"20:30","2021-10-02","2021-10-02","2021-10-02","2021-10-02","2021-10-02","2021-10-02","2021-10-02","2021-10-02","2021-10-02"};
+        String[] names = {"曹操", "刘备", "关羽", "诸葛亮", "小乔", "貂蝉", "吕布", "赵云", "黄盖", "周瑜"};
+        String[] lastmsg = {"一代枭雄", "卖草鞋", "财神", "卧龙先生", "周瑜媳妇", "四大镁铝", "天下无双", "常胜将军", "愿意挨打", "愿意打人"};
+        String[] lasttime = {"20:30", "2021-10-02", "2021-10-02", "2021-10-02", "2021-10-02", "2021-10-02", "2021-10-02", "2021-10-02", "2021-10-02", "2021-10-02"};
 
-        list= new ArrayList<>();
-        for(int i=0;i<images.length;i++){
+        list = new ArrayList<>();
+        for (int i = 0; i < images.length; i++) {
             Map<String, Object> map = new HashMap<>();
 //            Map<String, Object> map = new HashMap<String, Object>();
             map.put("head", images[i]);
             map.put("name", names[i]);
-            map.put("lastmsg",lastmsg[i]);
+            map.put("lastmsg", lastmsg[i]);
             map.put("lasttime", lasttime[i]);
             list.add(map);
         }
@@ -808,45 +811,44 @@ public class MainAbilitySlice extends AbilitySlice {
         Calendar cal = Calendar.getInstance();
         List<String> yearList = new ArrayList<>();
         int year_now = cal.get(Calendar.YEAR);
-        for (int i = year_now; i <= year_now+9 ; i++) {
-            yearList.add(i +"年");
+        for (int i = year_now; i <= year_now + 9; i++) {
+            yearList.add(i + "年");
         }
 
         tf_add_outdate_year.setDisplayedData(yearList.toArray(new String[]{}));
         tf_add_outdate_year.setValue(0);
 
-        tf_add_outdate_month.setDisplayedData(new String[]{"1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"});
-        tf_add_outdate_month.setHeight(util.getWindowWidthPx(MainAbilitySlice.this)/4);
+        tf_add_outdate_month.setDisplayedData(new String[]{"1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"});
+        tf_add_outdate_month.setHeight(util.getWindowWidthPx(MainAbilitySlice.this) / 4);
         tf_add_outdate_month.setValue(0);
 
-        tf_add_otc.setDisplayedData(new String[]{"OTC(非处方药)-红","OTC(非处方药)-绿","(留空)","RX(处方药)"});
+        tf_add_otc.setDisplayedData(new String[]{"OTC(非处方药)-红", "OTC(非处方药)-绿", "(留空)", "RX(处方药)"});
         tf_add_otc.setValue(2);
 
 
     }
 
 
-
     // 初始化药品主页的ListContainer
-    private void initHomepageListContainer(){
+    private void initHomepageListContainer() {
         //1.获取xml布局中的ListContainer组件
         ListContainer listContainer = (ListContainer) findComponentById(ResourceTable.Id_things_list);
 
         // 2.实例化数据源
-        List<Map<String,Object>> list = queryData();
+        List<Map<String, Object>> list = queryData();
         // 3.初始化Provider对象
-        HomePageListItemProvider listItemProvider = new HomePageListItemProvider(list,this);
+        HomePageListItemProvider listItemProvider = new HomePageListItemProvider(list, this);
         // 4.适配要展示的内容数据
         listContainer.setItemProvider(listItemProvider);
         // 5.设置每个Item的点击事件
         listContainer.setItemClickedListener((container, component, position, id) -> {
 
-            Map<String,Object> item = (Map<String,Object>) listContainer.getItemProvider().getItem(position);
-            Map<String,Object> res = list.get(position);
+            Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+            Map<String, Object> res = list.get(position);
 
             //单击打开详情弹窗
             util.PreferenceUtils.putString(getContext(), "editok", "none");
-            util.PreferenceUtils.putString(this,"mglocalkey", res.getOrDefault("keyid",null).toString());
+            util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
             Intent intentDetail = new Intent();
             Operation operation = new Intent.OperationBuilder()
                     .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
@@ -861,10 +863,11 @@ public class MainAbilitySlice extends AbilitySlice {
         });
 
     }
+
     //药品数据源
-    private List<Map<String,Object>> queryData() {
-        List<Map<String,Object>> list = new ArrayList<>();
-        String[] columns = new String[] {
+    private List<Map<String, Object>> queryData() {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String[] columns = new String[]{
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
                 DB_COLUMN_IMAGEPATH,
@@ -879,7 +882,7 @@ public class MainAbilitySlice extends AbilitySlice {
         };
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        System.out.println("开始"+lowKey+"-"+highKey);
+        System.out.println("开始" + lowKey + "-" + highKey);
         predicates.between(DB_COLUMN_KEYID, lowKey, highKey);
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
@@ -903,21 +906,21 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                map.put("keyid",keyid);
+                map.put("keyid", keyid);
                 map.put("imgpath", imagepath);
                 map.put("name", name);
-                map.put("description",description);
+                map.put("description", description);
                 map.put("outdate", outdate);
                 map.put("otc", otc);
                 map.put("barcode", barcode);
                 map.put("usage", usage);
-                map.put("company",company);
+                map.put("company", company);
                 map.put("yu", yu);
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
                 list.add(map);
-                HiLog.info(LABEL_LOG, "query: Id :"  +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
-                        + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
+                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + imagepath + " description:" + description + " outdate:" + outdate
+                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
             } while (resultSet.goToNextRow());
             return list;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
@@ -925,10 +928,11 @@ public class MainAbilitySlice extends AbilitySlice {
             return new ArrayList<>();
         }
     }
+
     //药品搜索返回数据【筛选搜索】
-    public static List<Map<String,Object>> queryScreenData(int method,String field,String value1,String value2) {
-        List<Map<String,Object>> list = new ArrayList<>();
-        String[] columns = new String[] {
+    public static List<Map<String, Object>> queryScreenData(int method, String field, String value1, String value2) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String[] columns = new String[]{
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
                 DB_COLUMN_IMAGEPATH,
@@ -943,13 +947,31 @@ public class MainAbilitySlice extends AbilitySlice {
         };
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        switch (method){
-            case 11:predicates.lessThan(field,util.getDateFromString(value1));
+        switch (method) {
+            case 11: predicates.lessThan(field, util.getDateFromString(value1));
                 break;
-            case 12:predicates.between(field,util.getDateFromString(value1),util.getDateFromString(value2));
+            case 12: predicates.between(field, util.getDateFromString(value1), util.getDateFromString(value2));
                 break;
-            case 13:predicates.greaterThan(field,util.getDateFromString(value1));
+            case 13: predicates.greaterThan(field, util.getDateFromString(value1));
                 break;
+            case 21: predicates.lessThan(field, value1);
+                break;
+            case 22: predicates.between(field, value1, value2);
+                break;
+            case 23: predicates.greaterThan(field, value1);
+                break;
+            case 31: predicates.contains(field, value1);
+                break;
+            case 32: predicates.equalTo(field, value1);
+                break;
+            case 33: predicates.equalTo(field, value1);
+                break;
+            case 34: predicates.equalTo(field, value1);
+                break;
+            case 35: predicates.equalTo(field, value1);
+                break;
+
+
         }
 
         try {
@@ -974,21 +996,21 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                map.put("keyid",keyid);
+                map.put("keyid", keyid);
                 map.put("imgpath", imagepath);
                 map.put("name", name);
-                map.put("description",description);
+                map.put("description", description);
                 map.put("outdate", outdate);
                 map.put("otc", otc);
                 map.put("barcode", barcode);
                 map.put("usage", usage);
-                map.put("company",company);
+                map.put("company", company);
                 map.put("yu", yu);
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
                 list.add(map);
-                HiLog.info(LABEL_LOG, "query: Id :"  +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
-                        + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
+                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + imagepath + " description:" + description + " outdate:" + outdate
+                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
             } while (resultSet.goToNextRow());
             return list;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
@@ -996,10 +1018,11 @@ public class MainAbilitySlice extends AbilitySlice {
             return new ArrayList<>();
         }
     }
+
     //药品搜索返回数据【指定搜索】
-    public static List<Map<String,Object>> queryAssignData(String field,String value) {
-        List<Map<String,Object>> list = new ArrayList<>();
-        String[] columns = new String[] {
+    public static List<Map<String, Object>> queryAssignData(String field, String value) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String[] columns = new String[]{
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
                 DB_COLUMN_IMAGEPATH,
@@ -1014,7 +1037,7 @@ public class MainAbilitySlice extends AbilitySlice {
         };
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.contains(field,value);
+        predicates.contains(field, value);
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
                     columns, predicates);
@@ -1037,21 +1060,21 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                map.put("keyid",keyid);
+                map.put("keyid", keyid);
                 map.put("imgpath", imagepath);
                 map.put("name", name);
-                map.put("description",description);
+                map.put("description", description);
                 map.put("outdate", outdate);
                 map.put("otc", otc);
                 map.put("barcode", barcode);
                 map.put("usage", usage);
-                map.put("company",company);
+                map.put("company", company);
                 map.put("yu", yu);
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
                 list.add(map);
-                HiLog.info(LABEL_LOG, "query: Id :"  +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
-                        + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
+                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + imagepath + " description:" + description + " outdate:" + outdate
+                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
             } while (resultSet.goToNextRow());
             return list;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
@@ -1059,10 +1082,11 @@ public class MainAbilitySlice extends AbilitySlice {
             return new ArrayList<>();
         }
     }
+
     //药品搜索界面总数据源
-    public static List<Map<String,Object>> querySearchData(String lowKey,String highKey) {
-        List<Map<String,Object>> list = new ArrayList<>();
-        String[] columns = new String[] {
+    public static List<Map<String, Object>> querySearchData(String lowKey, String highKey) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String[] columns = new String[]{
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
                 DB_COLUMN_IMAGEPATH,
@@ -1100,21 +1124,21 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                map.put("keyid",keyid);
+                map.put("keyid", keyid);
                 map.put("imgpath", imagepath);
                 map.put("name", name);
-                map.put("description",description);
+                map.put("description", description);
                 map.put("outdate", outdate);
                 map.put("otc", otc);
                 map.put("barcode", barcode);
                 map.put("usage", usage);
-                map.put("company",company);
+                map.put("company", company);
                 map.put("yu", yu);
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
                 list.add(map);
-                HiLog.info(LABEL_LOG, "query: Id :"  +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
-                        + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
+                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + imagepath + " description:" + description + " outdate:" + outdate
+                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
             } while (resultSet.goToNextRow());
             return list;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
@@ -1127,10 +1151,10 @@ public class MainAbilitySlice extends AbilitySlice {
     @Override
     public void onActive() {
         super.onActive();
-        String editdone = util.PreferenceUtils.getString(getContext(),"editok");
-        if (editdone.equals("ok")){
+        String editdone = util.PreferenceUtils.getString(getContext(), "editok");
+        if (editdone.equals("ok")) {
             initHomepageListContainer();
-            util.PreferenceUtils.putString(getContext(),"editok","none");
+            util.PreferenceUtils.putString(getContext(), "editok", "none");
         }
     }
 
@@ -1142,7 +1166,7 @@ public class MainAbilitySlice extends AbilitySlice {
     @Override
     protected void onBackground() {
         super.onBackground();
-        if (mBubbleNavigationLinearView.mEventHandler != null){
+        if (mBubbleNavigationLinearView.mEventHandler != null) {
             mBubbleNavigationLinearView.mEventHandler.removeAllEvent();
             mBubbleNavigationLinearView.mEventHandler = null;
         }
@@ -1150,7 +1174,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
     @Override
     public void onAbilityResult(int requestCode, int resultCode, Intent data) {
-        System.out.println("返回"+resultCode+":"+requestCode+":"+data);
+        System.out.println("返回" + resultCode + ":" + requestCode + ":" + data);
         switch (requestCode) {
             case RESULTCODE_IMAGE_STARTCROP:
                 if (data != null) {
@@ -1158,7 +1182,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     String paths = data.getUriString();
                     imgpath = data.getUriString();
 
-                    System.out.println("gggggggg"+imgpath);
+                    System.out.println("gggggggg" + imgpath);
                     //定义数据能力帮助对象
                     DataAbilityHelper helper = DataAbilityHelper.creator(getContext());
 
@@ -1171,7 +1195,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
                     try {
                         inputStream = new FileInputStream(helper.openFile(Uri.parse(imgpath), "r"));
-                    } catch (DataAbilityRemoteException|FileNotFoundException e) {
+                    } catch (DataAbilityRemoteException | FileNotFoundException e) {
                         e.printStackTrace();
                     }
                     //定义文件
@@ -1188,9 +1212,6 @@ public class MainAbilitySlice extends AbilitySlice {
 //                    addimg.setPixelMap(pixelMap);
 
 
-
-
-
                     //readInputStream将inputStream转换成byte[]
                     byte[] bytes = readInputStream(inputStream);
 //                    System.out.println("ggggg"+ Arrays.toString(bytes));
@@ -1199,8 +1220,8 @@ public class MainAbilitySlice extends AbilitySlice {
 
                     //TODO:修复跳转去裁剪图片
                     Intent newIntent = new Intent();
-                    newIntent.setParam("startcropimage",bytes);
-                    presentForResult(new ImageCropAbilitySlice(), newIntent,RESULTCODE_IMAGE_CROPED);
+                    newIntent.setParam("startcropimage", bytes);
+                    presentForResult(new ImageCropAbilitySlice(), newIntent, RESULTCODE_IMAGE_CROPED);
 
                 }
                 break;
@@ -1245,10 +1266,9 @@ public class MainAbilitySlice extends AbilitySlice {
     }
 
 
-
     //刷新数据
     public void query() {
-        String[] columns = new String[] {
+        String[] columns = new String[]{
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
                 DB_COLUMN_IMAGEPATH,
@@ -1274,7 +1294,7 @@ public class MainAbilitySlice extends AbilitySlice {
             }
             resultSet.goToFirstRow();
             lowKey = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
-            util.PreferenceUtils.putString(this,"lowKey",lowKey);
+            util.PreferenceUtils.putString(this, "lowKey", lowKey);
             do {
                 count++;
                 String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
@@ -1288,11 +1308,11 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                HiLog.info(LABEL_LOG, "query: Id :"  + " keyid:"+keyid+" name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
-                        + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
-                if (count==resultSet.getRowCount()){
+                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + imagepath + " description:" + description + " outdate:" + outdate
+                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
+                if (count == resultSet.getRowCount()) {
                     highKey = keyid;
-                    util.PreferenceUtils.putString(this,"highKey",highKey);
+                    util.PreferenceUtils.putString(this, "highKey", highKey);
                 }
             } while (resultSet.goToNextRow());
 
@@ -1301,10 +1321,10 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
 
-    public static Map<String,Object> querySingleData(String idkey) {
+    public static Map<String, Object> querySingleData(String idkey) {
         Map<String, Object> map = new HashMap<>();
 //            Map<String, Object> map = new HashMap<String, Object>();
-        String[] columns = new String[] {
+        String[] columns = new String[]{
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
                 DB_COLUMN_IMAGEPATH,
@@ -1319,7 +1339,7 @@ public class MainAbilitySlice extends AbilitySlice {
         };
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.equalTo(DB_COLUMN_KEYID,idkey);
+        predicates.equalTo(DB_COLUMN_KEYID, idkey);
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
                     columns, predicates);
@@ -1340,20 +1360,20 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                map.put("keyid",keyid);
+                map.put("keyid", keyid);
                 map.put("imgpath", imagepath);
                 map.put("name", name);
-                map.put("description",description);
+                map.put("description", description);
                 map.put("outdate", outdate);
                 map.put("otc", otc);
                 map.put("barcode", barcode);
                 map.put("usage", usage);
-                map.put("company",company);
+                map.put("company", company);
                 map.put("yu", yu);
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
-                HiLog.info(LABEL_LOG, "query: Id :" +" keyid:"+keyid+ " name:"+name+ " imagepath:"+imagepath+ " description:"+description+ " outdate:"+outdate
-                        + " otc:"+otc+ " barcode:"+barcode+ " :"+usage+ " company:"+company+ " yu:"+yu+ " elabel:"+elabel);
+                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + imagepath + " description:" + description + " outdate:" + outdate
+                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
             } while (resultSet.goToNextRow());
             return map;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
@@ -1364,10 +1384,10 @@ public class MainAbilitySlice extends AbilitySlice {
 
 
     //插入数据
-    public void insert( String keyid,String name, String imagepath,
-                        String description, String outdate, String otc,
-                        String barcode, String usage, String company,
-                        String yu ,String elabel) {
+    public void insert(String keyid, String name, String imagepath,
+                       String description, String outdate, String otc,
+                       String barcode, String usage, String company,
+                       String yu, String elabel) {
         ValuesBucket valuesBucket = new ValuesBucket();
         valuesBucket.putString(DB_COLUMN_KEYID, keyid);
         valuesBucket.putString(DB_COLUMN_NAME, name);
@@ -1383,13 +1403,13 @@ public class MainAbilitySlice extends AbilitySlice {
 
         try {
             if (databaseHelper.insert(Uri.parse(BASE_URI + DATA_PATH), valuesBucket) != -1) {
-                if (lowKey.equals("")||lowKey.equals(null)){
+                if (lowKey.equals("") || lowKey.equals(null)) {
                     lowKey = keyid;
-                    util.PreferenceUtils.putString(this,"lowKey",lowKey);
+                    util.PreferenceUtils.putString(this, "lowKey", lowKey);
                 }
                 highKey = keyid;
-                util.PreferenceUtils.putString(this,"highKey",highKey);
-                System.out.println("keykeykey"+lowKey+"ley"+highKey+"ffff");
+                util.PreferenceUtils.putString(this, "highKey", highKey);
+                System.out.println("keykeykey" + lowKey + "ley" + highKey + "ffff");
                 HiLog.info(LABEL_LOG, "insert successful");
                 //消息弹框
                 new XPopup.Builder(getContext())
@@ -1410,14 +1430,15 @@ public class MainAbilitySlice extends AbilitySlice {
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "insert: dataRemote exception|illegalStateException");
-            ToastUtil.showToast(this,"添加失败，请重试  ");
+            ToastUtil.showToast(this, "添加失败，请重试  ");
         }
     }
+
     //更新
-    public static void update( String keyid, String name, String imagepath,
-                        String description, String outdate, String otc,
-                        String barcode, String usage, String company,
-                        String yu ,String elabel) {
+    public static void update(String keyid, String name, String imagepath,
+                              String description, String outdate, String otc,
+                              String barcode, String usage, String company,
+                              String yu, String elabel) {
         DataAbilityPredicates predicates = new DataAbilityPredicates();
         predicates.equalTo(DB_COLUMN_KEYID, keyid);
 
@@ -1435,13 +1456,14 @@ public class MainAbilitySlice extends AbilitySlice {
         try {
             if (databaseHelper.update(Uri.parse(BASE_URI + DATA_PATH), valuesBucket, predicates) != -1) {
                 HiLog.info(LABEL_LOG, "update successful");
-                ToastUtil.showToast(cont,"修改成功  ");
+                ToastUtil.showToast(cont, "修改成功  ");
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
-            ToastUtil.showToast(cont,"修改失败，请重试  ");
+            ToastUtil.showToast(cont, "修改失败，请重试  ");
         }
     }
+
     //删除
     public static void delete(String keyid) {
         DataAbilityPredicates predicates = new DataAbilityPredicates()
@@ -1449,13 +1471,14 @@ public class MainAbilitySlice extends AbilitySlice {
         try {
             if (databaseHelper.delete(Uri.parse(BASE_URI + DATA_PATH), predicates) != -1) {
                 HiLog.info(LABEL_LOG, "delete successful");
-                ToastUtil.showToast(cont,"删除成功  ");
+                ToastUtil.showToast(cont, "删除成功  ");
             }
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "delete: dataRemote exception | illegalStateException");
-            ToastUtil.showToast(cont,"删除失败，请重试  ");
+            ToastUtil.showToast(cont, "删除失败，请重试  ");
         }
     }
+
     public static class XPopupListener extends SimpleCallback {
         @Override
         public void onCreated(BasePopupView pv) {
@@ -1464,12 +1487,12 @@ public class MainAbilitySlice extends AbilitySlice {
 
         @Override
         public void onShow(BasePopupView popupView) {
-            HiLog.info(LABEL_LOG,"onShow");
+            HiLog.info(LABEL_LOG, "onShow");
         }
 
         @Override
         public void onDismiss(BasePopupView popupView) {
-            HiLog.info(LABEL_LOG,"onDismiss");
+            HiLog.info(LABEL_LOG, "onDismiss");
         }
 
         @Override

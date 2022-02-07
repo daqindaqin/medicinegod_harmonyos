@@ -5,18 +5,20 @@ import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.utils.util;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.agp.components.*;
+import ohos.agp.components.element.ElementScatter;
 import ohos.agp.utils.Color;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-public class CompanyProvider extends BaseItemProvider {
+public class OtcProvider extends BaseItemProvider {
 
     private List<Map<String, Object>> list;
     private AbilitySlice slice;
 
-    public CompanyProvider(List<Map<String, Object>> list, AbilitySlice slice) {
+    public OtcProvider(List<Map<String, Object>> list, AbilitySlice slice) {
         this.list = list;
         this.slice = slice;
     }
@@ -45,7 +47,7 @@ public class CompanyProvider extends BaseItemProvider {
         // 如果还没有convertComponent对象，那么将xml布局文件转为一个Component对象。
         if (convertComponent == null) {
             //从当前的AbilitySlice对应的xml布局中，
-            cpt = LayoutScatter.getInstance(slice).parse(ResourceTable.Layout_list_item_search_method_company, null, false);
+            cpt = LayoutScatter.getInstance(slice).parse(ResourceTable.Layout_list_item_search_method_otc, null, false);
         } else {
             cpt = convertComponent;
         }
@@ -65,12 +67,15 @@ public class CompanyProvider extends BaseItemProvider {
         Map<String, Object> map = list.get(position);//获取数据
 
         Text textName = (Text) cpt.findComponentById(ResourceTable.Id_srced_name);
-        Text textCompany = (Text) cpt.findComponentById(ResourceTable.Id_srced_company);
+        Text textOtc = (Text) cpt.findComponentById(ResourceTable.Id_srced_otc);
+        Text textOtcDesp = (Text) cpt.findComponentById(ResourceTable.Id_srced_otcdesp);
         Image image = (Image) cpt.findComponentById(ResourceTable.Id_srced_image_png);
-
         if (map.get("keyid") != null) {
+
+
+
             textName.setText((String) map.get("name"));
-            textCompany.setText((String) map.get("company"));
+
             //过期提醒,红色过期，黑色正常，黄色临期，蓝色搜索到的内容
             //过期提醒,红色过期，黑色正常，黄色临期，蓝色搜索到的内容
             //过期提醒
@@ -81,6 +86,7 @@ public class CompanyProvider extends BaseItemProvider {
             long date0 = Long.parseLong(map.get("outdate").toString());
             String date1 = util.getStringFromDate(date0);
             int res;
+            int[] res_date;
             //date1  2022-03-01 药品的时间
             //timeB  2022-01-01 现在的时间
             String timeB = cl.get(Calendar.YEAR) + "-" + (cl.get(Calendar.MONTH) + 1) + "-1";
@@ -96,8 +102,33 @@ public class CompanyProvider extends BaseItemProvider {
                     textName.setTextColor(new Color(Color.rgb(106, 104, 94)));
                     break;
             }
-
-
+            textName.setText((String)map.get("name"));
+            //OTC标识设置提醒
+            String otc = (String)map.get("otc");
+            switch (otc){
+                case "none":
+                    textOtc.setVisibility(Component.HIDE);
+                    textOtcDesp.setText("类型:空");
+                    break;
+                case "OTC-G":
+                    textOtc.setText("OTC");
+                    textOtc.setVisibility(Component.VISIBLE);
+                    textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_otc_green));
+                    textOtcDesp.setText("类型:OTC 非处方药(绿)");
+                    break;
+                case "OTC-R":
+                    textOtc.setText("OTC");
+                    textOtc.setVisibility(Component.VISIBLE);
+                    textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_otc_red));
+                    textOtcDesp.setText("类型:OTC 非处方药(红)");
+                    break;
+                case "Rx":
+                    textOtc.setText("Rx");
+                    textOtc.setVisibility(Component.VISIBLE);
+                    textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_rx));
+                    textOtcDesp.setText("类型:Rx 处方药");
+                    break;
+            }
 //        DataAbilityHelper helper = DataAbilityHelper.creator(slice.getContext());
 //        //定义文件
 //        FileDescriptor file = null;
@@ -116,10 +147,13 @@ public class CompanyProvider extends BaseItemProvider {
             image.setPixelMap(ResourceTable.Media_test);
             image.setCornerRadius(5);
 //        image.setPixelMap((int)map.get("image"));
+
         } else {
             textName.setText((String)map.get("name"));
             image.setVisibility(Component.HIDE);
+
         }
+
         return cpt;
     }
 

@@ -4,140 +4,140 @@
     ohos:height="match_parent"
     ohos:width="match_parent"
     ohos:alignment="top"
-    ohos:orientation="vertical"
-    ohos:background_element="$color:white">
+    ohos:background_element="$color:white"
+    ohos:orientation="vertical">
+
     <DirectionalLayout
         ohos:height="match_content"
         ohos:width="match_parent"
         ohos:alignment="vertical_center"
-        ohos:orientation="vertical"
-        ohos:top_margin="20vp"
         ohos:bottom_margin="5vp"
+        ohos:end_margin="10vp"
+        ohos:orientation="vertical"
         ohos:start_margin="10vp"
-        ohos:end_margin="10vp">
-        <DirectionalLayout
+        ohos:top_margin="20vp">
+        <TextField
+            ohos:id="$+id:src_srcbox"
             ohos:height="match_content"
             ohos:width="match_parent"
-            ohos:alignment="vertical_center"
-            ohos:orientation="horizontal">
-            <TextField
-                ohos:id="$+id:src_srcbox"
-                ohos:height="match_content"
-                ohos:width="match_parent"
-                ohos:text=""
-                ohos:hint="填写需查找的药名"
-                ohos:text_alignment="left"
-                ohos:padding="10vp"
-                ohos:text_color="$color:black_clear"
-                ohos:hint_color="$color:black_line"
-                ohos:text_size="22vp"
-                ohos:text_weight="700"
-                ohos:multiple_lines="true"
-                ohos:input_enter_key_type="enter_key_type_done"
-                ohos:max_text_lines="3"
-                ohos:background_element="$graphic:bg_src_textfield_search"
-                ohos:start_margin="5vp"
-                ohos:end_margin="5vp"/>
-            <Text
-                ohos:id="$+id:src_src"
-                ohos:height="match_content"
-                ohos:width="match_content"
-                ohos:background_element="$graphic:bg_src_textfield_search"
-                ohos:text_weight="500"
-                ohos:start_padding="10vp"
-                ohos:end_padding="10vp"
-                ohos:top_padding="5vp"
-                ohos:bottom_padding="5vp"
-                ohos:top_margin="15vp"
-                ohos:bottom_margin="15vp"
-                ohos:start_margin="10vp"
-                ohos:end_margin="10vp"
-                ohos:text="搜"
-                ohos:text_color="$color:purple_clear"
-                ohos:text_size="22vp"/>
-        </DirectionalLayout>
+            ohos:background_element="$graphic:bg_src_textfield_search"
+            ohos:end_margin="5vp"
+            ohos:hint="填写需查找的内容"
+            ohos:hint_color="$color:black_line"
+            ohos:input_enter_key_type="enter_key_type_done"
+            ohos:max_text_lines="3"
+            ohos:multiple_lines="true"
+            ohos:padding="10vp"
+            ohos:start_margin="5vp"
+            ohos:text=""
+            ohos:text_alignment="left"
+            ohos:text_color="$color:black_clear"
+            ohos:text_size="22vp"
+            ohos:text_weight="700"/>
 
         <ScrollView
             ohos:height="match_content"
             ohos:width="match_parent"
-            ohos:start_margin="5vp"
-            ohos:end_margin="5vp">
-        <DirectionalLayout
-            ohos:height="match_content"
-            ohos:width="match_content"
-            ohos:orientation="horizontal"
-            ohos:alignment="left|vertical_center"
-            >
-            <Text
-                ohos:id="$+id:src_back"
+            ohos:end_margin="5vp"
+            ohos:start_margin="5vp">
+
+            <DirectionalLayout
                 ohos:height="match_content"
                 ohos:width="match_content"
-                ohos:background_element="$graphic:bg_search_method_normal"
-                ohos:start_padding="10vp"
-                ohos:end_padding="10vp"
-                ohos:top_padding="5vp"
-                ohos:bottom_padding="5vp"
-                ohos:top_margin="15vp"
-                ohos:bottom_margin="15vp"
-                ohos:start_margin="0vp"
-                ohos:end_margin="10vp"
-                ohos:text="◀ 退出"
-                ohos:text_weight="500"
-                ohos:text_color="$color:white"
-                ohos:text_size="18vp"/>
-            <Text
-                ohos:id="$+id:src_srcmethod"
-                ohos:height="match_content"
-                ohos:width="match_content"
-                ohos:background_element="$graphic:bg_search_method_select"
-                ohos:start_padding="10vp"
-                ohos:end_padding="10vp"
-                ohos:top_padding="5vp"
-                ohos:bottom_padding="5vp"
-                ohos:top_margin="15vp"
-                ohos:bottom_margin="15vp"
-                ohos:start_margin="0vp"
-                ohos:end_margin="10vp"
-                ohos:text="药 名 ▼"
-                ohos:text_weight="500"
-                ohos:text_color="$color:white"
-                ohos:text_size="18vp"/>
-            <Text
-                ohos:id="$+id:src_srceen"
-                ohos:height="match_content"
-                ohos:width="match_content"
-                ohos:background_element="$graphic:bg_search_method_normal"
-                ohos:start_padding="10vp"
-                ohos:end_padding="10vp"
-                ohos:top_padding="5vp"
-                ohos:bottom_padding="5vp"
-                ohos:top_margin="15vp"
-                ohos:bottom_margin="15vp"
-                ohos:start_margin="0vp"
-                ohos:end_margin="10vp"
-                ohos:text="筛 选 ▼"
-                ohos:text_weight="500"
-                ohos:text_color="$color:white"
-                ohos:text_size="18vp"/>
+                ohos:alignment="left|vertical_center"
+                ohos:orientation="horizontal"
+                >
+
+                <Text
+                    ohos:id="$+id:src_back"
+                    ohos:height="match_content"
+                    ohos:width="match_content"
+                    ohos:background_element="$graphic:bg_search_method_normal"
+                    ohos:bottom_margin="15vp"
+                    ohos:bottom_padding="5vp"
+                    ohos:end_margin="10vp"
+                    ohos:end_padding="10vp"
+                    ohos:start_margin="0vp"
+                    ohos:start_padding="10vp"
+                    ohos:text="◀ 退出"
+                    ohos:text_color="$color:white"
+                    ohos:text_size="18vp"
+                    ohos:text_weight="500"
+                    ohos:top_margin="15vp"
+                    ohos:top_padding="5vp"/>
+
+                <Text
+                    ohos:id="$+id:src_srcmethod"
+                    ohos:height="match_content"
+                    ohos:width="match_content"
+                    ohos:background_element="$graphic:bg_search_method_select"
+                    ohos:bottom_margin="15vp"
+                    ohos:bottom_padding="5vp"
+                    ohos:end_margin="10vp"
+                    ohos:end_padding="10vp"
+                    ohos:start_margin="0vp"
+                    ohos:start_padding="10vp"
+                    ohos:text="药 名 ▼"
+                    ohos:text_color="$color:white"
+                    ohos:text_size="18vp"
+                    ohos:text_weight="500"
+                    ohos:top_margin="15vp"
+                    ohos:top_padding="5vp"/>
+
+                <Text
+                    ohos:id="$+id:src_srceen"
+                    ohos:height="match_content"
+                    ohos:width="match_content"
+                    ohos:background_element="$graphic:bg_search_method_normal"
+                    ohos:bottom_margin="15vp"
+                    ohos:bottom_padding="5vp"
+                    ohos:end_margin="10vp"
+                    ohos:end_padding="10vp"
+                    ohos:start_margin="0vp"
+                    ohos:start_padding="10vp"
+                    ohos:text="筛 选 ▼"
+                    ohos:text_color="$color:white"
+                    ohos:text_size="18vp"
+                    ohos:text_weight="500"
+                    ohos:top_margin="15vp"
+                    ohos:top_padding="5vp"/>
 
 
-        </DirectionalLayout>
+            </DirectionalLayout>
         </ScrollView>
+        <Text
+            ohos:id="$+id:src_notice"
+            ohos:height="match_content"
+            ohos:width="match_parent"
+            ohos:text_alignment="vertical_center|left"
+            ohos:start_margin="5vp"
+            ohos:end_margin="5vp"
+            ohos:top_margin="0vp"
+            ohos:bottom_margin="5vp"
+            ohos:start_padding="10vp"
+            ohos:end_padding="20vp"
+            ohos:text="暂无新通知"
+            ohos:text_color="$color:black_line"
+            ohos:text_size="16vp"
+            ohos:text_weight="500"
+            ohos:italic="true"/>
     </DirectionalLayout>
+
     <Component
         ohos:height="1vp"
         ohos:width="match_parent"
-        ohos:background_element="$color:purple"
-        ohos:altitude="3vp"/>
+        ohos:altitude="3vp"
+        ohos:background_element="$color:purple"/>
+
     <ListContainer
         ohos:id="$+id:src_list"
-        ohos:width="match_parent"
         ohos:height="match_parent"
-        ohos:scrollbar_color="$color:blue"
-        ohos:start_padding="5vp"
-        ohos:end_padding="5vp"
+        ohos:width="match_parent"
+        ohos:background_element="$color:purple_light"
         ohos:bottom_padding="10vp"
-        ohos:background_element="$color:purple_light"/>
+        ohos:end_padding="5vp"
+        ohos:scrollbar_color="$color:blue"
+        ohos:start_padding="5vp"/>
 
 </DirectionalLayout>
 

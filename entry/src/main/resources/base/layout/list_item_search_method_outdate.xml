@@ -49,7 +49,7 @@
         ohos:end_margin="10vp"
         ohos:background_element="$color:black_line"/>
     <Text
-        ohos:id="$+id:srced_desp"
+        ohos:id="$+id:srced_outdate"
         ohos:height="match_content"
         ohos:width="match_parent"
         ohos:text=""

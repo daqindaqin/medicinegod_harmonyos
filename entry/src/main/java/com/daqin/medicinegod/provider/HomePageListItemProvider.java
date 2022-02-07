@@ -144,7 +144,6 @@ public class HomePageListItemProvider extends  BaseItemProvider{
         //timeB  2022-01-01 现在的时间
         String timeB = cl.get(Calendar.YEAR) + "-" + (cl.get(Calendar.MONTH)+1) + "-1";
         res = util.isTimeOut(date1,timeB);
-        System.out.println("输出了"+date1+"-"+timeB);
         switch (res){
             case -1:
                 textOutdate.setText("[药品过期]"+"\n"+"禁止服用 请妥善处理。");
