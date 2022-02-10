@@ -25,8 +25,7 @@
         ohos:width="match_parent"
         ohos:alignment="vertical_center|horizontal_center"
         ohos:orientation="horizontal"
-        ohos:padding="10vp"
-        ohos:top_margin="10vp">
+        ohos:padding="10vp">
 
         <Button
             ohos:id="$+id:imageControl_btn_back"

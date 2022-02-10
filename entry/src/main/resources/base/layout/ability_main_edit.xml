@@ -84,6 +84,34 @@
                 ohos:image_src="$media:test"
                 ohos:margin="20vp"
                 ohos:scale_mode="stretch"/>
+            <DirectionalLayout
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:orientation="horizontal"
+                ohos:alignment="center">
+                <Text
+                    ohos:id="$+id:dtl_edit_imgcrop"
+                    ohos:height="match_content"
+                    ohos:width="match_content"
+                    ohos:text_weight="500"
+                    ohos:text="图片裁剪"
+                    ohos:padding="10vp"
+                    ohos:text_size="16vp"
+                    ohos:text_color="$color:white"
+                    ohos:margin="10vp"
+                    ohos:background_element="$graphic:bg_search_method_normal"/>
+                <Text
+                    ohos:id="$+id:dtl_edit_imgback"
+                    ohos:height="match_content"
+                    ohos:width="match_content"
+                    ohos:text_weight="500"
+                    ohos:text="还原图片"
+                    ohos:padding="10vp"
+                    ohos:text_size="16vp"
+                    ohos:text_color="$color:white"
+                    ohos:margin="10vp"
+                    ohos:background_element="$graphic:bg_search_method_normal"/>
+            </DirectionalLayout>
             <!--name-->
             <Text
                 ohos:height="match_content"

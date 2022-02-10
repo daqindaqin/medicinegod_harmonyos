@@ -23,7 +23,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//TODO:还差点击跳转到主页更改信息联动
 public class SearchAbilitySlice extends AbilitySlice {
     //过期提醒,红色过期，黑色正常，黄色临期，蓝色搜索到的内容
     /**

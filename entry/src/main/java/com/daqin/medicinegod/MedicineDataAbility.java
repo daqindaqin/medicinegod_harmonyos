@@ -17,7 +17,7 @@ import ohos.utils.net.Uri;
 import java.io.FileDescriptor;
 
 
-public class PersonDataAbility extends Ability {
+public class MedicineDataAbility extends Ability {
     private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "allmedicine");
 
     private static final String DB_NAME = "allmedicine.db";
@@ -26,7 +26,7 @@ public class PersonDataAbility extends Ability {
 
     private static final String DB_COLUMN_KEYID = "KEYID";
     private static final String DB_COLUMN_NAME = "NAME";
-    private static final String DB_COLUMN_IMAGEPATH = "IMAGEPATH";
+    private static final String DB_COLUMN_IMAGE = "IMAGE";
     private static final String DB_COLUMN_DESCRIPTION = "DESCRIPTION";
     private static final String DB_COLUMN_OUTDATE = "OUTDATE";
     private static final String DB_COLUMN_OTC = "OTC";
@@ -49,7 +49,7 @@ public class PersonDataAbility extends Ability {
                     + DB_TAB_NAME + " ("
                     + DB_COLUMN_KEYID + " text not null, "
                     + DB_COLUMN_NAME + " text not null, "
-                    + DB_COLUMN_IMAGEPATH + " long text not null, "
+                    + DB_COLUMN_IMAGE + " blob not null, "
                     + DB_COLUMN_DESCRIPTION + " long text not null, "
                     + DB_COLUMN_OUTDATE + " long int not null, "
                     + DB_COLUMN_OTC + " text not null, "
@@ -70,7 +70,7 @@ public class PersonDataAbility extends Ability {
     @Override
     public void onStart(Intent intent) {
         super.onStart(intent);
-        HiLog.info(LABEL_LOG, "PersonDataAbility onStart");
+        HiLog.info(LABEL_LOG, "MedicineDataAbility onStart");
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         rdbStore = databaseHelper.getRdbStore(config, DB_VERSION, rdbOpenCallback, null);
     }
@@ -87,16 +87,16 @@ public class PersonDataAbility extends Ability {
 
     @Override
     public int insert(Uri uri, ValuesBucket value) {
-        HiLog.info(LABEL_LOG, "PersonDataAbility insert");
+        HiLog.info(LABEL_LOG, "MedicineDataAbility insert");
         String path = uri.getLastPath();
-        if (!"mg".equals(path)) {
+        if (!"medicine".equals(path)) {
             HiLog.info(LABEL_LOG, "DataAbility insert path is not matched");
             return -1;
         }
         ValuesBucket values = new ValuesBucket();
         values.putString(DB_COLUMN_KEYID, value.getString(DB_COLUMN_KEYID));
         values.putString(DB_COLUMN_NAME, value.getString(DB_COLUMN_NAME));
-        values.putString(DB_COLUMN_IMAGEPATH, value.getString(DB_COLUMN_IMAGEPATH));
+        values.putByteArray(DB_COLUMN_IMAGE, value.getByteArray(DB_COLUMN_IMAGE));
         values.putString(DB_COLUMN_DESCRIPTION, value.getString(DB_COLUMN_DESCRIPTION));
         values.putLong(DB_COLUMN_OUTDATE, value.getLong(DB_COLUMN_OUTDATE));
         values.putString(DB_COLUMN_OTC, value.getString(DB_COLUMN_OTC));

@@ -196,6 +196,7 @@
                                     ohos:alignment="horizontal_center|vertical_center"
                                     ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
+                                            ohos:id="$+id:me_has"
                                             ohos:height="match_content"
                                             ohos:width="match_content"
                                             ohos:text="99+"
@@ -233,6 +234,7 @@
                                             ohos:margin="5vp"
                                             ohos:text_alignment="horizontal_center"/>
                                         <Text
+                                            ohos:id="$+id:me_fav"
                                             ohos:height="match_content"
                                             ohos:width="match_content"
                                             ohos:text="收藏"
@@ -260,6 +262,7 @@
                                             ohos:margin="5vp"
                                             ohos:text_alignment="horizontal_center"/>
                                         <Text
+                                            ohos:id="$+id:me_share"
                                             ohos:height="match_content"
                                             ohos:width="match_content"
                                             ohos:text="分享"
@@ -274,7 +277,8 @@
                         <DirectionalLayout
                             ohos:height="match_content"
                             ohos:width="match_parent"
-                            ohos:orientation="horizontal">
+                            ohos:orientation="horizontal"
+                            ohos:visibility="hide">
                                 <DirectionalLayout
                                     ohos:height="100vp"
                                     ohos:width="100vp"

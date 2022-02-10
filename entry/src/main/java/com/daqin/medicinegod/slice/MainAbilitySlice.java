@@ -40,8 +40,7 @@ import ohos.utils.net.Uri;
 import java.io.*;
 import java.util.*;
 
-
-//TODO：图片处理、otc为空的判断、时间处理的判断
+//修复post的bug
 public class MainAbilitySlice extends AbilitySlice {
     public static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;   //自定义的一个权限请求识别码，用于处理权限回调
     private static DataAbilityHelper databaseHelper;
@@ -52,20 +51,15 @@ public class MainAbilitySlice extends AbilitySlice {
     private static final int RESULTCODE_IMAGE_CHOOSE = 100;
     private static final int RESULTCODE_IMAGE_CROP = 101;
     private static int newUsage_utils_1 = 0, newUsage_utils_3 = 0, elabelCount = 0;
-    /**
-     * @param lowKey 第一条key，查询所用
-     * @param highKey 最后一条key，查询所用
-     */
-    private static String lowKey;
-    private static String highKey;
-    private String imgpath = null;
-    private String eLABEL = "";
+    private int dataHas = 0,dataFav=0,dataShare=0;
+
+    List<String> eLABEL = new ArrayList<>();
     private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "MainAbilitySlice");
-    private static final String BASE_URI = "dataability:///com.daqin.medicinegod.PersonDataAbility";
-    private static final String DATA_PATH = "/mg";
+    private static final String BASE_URI = "dataability:///com.daqin.medicinegod.MedicineDataAbility";
+    private static final String DATA_PATH = "/medicine";
     private static final String DB_COLUMN_KEYID = "KEYID";
     private static final String DB_COLUMN_NAME = "NAME";
-    private static final String DB_COLUMN_IMAGEPATH = "IMAGEPATH";
+    private static final String DB_COLUMN_IMAGE = "IMAGE";
     private static final String DB_COLUMN_DESCRIPTION = "DESCRIPTION";
     private static final String DB_COLUMN_OUTDATE = "OUTDATE";
     private static final String DB_COLUMN_OTC = "OTC";
@@ -74,6 +68,11 @@ public class MainAbilitySlice extends AbilitySlice {
     private static final String DB_COLUMN_COMPANY = "COMPANY";
     private static final String DB_COLUMN_YU = "YU";
     private static final String DB_COLUMN_ELABEL = "ELABEL";
+    /**
+     * @param img 图片最终数据
+     * @param imgbytes 图片待裁剪数据
+     */
+    byte[] img = null;
     private static byte[] imgbytes = null;
 
     Image img_thing_head;
@@ -185,9 +184,9 @@ public class MainAbilitySlice extends AbilitySlice {
         t_add_imgcrop.setClickedListener(new Component.ClickedListener() {
             @Override
             public void onClick(Component component) {
-                if (imgbytes==null){
+                if (imgbytes == null) {
                     ToastUtil.showToast(getContext(), "请先选择图片才能裁剪  ");
-                }else{
+                } else {
                     Intent intent = new Intent();
                     Operation operation = new Intent.OperationBuilder()
                             .withDeviceId("")
@@ -289,9 +288,11 @@ public class MainAbilitySlice extends AbilitySlice {
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
+                                    eLABEL.remove(t_add_elabel1.getText());
+                                    eLABEL.add("测试标签");
                                     t_add_elabel1.setText("测试标签");
                                     t_add_elabel1.setVisibility(Component.HIDE);
-                                    elabelCount -= 1;
+                                    elabelCount--;
                                     t_add_elabel_title.setText("添加药效标签(" + elabelCount + "/5)");
 
                                 }
@@ -308,9 +309,11 @@ public class MainAbilitySlice extends AbilitySlice {
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
+                                    eLABEL.remove(t_add_elabel2.getText());
+                                    eLABEL.add("测试标签");
                                     t_add_elabel2.setText("测试标签");
                                     t_add_elabel2.setVisibility(Component.HIDE);
-                                    elabelCount -= 1;
+                                    elabelCount--;
                                     t_add_elabel_title.setText("添加药效标签(" + elabelCount + "/5)");
 
                                 }
@@ -327,9 +330,11 @@ public class MainAbilitySlice extends AbilitySlice {
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
+                                    eLABEL.remove(t_add_elabel3.getText());
+                                    eLABEL.add("测试标签");
                                     t_add_elabel3.setText("测试标签");
                                     t_add_elabel3.setVisibility(Component.HIDE);
-                                    elabelCount -= 1;
+                                    elabelCount--;
                                     t_add_elabel_title.setText("添加药效标签(" + elabelCount + "/5)");
 
                                 }
@@ -346,9 +351,11 @@ public class MainAbilitySlice extends AbilitySlice {
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
+                                    eLABEL.remove(t_add_elabel4.getText());
+                                    eLABEL.add("测试标签");
                                     t_add_elabel4.setText("测试标签");
                                     t_add_elabel4.setVisibility(Component.HIDE);
-                                    elabelCount += 1;
+                                    elabelCount--;
                                     t_add_elabel_title.setText("添加药效标签(" + elabelCount + "/5)");
 
                                 }
@@ -365,9 +372,11 @@ public class MainAbilitySlice extends AbilitySlice {
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
+                                    eLABEL.remove(t_add_elabel5.getText());
+                                    eLABEL.add("测试标签");
                                     t_add_elabel5.setText("测试标签");
                                     t_add_elabel5.setVisibility(Component.HIDE);
-                                    elabelCount += 1;
+                                    elabelCount--;
                                     t_add_elabel_title.setText("添加药效标签(" + elabelCount + "/5)");
 
                                 }
@@ -404,7 +413,8 @@ public class MainAbilitySlice extends AbilitySlice {
                 } else if (tf_add_elabelBox.length() > 0 && tf_add_elabelBox.length() < 5) {
                     for (Text text : add_elabelview) {
                         if (text.getText() == null || text.getText().equals("测试标签")) {
-                            elabelCount += 1;
+                            elabelCount++;
+                            eLABEL.add(tf_add_elabelBox.getText().trim());
                             text.setText(tf_add_elabelBox.getText().trim());
                             text.setVisibility(Component.VISIBLE);
                             tf_add_elabelBox.setText("");
@@ -418,113 +428,60 @@ public class MainAbilitySlice extends AbilitySlice {
             }
         });
         //添加药品数据事件
-        final int[] a = {0};
         btn_add_ok.setClickedListener(component -> {
+            String key = util.getRandomKeyId();
+            System.out.println("生成key" + key);
             //检测已经选择图片
-            a[0] += 1;
-            insert("QWEY" + a[0],
-                    "NameNameNameName",
-                    "imgpath",
-                    "描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述",
-                    "2022-3-1",
-                    "OTC-R",
-                    "6666666666",
-                    //XX-包/克/片-XX-次-XX-时/天
-                    "3-片-3-次-1-天",
-                    "大马猴大马猴大马猴大马猴",
-                    "2459",
-                    "超级无敌@@嘟嘟嘟@@大大大@@DADAD");
-            /*if (imgpath == null) {
-                view.fluentScrollTo(0, addimg.getTop() - 100);
+            if (imgbytes == null) {
+                view_add.fluentScrollTo(0, btn_add_img.getTop() - 100);
                 ToastUtil.showToast(this, "图片不能为空");
-            }else if(ELABEL == null){
-                view.fluentScrollTo(0,btn_ok.getTop());
-                ToastUtil.showToast(this, "图片不能为空");
-            }else if((add_otc.getDisplayedData())[add_otc.getValue()].equals("(空)")){
-                view.fluentScrollTo(0,add_otc.getTop());
-                ToastUtil.showToast(this, "标识不能为空");
-            }else {
+            } else if (eLABEL == null || elabelCount == 0) {
+                view_add.fluentScrollTo(0, btn_add_ok.getTop());
+                ToastUtil.showToast(this, "药品标签不能为空");
+            } else {
                 //计次，计算是否都填好了
                 int count = 0;
                 //检测里面是否为空
-                for (TextField box : texttList) {
-                    if (box.getText().equals("") || box.getText().equals(" ") || box.getText().equals(null)) {
+                for (TextField box : add_tf_list) {
+                    if (box.getText().length() == 0 || box.getText().equals(" ")) {
                         //为空则跳转
                         box.setFocusable(Component.FOCUS_ADAPTABLE);
                         box.setTouchFocusable(true);
                         box.requestFocus();
                         //使view滑动到指定位置
                         ToastUtil.showToast(this, "有未填写空白，请填写后提交");
-                        view.fluentScrollTo(0, box.getTop() - 100);
+                        view_add.fluentScrollTo(0, box.getTop() - 100);
                         break;
                     } else {
                         box.clearFocus();
-                        count += 1;
-                        if (count >= 8) {
-                            //添加数据
-                            String otctext;
-                            switch ((add_otc.getDisplayedData())[add_otc.getValue()]){
-                                case "OTC(非处方药)-红":
-                                    otctext = "OTC-R";
-                                    break;
-                                case "OTC(非处方药)-绿":
-                                    otctext = "OTC-G";
-                                    break;
-                                case "RX(处方药)":
-                                    otctext = "Rx";
-                                    break;
-                                default:
-                                    otctext = "none";
-                                    break;
-                            }
-                            *//*
-             * insert(id
-             *       name
-             *       imgpath
-             *       desp
-             *       XXXX年-XX月
-             *       OTC /  / Rx
-             *       barcode
-             *       XX-包/克/片-XX-次-XX-时/天
-             *       company
-             *       剩余：XX  包/克/片
-             *       Elabel
-             *       )
-             * *//*
-                            insert(idInsert,
-                                    add_name.getText(),
-                                    imgpath,
-                                    add_desp.getText(),
-                                    (add_outdate_year.getDisplayedData())[add_outdate_year.getValue()]
-                                            + "-"
-                                            + (add_outdate_month.getDisplayedData())[add_outdate_month.getValue()],
-                                    otctext,
-                                    add_barcode.getText(),
-                                    add_usage_total.getText() + "-" + method1.getText() + "-" + add_usage_time.getText() + "-次-" + add_usage_day.getText() + method3.getText(),
-                                    add_company.getText(),
-                                    add_yu.getText(),
-                                    ELABEL);
-//                            query();//刷新
-//TODO：2.解决img上屏的问题。
-                        }
+                        count++;
                     }
                 }
-            }*/
-            /*if (DIALOG==null) {
-                DIALOG = new XPopup.Builder(getContext())
-                        .dismissOnBackPressed(false) // 点击返回键是否消失
-                        .dismissOnTouchOutside(true) // 点击外部是否消失
-                        .setPopupCallback(new dialogListener())
-                        .asConfirm("提示", "未填写药品名", "取消", "确定",
-                                new OnConfirmListener() {
-                                    @Override
-                                    public void onConfirm() {
-                                        view.fluentScrollTo(0, 0);
-                                    }
-                                }, null, false);
+                if (count >= 8) {
+                    //添加数据
+                    String usa1, usa2, usa3, usageall;
+                    usa1 = tf_add_usage_total.getText().trim();
+                    usa2 = tf_add_usage_time.getText().trim();
+                    usa3 = tf_add_usage_day.getText().trim();
+                    usageall = usa1 + "-" + btn_add_newUsage_utils_1.getText() + "-" + usa2 + "-" + btn_add_newUsage_utils_2.getText() + "-" + usa3 + "-" + btn_add_newUsage_utils_3.getText();
+                    insert(key,
+                            tf_add_name.getText(),
+                            img == null ? imgbytes : img,
+                            tf_add_desp.getText(),
+                            (tf_add_outdate_year.getDisplayedData())[tf_add_outdate_year.getValue()].replace("年", "")
+                                    + "-"
+                                    + (tf_add_outdate_month.getDisplayedData())[tf_add_outdate_month.getValue()].replace("月", "")
+                                    + "-1",
+                            tf_add_otc.getDisplayedData()[tf_add_otc.getValue()].equals("OTC(非处方药)-绿") ? "OTC-G" : tf_add_otc.getDisplayedData()[tf_add_otc.getValue()].equals("OTC(非处方药)-红") ? "OTC-R" : tf_add_otc.getDisplayedData()[tf_add_otc.getValue()].equals("RX(处方药)") ? "Rx" : "none",
+                            tf_add_barcode.getText(),
+                            usageall,
+                            tf_add_company.getText(),
+                            tf_add_yu.getText().trim(),
+                            eLABEL.toString());
+
+                }
+
             }
-            DIALOG.show();
-*/
         });
 
 
@@ -537,19 +494,11 @@ public class MainAbilitySlice extends AbilitySlice {
 //        mflowLayout = (FlowLayout) findComponentById(ResourceTable.Id_flow_layout);
 //        labelList.clear();
         databaseHelper = DataAbilityHelper.creator(this);
-        lowKey = util.PreferenceUtils.getString(this, "lowKey");
-        highKey = util.PreferenceUtils.getString(this, "highKey");
-        if (lowKey == null) {
-            lowKey = "";
-        }
-        if (highKey == null) {
-            highKey = "";
-        }
         cont = getContext();
         imageSaver = new ImageSaver();
         imageSaver.setInstance();
-        util.PreferenceUtils.putString(getContext(), "editok", "none");
         query();
+        util.PreferenceUtils.putString(getContext(), "editok", "none");
         intPageStart();
         initHomepageListContainer();
         if (verifySelfPermission("ohos.permission.READ_MEDIA") != IBundleManager.PERMISSION_GRANTED) {
@@ -610,9 +559,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
     //清空添加药品的列表
     private void clearAddTextfield() {
-        //TODO：elabel列表清理
-        imgpath = "";
-        eLABEL = "";
+        eLABEL.clear();
         btn_add_img.setPixelMap(ResourceTable.Media_add_imgadd);
         btn_add_img.setScaleMode(Image.ScaleMode.CENTER);
         tf_add_name.setText("");
@@ -639,8 +586,11 @@ public class MainAbilitySlice extends AbilitySlice {
         t_add_elabel5.setText("测试标签");
         t_add_elabel5.setVisibility(Component.HIDE);
         t_add_elabel_title.setText("添加药效标签(0/5)");
+        imgbytes = null;
+        img = null;
+        btn_add_img.setPixelMap(ResourceTable.Media_add_imgadd);
+        btn_add_img.setScaleMode(Image.ScaleMode.CENTER);
         iniCalendarPicker();
-
         ToastUtil.showToast(getContext(), "已清空内容  ");
     }
 
@@ -727,6 +677,12 @@ public class MainAbilitySlice extends AbilitySlice {
                 case 4:
                     Image img_homehead = (Image) findComponentById(ResourceTable.Id_home_image_head);
                     img_homehead.setCornerRadius(200);
+                    Text me_has = (Text) findComponentById(ResourceTable.Id_me_has);
+                    me_has.setText(String.valueOf(dataHas));
+                    Text me_fav = (Text) findComponentById(ResourceTable.Id_me_fav);
+                    me_fav.setText(String.valueOf(dataFav));
+                    Text me_share = (Text) findComponentById(ResourceTable.Id_me_share);
+                    me_share.setText(String.valueOf(dataShare));
                     break;
                 default:
                     break;
@@ -912,7 +868,7 @@ public class MainAbilitySlice extends AbilitySlice {
         String[] columns = new String[]{
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
-                DB_COLUMN_IMAGEPATH,
+                DB_COLUMN_IMAGE,
                 DB_COLUMN_DESCRIPTION,
                 DB_COLUMN_OUTDATE,
                 DB_COLUMN_OTC,
@@ -924,8 +880,7 @@ public class MainAbilitySlice extends AbilitySlice {
         };
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        System.out.println("开始" + lowKey + "-" + highKey);
-        predicates.between(DB_COLUMN_KEYID, lowKey, highKey);
+        predicates.beginsWith(DB_COLUMN_KEYID,"KEY");
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
                     columns, predicates);
@@ -939,7 +894,7 @@ public class MainAbilitySlice extends AbilitySlice {
 //            Map<String, Object> map = new HashMap<String, Object>();
                 String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                 String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
                 String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
                 long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
                 String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
@@ -949,7 +904,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
                 map.put("keyid", keyid);
-                map.put("imgpath", imagepath);
+                map.put("img", image);
                 map.put("name", name);
                 map.put("description", description);
                 map.put("outdate", outdate);
@@ -959,11 +914,11 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("company", company);
                 map.put("yu", yu);
                 map.put("elabel", elabel);
-                map.put("image", ResourceTable.Media_test);
                 list.add(map);
-                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + imagepath + " description:" + description + " outdate:" + outdate
+                System.out.println("query: Id :" + " keyid:" + keyid + " name:" + name + " image:" + Arrays.toString(image) + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
             } while (resultSet.goToNextRow());
+            dataHas = list.size();
             return list;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "query: dataRemote exception | illegalStateException");
@@ -977,7 +932,7 @@ public class MainAbilitySlice extends AbilitySlice {
         String[] columns = new String[]{
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
-                DB_COLUMN_IMAGEPATH,
+                DB_COLUMN_IMAGE,
                 DB_COLUMN_DESCRIPTION,
                 DB_COLUMN_OUTDATE,
                 DB_COLUMN_OTC,
@@ -990,27 +945,38 @@ public class MainAbilitySlice extends AbilitySlice {
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
         switch (method) {
-            case 11: predicates.lessThan(field, util.getDateFromString(value1));
+            case 11:
+                predicates.lessThan(field, util.getDateFromString(value1));
                 break;
-            case 12: predicates.between(field, util.getDateFromString(value1), util.getDateFromString(value2));
+            case 12:
+                predicates.between(field, util.getDateFromString(value1), util.getDateFromString(value2));
                 break;
-            case 13: predicates.greaterThan(field, util.getDateFromString(value1));
+            case 13:
+                predicates.greaterThan(field, util.getDateFromString(value1));
                 break;
-            case 21: predicates.lessThan(field, value1);
+            case 21:
+                predicates.lessThan(field, value1);
                 break;
-            case 22: predicates.between(field, value1, value2);
+            case 22:
+                predicates.between(field, value1, value2);
                 break;
-            case 23: predicates.greaterThan(field, value1);
+            case 23:
+                predicates.greaterThan(field, value1);
                 break;
-            case 31: predicates.contains(field, value1);
+            case 31:
+                predicates.contains(field, value1);
                 break;
-            case 32: predicates.equalTo(field, value1);
+            case 32:
+                predicates.equalTo(field, value1);
                 break;
-            case 33: predicates.equalTo(field, value1);
+            case 33:
+                predicates.equalTo(field, value1);
                 break;
-            case 34: predicates.equalTo(field, value1);
+            case 34:
+                predicates.equalTo(field, value1);
                 break;
-            case 35: predicates.equalTo(field, value1);
+            case 35:
+                predicates.equalTo(field, value1);
                 break;
 
 
@@ -1029,7 +995,7 @@ public class MainAbilitySlice extends AbilitySlice {
 //            Map<String, Object> map = new HashMap<String, Object>();
                 String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                 String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
                 String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
                 long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
                 String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
@@ -1039,7 +1005,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
                 map.put("keyid", keyid);
-                map.put("imgpath", imagepath);
+                map.put("img", image);
                 map.put("name", name);
                 map.put("description", description);
                 map.put("outdate", outdate);
@@ -1051,7 +1017,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
                 list.add(map);
-                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + imagepath + " description:" + description + " outdate:" + outdate
+                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
             } while (resultSet.goToNextRow());
             return list;
@@ -1067,7 +1033,7 @@ public class MainAbilitySlice extends AbilitySlice {
         String[] columns = new String[]{
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
-                DB_COLUMN_IMAGEPATH,
+                DB_COLUMN_IMAGE,
                 DB_COLUMN_DESCRIPTION,
                 DB_COLUMN_OUTDATE,
                 DB_COLUMN_OTC,
@@ -1093,9 +1059,9 @@ public class MainAbilitySlice extends AbilitySlice {
 //            Map<String, Object> map = new HashMap<String, Object>();
                 String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                 String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
                 String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
-                String outdate = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
+                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
                 String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
                 String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
                 String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
@@ -1103,7 +1069,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
                 map.put("keyid", keyid);
-                map.put("imgpath", imagepath);
+                map.put("img", image);
                 map.put("name", name);
                 map.put("description", description);
                 map.put("outdate", outdate);
@@ -1115,7 +1081,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
                 list.add(map);
-                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + imagepath + " description:" + description + " outdate:" + outdate
+                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
             } while (resultSet.goToNextRow());
             return list;
@@ -1131,7 +1097,7 @@ public class MainAbilitySlice extends AbilitySlice {
         String[] columns = new String[]{
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
-                DB_COLUMN_IMAGEPATH,
+                DB_COLUMN_IMAGE,
                 DB_COLUMN_DESCRIPTION,
                 DB_COLUMN_OUTDATE,
                 DB_COLUMN_OTC,
@@ -1143,7 +1109,7 @@ public class MainAbilitySlice extends AbilitySlice {
         };
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.between(DB_COLUMN_KEYID, lowKey, highKey);
+        predicates.beginsWith(DB_COLUMN_KEYID,"KEY");
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
                     columns, predicates);
@@ -1157,9 +1123,9 @@ public class MainAbilitySlice extends AbilitySlice {
 //            Map<String, Object> map = new HashMap<String, Object>();
                 String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                 String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
                 String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
-                String outdate = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
+                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
                 String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
                 String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
                 String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
@@ -1167,7 +1133,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
                 map.put("keyid", keyid);
-                map.put("imgpath", imagepath);
+                map.put("img", image);
                 map.put("name", name);
                 map.put("description", description);
                 map.put("outdate", outdate);
@@ -1179,7 +1145,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
                 list.add(map);
-                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + imagepath + " description:" + description + " outdate:" + outdate
+                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
             } while (resultSet.goToNextRow());
             return list;
@@ -1218,13 +1184,13 @@ public class MainAbilitySlice extends AbilitySlice {
 
     @Override
     public void onAbilityResult(int requestCode, int resultCode, Intent data) {
-        System.out.println("输出了: "+ resultCode + ":" + requestCode + ":" + data);
+        System.out.println("输出了: " + resultCode + ":" + requestCode + ":" + data);
 
         switch (requestCode) {
             case RESULTCODE_IMAGE_CHOOSE:
                 if (data != null) {
                     //取得图片路径
-                    imgpath = data.getUriString();
+                    String imgpath = data.getUriString();
                     System.out.println("gggggggg" + imgpath);
                     //定义数据能力帮助对象
                     DataAbilityHelper helper = DataAbilityHelper.creator(getContext());
@@ -1261,9 +1227,11 @@ public class MainAbilitySlice extends AbilitySlice {
                 }
                 break;
             case RESULTCODE_IMAGE_CROP:
-                if (data!=null){
-                    if(data.getStringParam("cropedimage").equals("ok")){
-                        btn_add_img.setPixelMap(util.byte2PixelMap(ImageSaver.getInstance().getByte()));
+                if (data != null) {
+                    if (data.getStringParam("cropedimage").equals("ok")) {
+                        img = ImageSaver.getInstance().getByte();
+                        btn_add_img.setPixelMap(util.byte2PixelMap(img));
+
                     }
                 }
                 break;
@@ -1275,15 +1243,12 @@ public class MainAbilitySlice extends AbilitySlice {
         super.onAbilityResult(requestCode, resultCode, data);
     }
 
-
-
-
-    //刷新数据
-    public void query() {
+    //TODO：刷新个人界面数据
+    public int queryMeData() {
         String[] columns = new String[]{
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
-                DB_COLUMN_IMAGEPATH,
+                DB_COLUMN_IMAGE,
                 DB_COLUMN_DESCRIPTION,
                 DB_COLUMN_OUTDATE,
                 DB_COLUMN_OTC,
@@ -1295,7 +1260,57 @@ public class MainAbilitySlice extends AbilitySlice {
         };
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.between(DB_COLUMN_KEYID, lowKey, highKey);
+        predicates.beginsWith(DB_COLUMN_OUTDATE,"KEY");
+        int count = 0;
+        try {
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
+                    columns, predicates);
+            if (resultSet == null || resultSet.getRowCount() == 0) {
+                HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
+                return 0;
+            }
+            resultSet.goToFirstRow();
+            do {
+                count++;
+                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
+                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
+                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
+                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
+                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
+                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
+                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
+                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
+                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
+                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
+                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
+                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
+            } while (resultSet.goToNextRow());
+            dataHas = count;
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "query: dataRemote exception | illegalStateException");
+        }
+        return 0;
+    }
+    //刷新数据
+    public void query() {
+        String[] columns = new String[]{
+                DB_COLUMN_KEYID,
+                DB_COLUMN_NAME,
+                DB_COLUMN_IMAGE,
+                DB_COLUMN_DESCRIPTION,
+                DB_COLUMN_OUTDATE,
+                DB_COLUMN_OTC,
+                DB_COLUMN_BARCODE,
+                DB_COLUMN_USAGE,
+                DB_COLUMN_COMPANY,
+                DB_COLUMN_YU,
+                DB_COLUMN_ELABEL
+        };
+        // 构造查询条件
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+//        predicates.between(DB_COLUMN_KEYID, lowKey, highKey);
+        predicates.beginsWith(DB_COLUMN_KEYID,"KEY");
         int count = 0;
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
@@ -1305,13 +1320,11 @@ public class MainAbilitySlice extends AbilitySlice {
                 return;
             }
             resultSet.goToFirstRow();
-            lowKey = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
-            util.PreferenceUtils.putString(this, "lowKey", lowKey);
             do {
                 count++;
                 String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                 String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
                 String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
                 long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
                 String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
@@ -1320,14 +1333,10 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + imagepath + " description:" + description + " outdate:" + outdate
+                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
-                if (count == resultSet.getRowCount()) {
-                    highKey = keyid;
-                    util.PreferenceUtils.putString(this, "highKey", highKey);
-                }
             } while (resultSet.goToNextRow());
-
+            dataHas = count;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
             HiLog.error(LABEL_LOG, "query: dataRemote exception | illegalStateException");
         }
@@ -1339,7 +1348,7 @@ public class MainAbilitySlice extends AbilitySlice {
         String[] columns = new String[]{
                 DB_COLUMN_KEYID,
                 DB_COLUMN_NAME,
-                DB_COLUMN_IMAGEPATH,
+                DB_COLUMN_IMAGE,
                 DB_COLUMN_DESCRIPTION,
                 DB_COLUMN_OUTDATE,
                 DB_COLUMN_OTC,
@@ -1363,7 +1372,7 @@ public class MainAbilitySlice extends AbilitySlice {
             do {
                 String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
                 String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                String imagepath = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_IMAGEPATH));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
                 String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
                 long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
                 String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
@@ -1373,7 +1382,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
                 map.put("keyid", keyid);
-                map.put("imgpath", imagepath);
+                map.put("img", image);
                 map.put("name", name);
                 map.put("description", description);
                 map.put("outdate", outdate);
@@ -1384,7 +1393,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("yu", yu);
                 map.put("elabel", elabel);
                 map.put("image", ResourceTable.Media_test);
-                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + imagepath + " description:" + description + " outdate:" + outdate
+                HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
             } while (resultSet.goToNextRow());
             return map;
@@ -1394,16 +1403,42 @@ public class MainAbilitySlice extends AbilitySlice {
         }
     }
 
+    public static boolean isPresentkeyId(String keyid) {
+        String[] columns = new String[]{
+                DB_COLUMN_KEYID,
+                DB_COLUMN_NAME,
+                DB_COLUMN_IMAGE,
+                DB_COLUMN_DESCRIPTION,
+                DB_COLUMN_OUTDATE,
+                DB_COLUMN_OTC,
+                DB_COLUMN_BARCODE,
+                DB_COLUMN_USAGE,
+                DB_COLUMN_COMPANY,
+                DB_COLUMN_YU,
+                DB_COLUMN_ELABEL
+        };
+        // 构造查询条件
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.equalTo(DB_COLUMN_KEYID, keyid);
+        boolean isPresent = true;
+        try {
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
+                    columns, predicates);
+            isPresent = resultSet != null && resultSet.getRowCount() != 0;
+        } catch (DataAbilityRemoteException | IllegalStateException ignored) {
+        }
+        return isPresent;
+    }
 
     //插入数据
-    public void insert(String keyid, String name, String imagepath,
+    public void insert(String keyid, String name, byte[] image,
                        String description, String outdate, String otc,
                        String barcode, String usage, String company,
                        String yu, String elabel) {
         ValuesBucket valuesBucket = new ValuesBucket();
         valuesBucket.putString(DB_COLUMN_KEYID, keyid);
         valuesBucket.putString(DB_COLUMN_NAME, name);
-        valuesBucket.putString(DB_COLUMN_IMAGEPATH, imagepath);
+        valuesBucket.putByteArray(DB_COLUMN_IMAGE, image);
         valuesBucket.putString(DB_COLUMN_DESCRIPTION, description);
         valuesBucket.putLong(DB_COLUMN_OUTDATE, util.getDateFromString(outdate));
         valuesBucket.putString(DB_COLUMN_OTC, otc);
@@ -1415,13 +1450,6 @@ public class MainAbilitySlice extends AbilitySlice {
 
         try {
             if (databaseHelper.insert(Uri.parse(BASE_URI + DATA_PATH), valuesBucket) != -1) {
-                if (lowKey.equals("") || lowKey.equals(null)) {
-                    lowKey = keyid;
-                    util.PreferenceUtils.putString(this, "lowKey", lowKey);
-                }
-                highKey = keyid;
-                util.PreferenceUtils.putString(this, "highKey", highKey);
-                System.out.println("keykeykey" + lowKey + "ley" + highKey + "ffff");
                 HiLog.info(LABEL_LOG, "insert successful");
                 //消息弹框
                 new XPopup.Builder(getContext())
@@ -1447,7 +1475,7 @@ public class MainAbilitySlice extends AbilitySlice {
     }
 
     //更新
-    public static void update(String keyid, String name, String imagepath,
+    public static void update(String keyid, String name, byte[] image,
                               String description, String outdate, String otc,
                               String barcode, String usage, String company,
                               String yu, String elabel) {
@@ -1456,7 +1484,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
         ValuesBucket valuesBucket = new ValuesBucket();
         valuesBucket.putString(DB_COLUMN_NAME, name);
-        valuesBucket.putString(DB_COLUMN_IMAGEPATH, imagepath);
+        valuesBucket.putByteArray(DB_COLUMN_IMAGE, image);
         valuesBucket.putString(DB_COLUMN_DESCRIPTION, description);
         valuesBucket.putLong(DB_COLUMN_OUTDATE, util.getDateFromString(outdate));
         valuesBucket.putString(DB_COLUMN_OTC, otc);

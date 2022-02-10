@@ -115,7 +115,8 @@ public class NormalProvider extends BaseItemProvider {
 //        image.setPixelMap(pixelMap);
 //        本机资源ID可使用下方命令
             image.setVisibility(Component.VISIBLE);
-            image.setPixelMap(ResourceTable.Media_test);
+            byte[] img = (byte[]) map.get("img");
+            image.setPixelMap(util.byte2PixelMap(img));
             image.setCornerRadius(5);
 //        image.setPixelMap((int)map.get("image"));
         } else {

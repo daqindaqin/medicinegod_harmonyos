@@ -295,7 +295,7 @@ public class util extends AbilitySlice {
             Long time1 =  fomatDate1.getTime();
             Long time2 =  fomatDate2.getTime();
             int second = (int) ((time1 - time2) / 1000);
-            //TODO：如有更好的方案则优化此处
+            //如有更好的方案则优化此处
             if (second > 0) {
                 outdate[5] = second;
                 if (outdate[5] >= 60) {
@@ -497,6 +497,20 @@ public class util extends AbilitySlice {
         return Base64.getEncoder().encodeToString(bytes);
     }
 
+    public static String getRandomKeyId() {
+        String base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        sb.append("KEY");
+        for (int i = 0; i < 13; i++) {
+            int number = random.nextInt(base.length());
+            sb.append(base.charAt(number));
+        }
+        if (MainAbilitySlice.isPresentkeyId(sb.toString())){
+            getRandomKeyId();
+        }
+        return sb.toString();
+    }
     public static byte[] readInputStream(InputStream inputStream) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

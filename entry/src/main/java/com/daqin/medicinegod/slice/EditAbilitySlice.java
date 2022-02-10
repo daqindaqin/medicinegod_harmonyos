@@ -1,15 +1,26 @@
 package com.daqin.medicinegod.slice;
 
 import com.daqin.medicinegod.ResourceTable;
+import com.daqin.medicinegod.utils.imageControler.ImageSaver;
 import com.daqin.medicinegod.utils.util;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.OnInputConfirmListener;
 import com.lxj.xpopup.interfaces.OnSelectListener;
+import com.lxj.xpopup.util.ToastUtil;
 import ohos.aafwk.ability.AbilitySlice;
+import ohos.aafwk.ability.DataAbilityHelper;
+import ohos.aafwk.ability.DataAbilityRemoteException;
 import ohos.aafwk.content.Intent;
+import ohos.aafwk.content.Operation;
 import ohos.agp.components.*;
+import ohos.media.image.ImageSource;
+import ohos.media.image.PixelMap;
+import ohos.utils.net.Uri;
 
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 
@@ -43,6 +54,8 @@ public class EditAbilitySlice extends AbilitySlice {
     Text edit_elabel_add1;
     Text edit_elabel_add2;
     Text edit_elabel_title;
+    Text edit_imgcrop;
+    Text edit_imgback;
     Map<String, Object> mgDdata;
     String keyid, otc;
     List<String> elabel = new ArrayList<>();
@@ -51,6 +64,9 @@ public class EditAbilitySlice extends AbilitySlice {
     int countElabel = 0;
     int newUsage_utils_1 = 0, newUsage_utils_3 = 0;
     String[] usage;
+    byte[] imgback = null;
+    byte[] img = null;
+    byte[] imgbytes = null;
 
 
     public void iniView() {
@@ -83,6 +99,8 @@ public class EditAbilitySlice extends AbilitySlice {
         edit_elabel3 = (Text) findComponentById(ResourceTable.Id_dtl_edit_elabel3);
         edit_elabel4 = (Text) findComponentById(ResourceTable.Id_dtl_edit_elabel4);
         edit_elabel5 = (Text) findComponentById(ResourceTable.Id_dtl_edit_elabel5);
+        edit_imgcrop = (Text) findComponentById(ResourceTable.Id_dtl_edit_imgcrop);
+        edit_imgback = (Text) findComponentById(ResourceTable.Id_dtl_edit_imgback);
 
     }
 
@@ -116,7 +134,9 @@ public class EditAbilitySlice extends AbilitySlice {
 
         textFieldlist = new TextField[]{edit_name, edit_desp, edit_usage_total, edit_usage_time, edit_usage_day, edit_company, edit_yu, edit_barcode};
         edit_img.setCornerRadius(25);
-
+        img = (byte[]) mgDdata.get("img");
+        imgback = img;
+        edit_img.setPixelMap(util.byte2PixelMap(img));
         edit_name.setHint((String) mgDdata.get("name"));
         edit_desp.setHint((String) mgDdata.get("description"));
         edit_barcode.setHint((String) mgDdata.get("barcode"));
@@ -138,14 +158,48 @@ public class EditAbilitySlice extends AbilitySlice {
 
 
     private void intclicklistener() {
+        edit_imgcrop.setClickedListener(new Component.ClickedListener() {
+            @Override
+            public void onClick(Component component) {
+                if (imgbytes == null) {
+                    //如果没选择图片则编辑本身
+                    Intent intent = new Intent();
+                    Operation operation = new Intent.OperationBuilder()
+                            .withDeviceId("")
+                            .withBundleName(getBundleName())
+                            .withAbilityName("com.daqin.medicinegod.ImageControlAbility")
+                            .build();
+                    intent.setOperation(operation);
+                    ImageSaver.getInstance().setByte(util.pixelMap2byte(edit_img.getPixelMap()));
+                    System.out.println("开始传输");
+                    startAbilityForResult(intent, 101);
+                } else {
+                    Intent intent = new Intent();
+                    Operation operation = new Intent.OperationBuilder()
+                            .withDeviceId("")
+                            .withBundleName(getBundleName())
+                            .withAbilityName("com.daqin.medicinegod.ImageControlAbility")
+                            .build();
+                    intent.setOperation(operation);
+                    ImageSaver.getInstance().setByte(imgbytes);
+                    System.out.println("开始传输");
+                    startAbilityForResult(intent, 101);
+                }
+            }
+        });
+        edit_imgback.setClickedListener(component -> {
+            edit_img.setPixelMap(util.byte2PixelMap(imgback));
+            img = null;
+            imgbytes = null;
+        });
         edit_ok.setClickedListener(component -> {
             boolean canEdit;
-            //TODO:加入图片的修改
-            String name, desp, outdate, otctmp, barcodetmp = "", usageall, usa1, usa2, usa3, yu, company, imgpath = "";
+
+            String name, desp, outdate, otctmp, barcodetmp = "", usageall, usa1, usa2, usa3, yu, company;
             StringBuilder label = new StringBuilder();
             name = (edit_name.getText().length() == 0 || edit_name.getText().equals(" ") || edit_name.getText().equals(edit_name.getHint())) ? edit_name.getHint() : edit_name.getText();
             desp = (edit_desp.getText().length() == 0 || edit_desp.getText().equals(" ") || edit_desp.getText().equals(edit_desp.getHint())) ? edit_desp.getHint() : edit_desp.getText();
-            outdate = edit_outdate_year.getDisplayedData()[edit_outdate_year.getValue()].replace("年","") + "-" + edit_outdate_month.getDisplayedData()[edit_outdate_month.getValue()].replace("月","")+"-1";
+            outdate = edit_outdate_year.getDisplayedData()[edit_outdate_year.getValue()].replace("年", "") + "-" + edit_outdate_month.getDisplayedData()[edit_outdate_month.getValue()].replace("月", "") + "-1";
             otctmp = (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-绿") ? "OTC-G" : ((edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-红") ? "OTC-R" : (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("RX(处方药)") ? "Rx" : "none"))));
             if (edit_barcode.getText().equals("") || edit_barcode.getText().equals(" ")) {
                 barcodetmp = edit_barcode.getHint();
@@ -180,7 +234,7 @@ public class EditAbilitySlice extends AbilitySlice {
                 }
 
                 String finalBarcodetmp = barcodetmp;
-                System.out.println("输出了" + keyid + name + imgpath + desp +util.getDateFromString(outdate)+ outdate + otctmp + finalBarcodetmp + usageall + company + yu + label.toString().substring(0, label.length() - 2));
+                System.out.println("输出了" + keyid + name + desp + util.getDateFromString(outdate) + outdate + otctmp + finalBarcodetmp + usageall + company + yu + label.toString().substring(0, label.length() - 2));
 
                 new XPopup.Builder(getContext())
                         //.setPopupCallback(new XPopupListener())
@@ -193,14 +247,14 @@ public class EditAbilitySlice extends AbilitySlice {
                                     public void onConfirm() {
                                         MainAbilitySlice.update(keyid,
                                                 name,
-                                                imgpath,
+                                                img == null ? imgbytes : img,
                                                 desp,
                                                 outdate,
                                                 otctmp,
                                                 finalBarcodetmp,
-                                                usageall,
+                                                usageall.trim(),
                                                 company,
-                                                yu,
+                                                yu.trim(),
                                                 label.toString()
                                         );
                                         //editok属性包括{ ok (修改完成) , none(无) }
@@ -209,6 +263,18 @@ public class EditAbilitySlice extends AbilitySlice {
                                     }
                                 }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_blueconfirm)
                         .show(); // 最后一个参数绑定已有布局
+            }
+        });
+        edit_img.setClickedListener(new Component.ClickedListener() {
+            @Override
+            public void onClick(Component component) {
+                Intent intent = new Intent();
+                Operation opt = new Intent.OperationBuilder().withAction("android.intent.action.GET_CONTENT").build();
+                intent.setOperation(opt);
+                intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
+                intent.setType("image/*");
+                intent.setBundle("com.huawei.photos");
+                startAbilityForResult(intent, 100);
             }
         });
         edit_back.setClickedListener(component -> terminate());
@@ -225,7 +291,7 @@ public class EditAbilitySlice extends AbilitySlice {
                                 public void onConfirm(String text) {
                                     elabelClickAdd(text);
                                 }
-                            },null,ResourceTable.Layout_popup_comfirm_with_input_word)
+                            }, null, ResourceTable.Layout_popup_comfirm_with_input_word)
                     .show();
         });
         edit_elabel_add2.setClickedListener(component -> {
@@ -241,7 +307,7 @@ public class EditAbilitySlice extends AbilitySlice {
                                 public void onConfirm(String text) {
                                     elabelClickAdd(text);
                                 }
-                            },null,ResourceTable.Layout_popup_comfirm_with_input_word)
+                            }, null, ResourceTable.Layout_popup_comfirm_with_input_word)
                     .show();
         });
         edit_elabel1.setClickedListener(component -> {
@@ -344,6 +410,56 @@ public class EditAbilitySlice extends AbilitySlice {
 
     }
 
+    @Override
+    protected void onAbilityResult(int requestCode, int resultCode, Intent resultData) {
+        super.onAbilityResult(requestCode, resultCode, resultData);
+        switch (requestCode) {
+            case 100:
+                if (resultData != null) {
+                    //取得图片路径
+                    String imgpath = resultData.getUriString();
+                    System.out.println("修改后的：" + imgpath);
+                    //定义数据能力帮助对象
+                    DataAbilityHelper helper = DataAbilityHelper.creator(getContext());
+                    //定义组件资源
+                    ImageSource imageSource = null;
+                    FileInputStream inputStream = null;
+
+                    try {
+                        inputStream = new FileInputStream(helper.openFile(Uri.parse(imgpath), "r"));
+                    } catch (DataAbilityRemoteException | FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    //定义文件
+                    FileDescriptor file = null;
+                    try {
+                        file = helper.openFile(Uri.parse(imgpath), "r");
+                    } catch (DataAbilityRemoteException | FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    //创建文件对象
+                    imageSource = ImageSource.create(file, null);
+                    //创建位图
+                    PixelMap pixelMap = imageSource.createPixelmap(null);
+                    edit_img.setPixelMap(pixelMap);
+
+                    //readInputStream将inputStream转换成byte[]
+                    imgbytes = util.readInputStream(inputStream);
+
+                }
+                break;
+            case 101:
+                if (resultData != null) {
+                    if (resultData.getStringParam("cropedimage").equals("ok")) {
+                        img = ImageSaver.getInstance().getByte();
+                        edit_img.setPixelMap(util.byte2PixelMap(img));
+
+                    }
+                }
+                break;
+        }
+    }
+
     public void elabelClickAdd(String text) {
         if (countElabel >= 5) {
             new XPopup.Builder(getContext())
@@ -422,7 +538,7 @@ public class EditAbilitySlice extends AbilitySlice {
                                             refreshElabel();
                                         }
                                     }
-                                },null,ResourceTable.Layout_popup_comfirm_with_input_word)
+                                }, null, ResourceTable.Layout_popup_comfirm_with_input_word)
                         .show();
                 break;
             case 1:
@@ -532,15 +648,15 @@ public class EditAbilitySlice extends AbilitySlice {
         long data0 = (long) mgDdata.get("outdate");
         String[] dateAll = util.getStringFromDate(data0).split("-");
         String year, month;
-        year = dateAll[0]+"年";
-        if (Integer.parseInt(dateAll[1])<10){
-            month = dateAll[1].substring(1)+"月";
-        }else {
-            month = dateAll[1]+"月";
+        year = dateAll[0] + "年";
+        if (Integer.parseInt(dateAll[1]) < 10) {
+            month = dateAll[1].substring(1) + "月";
+        } else {
+            month = dateAll[1] + "月";
         }
 
 
-        System.out.println("输出了"+year+"-"+month);
+        System.out.println("输出了" + year + "-" + month);
         int value = 0;
         Calendar cal = Calendar.getInstance();
         List<String> yearList = new ArrayList<>();

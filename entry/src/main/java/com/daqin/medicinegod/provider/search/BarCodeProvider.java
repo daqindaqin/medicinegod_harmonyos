@@ -97,24 +97,11 @@ public class BarCodeProvider extends BaseItemProvider {
             }
 
 
-//        DataAbilityHelper helper = DataAbilityHelper.creator(slice.getContext());
-//        //定义文件
-//        FileDescriptor file = null;
-//        try {
-//            file = helper.openFile(Uri.parse((String)map.get("imagepath")), "r");
-//        } catch (DataAbilityRemoteException | FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        //创建文件对象
-//        ImageSource imageSource = ImageSource.create(file, null);
-//        //创建位图
-//        PixelMap pixelMap = imageSource.createPixelmap(null);
-//        image.setPixelMap(pixelMap);
-//        本机资源ID可使用下方命令
+
             image.setVisibility(Component.VISIBLE);
-            image.setPixelMap(ResourceTable.Media_test);
+            byte[] img = (byte[]) map.get("img");
+            image.setPixelMap(util.byte2PixelMap(img));
             image.setCornerRadius(5);
-//        image.setPixelMap((int)map.get("image"));
 
         } else {
             textName.setText((String)map.get("name"));

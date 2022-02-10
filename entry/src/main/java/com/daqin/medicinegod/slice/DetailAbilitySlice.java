@@ -34,8 +34,8 @@ import java.util.*;
 
 public class DetailAbilitySlice extends AbilitySlice {
     private static DataAbilityHelper databaseHelper;
-    private static final String BASE_URI = "dataability:///com.daqin.medicinegod.PersonDataAbility";
-    private static final String DATA_PATH = "/mg";
+    private static final String BASE_URI = "dataability:///com.daqin.medicinegod.MedicineDataAbility";
+    private static final String DATA_PATH = "/medicine";
     private static final String DB_COLUMN_KEYID = "KEYID";
     private static final String DB_COLUMN_NAME = "NAME";
     private static final String DB_COLUMN_IMAGEPATH = "IMAGEPATH";
@@ -47,8 +47,7 @@ public class DetailAbilitySlice extends AbilitySlice {
     private static final String DB_COLUMN_COMPANY = "COMPANY";
     private static final String DB_COLUMN_YU = "YU";
     private static final String DB_COLUMN_ELABEL = "ELABEL";
-    private String lowKey;
-    private String highKey;
+
     private Map<String, Object> mdc_SingleData;
     private String localKEY = null;
     private String[] textUagesAll;
@@ -79,6 +78,8 @@ public class DetailAbilitySlice extends AbilitySlice {
     }
 
     public void iniContext() {
+        byte[] img = (byte[]) mdc_SingleData.get("img");
+        mdc_img.setPixelMap(util.byte2PixelMap(img));
         mdc_name.setText((String) mdc_SingleData.get("name"));
         mdc_desp.setText("        " + (String) mdc_SingleData.get("description"));
 
@@ -218,14 +219,6 @@ public class DetailAbilitySlice extends AbilitySlice {
         super.onStart(intent);
         super.setUIContent(ResourceTable.Layout_ability_main_detail);
         databaseHelper = DataAbilityHelper.creator(this);
-        lowKey = util.PreferenceUtils.getString(this, "lowKey");
-        highKey = util.PreferenceUtils.getString(this, "highKey");
-        if (lowKey == null) {
-            lowKey = "";
-        }
-        if (highKey == null) {
-            highKey = "";
-        }
         mdc_img = (Image) findComponentById(ResourceTable.Id_dtl_mdc_img);
         mdc_img.setCornerRadius(25);
         mdc_img_barcode = (Image) findComponentById(ResourceTable.Id_dtl_mdc_barcode_img);
@@ -325,14 +318,6 @@ public class DetailAbilitySlice extends AbilitySlice {
                     ToastUtil.showToast(getContext(), "使用失败  ");
                 }
 
-
-
-
-
-
-
-
-
                 break;
             case 1:
                 //弹出弹框编辑后再返回
@@ -367,7 +352,7 @@ public class DetailAbilitySlice extends AbilitySlice {
                                     public void onConfirm() {
                                         // 置换key
                                         DataAbilityPredicates predicates = new DataAbilityPredicates();
-                                        predicates.between(DB_COLUMN_KEYID, lowKey, highKey);
+                                        predicates.beginsWith(DB_COLUMN_KEYID, "KEY");
                                         String[] columns = new String[]{
                                                 DB_COLUMN_KEYID,
                                                 DB_COLUMN_NAME,
@@ -386,28 +371,7 @@ public class DetailAbilitySlice extends AbilitySlice {
                                                     columns, predicates);
                                             if (resultSet == null || resultSet.getRowCount() == 0) {
                                                 ToastUtil.showToast(getContext(), "未找到该条药品信息  ");
-                                            } else {
-                                                if (lowKey.equals(localKEY)) {
-                                                    //这里要将存在的数量做判断，否则越界
-                                                    if (resultSet.getRowCount() == 1) {
-                                                        //如果就剩一条信息，那就进这条信息(取key)
-                                                        resultSet.goToRow(0);
-                                                        lowKey = "";
-                                                        highKey = "";
-                                                    } else {
-                                                        //如果不止一条信息，那就进这条下面的信息(取key)
-                                                        resultSet.goToRow(1);
-                                                        lowKey = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
-                                                    }
-                                                } else if (highKey.equals(localKEY)) {
-                                                    //因为goToRow命令从0开始，从x-1结束，而getRowCount从1开始，x结束
-                                                    //在要getRowCount()-1取倒数第二条信息时仅仅是取到了最后一条
-                                                    //在此基础上再减1则是取倒数第二条
-                                                    resultSet.goToRow(resultSet.getRowCount() - 2);
-                                                    highKey = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
-                                                }
-                                                util.PreferenceUtils.putString(getContext(), "lowKey", lowKey);
-                                                util.PreferenceUtils.putString(getContext(), "highKey", highKey);
+                                            }else{
                                                 util.PreferenceUtils.putString(getContext(), "editok", "ok");
                                                 MainAbilitySlice.delete(localKEY);
                                                 terminate();

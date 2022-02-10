@@ -85,6 +85,7 @@
                 ohos:image_src="$media:test"
                 ohos:margin="20vp"
                 ohos:scale_mode="stretch"/>
+
             <!--名字-->
             <DirectionalLayout
                 ohos:height="match_content"

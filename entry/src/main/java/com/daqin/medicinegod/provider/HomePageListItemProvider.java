@@ -13,6 +13,7 @@ import ohos.agp.utils.Color;
 
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -125,7 +126,6 @@ public class HomePageListItemProvider extends  BaseItemProvider{
         int yuall = Integer.parseInt(map.get("yu").toString());
         int yuus = Integer.parseInt(textUagesAll[0]);
         double yures = yuall / yuus;
-        //TODO：修复bug
         DecimalFormat df = new DecimalFormat("#.0");
         String yu = df.format(yures);
         textMargin.setText(yu);
@@ -163,23 +163,17 @@ public class HomePageListItemProvider extends  BaseItemProvider{
 
 
 
-//        DataAbilityHelper helper = DataAbilityHelper.creator(slice.getContext());
-//        //定义文件
-//        FileDescriptor file = null;
-//        try {
-//            file = helper.openFile(Uri.parse((String)map.get("imagepath")), "r");
-//        } catch (DataAbilityRemoteException | FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        //创建文件对象
-//        ImageSource imageSource = ImageSource.create(file, null);
-//        //创建位图
-//        PixelMap pixelMap = imageSource.createPixelmap(null);
-//        image.setPixelMap(pixelMap);
-//        本机资源ID可使用下方命令
-        image.setPixelMap(ResourceTable.Media_test);
-        image.setCornerRadius(25);
-//        image.setPixelMap((int)map.get("image"));
+
+        byte[] img = (byte[]) map.get("img");
+        if (img==null){
+            image.setPixelMap(ResourceTable.Media_default);
+            image.setScaleMode(Image.ScaleMode.CENTER);
+        }else {
+            image.setPixelMap(util.byte2PixelMap(img));
+            image.setScaleMode(Image.ScaleMode.STRETCH);
+            image.setCornerRadius(25);
+        }
+
 
         return cpt;
     }

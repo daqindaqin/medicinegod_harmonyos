@@ -138,7 +138,7 @@ public class SelectionView extends Component implements Component.LayoutRefreshe
             drawShadow(canvas);
             drawLines(canvas);
             drawCorner(canvas);
-//            drawDot(canvas); //TODO:drawDot
+//            drawDot(canvas);
         }
     }
 
