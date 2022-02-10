@@ -60,7 +60,7 @@
       },
       {
         "icon": "$media:icon",
-        "name": "com.daqin.medicinegod.ImageCropAbility",
+        "name": "com.daqin.medicinegod.ImageControlAbility",
         "description": "药品图片的裁剪",
         "type": "page"
       },
@@ -75,6 +75,12 @@
         "name": "com.daqin.medicinegod.SearchAbility",
         "description": "药品的查找",
         "type": "page"
+      },
+      {
+        "icon": "$media:icon",
+        "name": "com.daqin.medicinegod.utils.imageControler.ImageSaver",
+        "description": "传输被裁剪的图片",
+        "type": "service"
       }
     ],
     "metaData": {

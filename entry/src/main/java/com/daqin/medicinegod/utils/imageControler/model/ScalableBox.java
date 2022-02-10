@@ -14,7 +14,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.daqin.medicinegod.imagecrop.model;
+package com.daqin.medicinegod.utils.imageControler.model;
 
 public class ScalableBox implements Cloneable {
     //limit

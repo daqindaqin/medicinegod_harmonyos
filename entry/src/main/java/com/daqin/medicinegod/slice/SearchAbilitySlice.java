@@ -115,7 +115,6 @@ public class SearchAbilitySlice extends AbilitySlice {
         tf_src_src_box.addTextObserver(textUpdateObserver);
 
 
-
     }
 
     public void clearMethod() {
@@ -427,7 +426,7 @@ public class SearchAbilitySlice extends AbilitySlice {
                                                                                                                     Matcher matcher = pattern.matcher(s);
                                                                                                                     if (matcher.matches()) {
                                                                                                                         searchScreen(22, DB_COLUMN_YU, src_screen_method, s);
-                                                                                                                        btn_src_screen.setText("药品余量:在" + src_screen_method+"与"+s+"间" + " ▼");
+                                                                                                                        btn_src_screen.setText("药品余量:在" + src_screen_method + "与" + s + "间" + " ▼");
                                                                                                                     } else {
                                                                                                                         new XPopup.Builder(getContext())
                                                                                                                                 //.setPopupCallback(new XPopupListener())
@@ -481,7 +480,7 @@ public class SearchAbilitySlice extends AbilitySlice {
                                                                                                 Matcher matcher = pattern.matcher(s);
                                                                                                 if (matcher.matches()) {
                                                                                                     searchScreen(23, DB_COLUMN_YU, s, null);
-                                                                                                    btn_src_screen.setText("药品余量:多于" +s+ " ▼");
+                                                                                                    btn_src_screen.setText("药品余量:多于" + s + " ▼");
 
                                                                                                 } else {
                                                                                                     new XPopup.Builder(getContext())
@@ -514,26 +513,26 @@ public class SearchAbilitySlice extends AbilitySlice {
                                                         .dismissOnTouchOutside(false)
                                                         .isDestroyOnDismiss(true)
                                                         .maxHeight(850)
-                                                        .asCenterList("请选择一项", new String[]{"OTC(全)", "OTC(绿)", "OTC(红)","Rx","留空"},
+                                                        .asCenterList("请选择一项", new String[]{"OTC(全)", "OTC(绿)", "OTC(红)", "Rx", "留空"},
                                                                 new OnSelectListener() {
                                                                     @Override
                                                                     public void onSelect(int position, String text) {
-                                                                        btn_src_screen.setText("药品标识:"+text + " ▼");
-                                                                        switch (position){
+                                                                        btn_src_screen.setText("药品标识:" + text + " ▼");
+                                                                        switch (position) {
                                                                             case 0:
-                                                                                searchScreen(31,DB_COLUMN_OTC,"OTC",null);
+                                                                                searchScreen(31, DB_COLUMN_OTC, "OTC", null);
                                                                                 break;
                                                                             case 1:
-                                                                                searchScreen(32,DB_COLUMN_OTC,"OTC-G",null);
+                                                                                searchScreen(32, DB_COLUMN_OTC, "OTC-G", null);
                                                                                 break;
                                                                             case 2:
-                                                                                searchScreen(33,DB_COLUMN_OTC,"OTC-R",null);
+                                                                                searchScreen(33, DB_COLUMN_OTC, "OTC-R", null);
                                                                                 break;
                                                                             case 3:
-                                                                                searchScreen(34,DB_COLUMN_OTC,"Rx",null);
+                                                                                searchScreen(34, DB_COLUMN_OTC, "Rx", null);
                                                                                 break;
                                                                             case 4:
-                                                                                searchScreen(35,DB_COLUMN_OTC,"none",null);
+                                                                                searchScreen(35, DB_COLUMN_OTC, "none", null);
                                                                                 break;
                                                                         }
 
@@ -568,7 +567,7 @@ public class SearchAbilitySlice extends AbilitySlice {
         tf_src_src_box = (TextField) findComponentById(ResourceTable.Id_src_srcbox);
         btn_src_back = (Text) findComponentById(ResourceTable.Id_src_back);
         btn_src_screen = (Text) findComponentById(ResourceTable.Id_src_srceen);
-        t_notice = (Text)findComponentById(ResourceTable.Id_src_notice);
+        t_notice = (Text) findComponentById(ResourceTable.Id_src_notice);
 
     }
 
@@ -581,8 +580,8 @@ public class SearchAbilitySlice extends AbilitySlice {
         if (list == null) {
             list = getNullListNotice();
             t_notice.setText("此次共筛选到 0 条数据");
-        }else {
-            t_notice.setText("此次共筛选到 "+ list.size() +" 条数据");
+        } else {
+            t_notice.setText("此次共筛选到 " + list.size() + " 条数据");
         }
         switch (method) {
             case 11:
@@ -881,7 +880,7 @@ public class SearchAbilitySlice extends AbilitySlice {
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
         map.put("keyid", null);
-        map.put("name","  失败:搜索到的结果为0");
+        map.put("name", "  失败:搜索到的结果为0");
         list.add(map);
         return list;
     }
@@ -895,8 +894,8 @@ public class SearchAbilitySlice extends AbilitySlice {
         if (list == null) {
             list = getNullListNotice();
             t_notice.setText("此次共搜索到 0 条数据");
-        }else {
-            t_notice.setText("此次共搜索到 "+ list.size() +" 条数据");
+        } else {
+            t_notice.setText("此次共搜索到 " + list.size() + " 条数据");
         }
         switch (method) {
             case 0:

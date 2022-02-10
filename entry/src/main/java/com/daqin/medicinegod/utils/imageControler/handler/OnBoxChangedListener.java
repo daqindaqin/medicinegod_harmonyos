@@ -14,7 +14,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.daqin.medicinegod.imagecrop.handler;
+package com.daqin.medicinegod.utils.imageControler.handler;
 
 public interface OnBoxChangedListener {
     void onChanged(int x1, int y1, int x2, int y2);

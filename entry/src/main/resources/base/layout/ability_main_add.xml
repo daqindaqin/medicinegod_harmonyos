@@ -105,6 +105,36 @@
                 ohos:margin="2vp"
                 ohos:scale_mode="center"
                 />
+            <Text
+                ohos:id="$+id:add_imgcrop"
+                ohos:height="match_content"
+                ohos:width="match_content"
+                ohos:text_weight="500"
+                ohos:text="裁"
+                ohos:padding="10vp"
+                ohos:text_size="18vp"
+                ohos:text_color="$color:white"
+                ohos:below="$id:add_line1"
+                ohos:align_end="$+id:add_imgclear"
+                ohos:start_margin="10vp"
+                ohos:end_margin="50vp"
+                ohos:top_margin="10vp"
+                ohos:bottom_margin="10vp"
+                ohos:background_element="$graphic:bg_add_imgutil"/>
+            <Text
+                ohos:id="$+id:add_imgclear"
+                ohos:height="match_content"
+                ohos:width="match_content"
+                ohos:text_weight="500"
+                ohos:text="清"
+                ohos:padding="10vp"
+                ohos:text_size="18vp"
+                ohos:text_color="$color:white"
+                ohos:below="$id:add_line1"
+                ohos:align_end="$+id:add_newImg"
+                ohos:margin="10vp"
+                ohos:background_element="$graphic:bg_add_imgutil"/>
+
             <Image
                 ohos:id="$+id:add_line2"
                 ohos:height="2vp"
@@ -490,7 +520,7 @@
             <!--添加标签的布局-->
             <DirectionalLayout
                 ohos:id="$+id:add_addNewlabel_DirectionalLayout"
-                ohos:height="match_parent"
+                ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:orientation="horizontal"
                 ohos:padding="5vp"
@@ -621,7 +651,6 @@
                         ohos:top_padding="5vp"
                         ohos:visibility="hide"/>
                 </DirectionalLayout>
-
 
             </DirectionalLayout>
 

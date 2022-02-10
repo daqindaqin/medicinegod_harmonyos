@@ -14,11 +14,10 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.daqin.medicinegod.imagecrop;
+package com.daqin.medicinegod.utils.imageControler;
 
-import com.daqin.medicinegod.imagecrop.model.ScalableBox;
-import com.daqin.medicinegod.imagecrop.util.ImageHelper;
-import ohos.app.Context;
+import com.daqin.medicinegod.utils.imageControler.model.ScalableBox;
+import com.daqin.medicinegod.utils.imageControler.util.ImageHelper;
 import ohos.media.image.PixelMap;
 
 import java.util.ArrayList;
@@ -29,8 +28,6 @@ import java.util.List;
  */
 public class EditableImage {
     private PixelMap originalPixelMap;
-    private int originalPixelMapId = 0;
-    private String originalPixelMapPath;
     private List<ScalableBox> originalBoxes;
     private int activeBoxIdx = -1;
     private ScalableBox copyOfActiveBox;
@@ -40,16 +37,6 @@ public class EditableImage {
 
     public EditableImage(PixelMap image) {
         originalPixelMap = image;
-
-        //init the search box
-        originalBoxes = new ArrayList<>();
-    }
-
-    public EditableImage(String localPath) {
-        //load image from path to pixel map
-        originalPixelMap = ImageHelper.getPixelMapFromPath(localPath);
-        originalPixelMapPath = localPath;
-
         //init the search box
         originalBoxes = new ArrayList<>();
     }
@@ -114,11 +101,9 @@ public class EditableImage {
         return copyOfActiveBox;
     }
 
-    public void rotateOriginalImage(Context context, int degree) {
-        if (originalPixelMapId != 0) {
-            originalPixelMap = ImageHelper.rotateImage(originalPixelMapId, context, degree);
-        } else if (!originalPixelMapPath.equals("")) {
-            originalPixelMap = ImageHelper.rotateImage(originalPixelMapPath, context, degree);
+    public void rotateOriginalImage(byte[] img ,int i) {
+        if (img != null) {
+            originalPixelMap = ImageHelper.rotateImage(img, i);
         }
     }
 
@@ -178,12 +163,6 @@ public class EditableImage {
         return actualSize;
     }
 
-    public String cropOriginalImage(String path, String imageName) {
-        ScalableBox relativeBox = getActiveBox();
-        return ImageHelper.saveImageCropToPath(originalPixelMap,
-                relativeBox.getX1(), relativeBox.getY1(), relativeBox.getX2(), relativeBox.getY2(),
-                path, imageName);
-    }
 
     public PixelMap cropOriginalImage() {
         ScalableBox relativeBox = getActiveBox();

@@ -14,10 +14,9 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.daqin.medicinegod.imagecrop;
-import com.daqin.medicinegod.imagecrop.*;
-import com.daqin.medicinegod.imagecrop.handler.OnBoxChangedListener;
-import com.daqin.medicinegod.imagecrop.model.ScalableBox;
+package com.daqin.medicinegod.utils.imageControler;
+import com.daqin.medicinegod.utils.imageControler.handler.OnBoxChangedListener;
+import com.daqin.medicinegod.utils.imageControler.model.ScalableBox;
 import ohos.agp.components.Component;
 import ohos.agp.render.Canvas;
 import ohos.agp.render.Paint;
@@ -34,7 +33,7 @@ import java.util.List;
 public class SelectionView extends Component implements Component.LayoutRefreshedListener, Component.TouchEventListener, Component.DrawTask {
     private static final HiLogLabel SELECTION_VIEW = new HiLogLabel(HiLog.LOG_APP, 0x00201, "BOX SELECTION VIEW");
     private OnBoxChangedListener onBoxChangedListener;
-    private com.daqin.medicinegod.imagecrop.EditableImage editableImage;
+    private com.daqin.medicinegod.utils.imageControler.EditableImage editableImage;
 
     private int pixelMapWidth;
     private int pixelMapHeight;
@@ -70,7 +69,7 @@ public class SelectionView extends Component implements Component.LayoutRefreshe
     public SelectionView(Context context,
                          float lineWidth, float cornerWidth, float cornerLength,
                          Color lineColor, Color cornerColor, Color dotColor, Color shadowColor,
-                         com.daqin.medicinegod.imagecrop.EditableImage editableImage) {
+                         com.daqin.medicinegod.utils.imageControler.EditableImage editableImage) {
         super(context);
         addDrawTask(this);
 
@@ -108,7 +107,7 @@ public class SelectionView extends Component implements Component.LayoutRefreshe
         invalidate();
     }
 
-    public void setBoxSize(com.daqin.medicinegod.imagecrop.EditableImage editableImage, List<ScalableBox> originalBoxes, int widthX, int heightY) {
+    public void setBoxSize(com.daqin.medicinegod.utils.imageControler.EditableImage editableImage, List<ScalableBox> originalBoxes, int widthX, int heightY) {
         int[] fitSize = editableImage.getFitSize();
         this.pixelMapWidth = fitSize[0];
         this.pixelMapHeight = fitSize[1];

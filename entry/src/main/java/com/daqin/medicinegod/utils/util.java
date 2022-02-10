@@ -4,7 +4,10 @@ import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.slice.MainAbilitySlice;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
+import ohos.aafwk.ability.Ability;
 import ohos.aafwk.ability.AbilitySlice;
+import ohos.aafwk.ability.DataAbilityHelper;
+import ohos.aafwk.ability.DataAbilityRemoteException;
 import ohos.agp.components.Image;
 import ohos.agp.render.*;
 import ohos.app.Context;
@@ -16,6 +19,7 @@ import ohos.media.image.ImageSource;
 import ohos.media.image.PixelMap;
 import ohos.media.image.common.PixelFormat;
 import ohos.media.image.common.Size;
+import ohos.utils.net.Uri;
 
 import java.io.*;
 import java.net.URL;
@@ -322,6 +326,7 @@ public class util extends AbilitySlice {
         return outdate;
     }
 
+
     public static String getImageBase64(String imgPath) {
         // 将图片文件转化为字节数组字符串，并对其进行Base64编码处理
         // String imgFile = imgPath;// 待处理的图片
@@ -460,7 +465,7 @@ public class util extends AbilitySlice {
         return result;
     }
 
-    public static PixelMap byte2PixelmapImage(byte[] bytes){
+    public static PixelMap byte2PixelMap(byte[] bytes){
         ImageSource.DecodingOptions decodingOptions = new ImageSource.DecodingOptions();
         ImageSource.SourceOptions srcOpts = new ImageSource.SourceOptions();
 
@@ -471,7 +476,17 @@ public class util extends AbilitySlice {
         return ImageSource.create(bytes, srcOpts).createPixelmap(decodingOptions);
 
     }
-    public static String pixelMap2BASE64(PixelMap pixelMap){
+    public static byte[] pixelMap2byte(PixelMap pixelMap){
+        ImagePacker imagePacker = ImagePacker.create();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImagePacker.PackingOptions packingOptions = new ImagePacker.PackingOptions();
+        imagePacker.initializePacking(byteArrayOutputStream, packingOptions);
+        imagePacker.addImage(pixelMap);
+        imagePacker.finalizePacking();
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    public static String pixelMap2Base64(PixelMap pixelMap){
         ImagePacker imagePacker = ImagePacker.create();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ImagePacker.PackingOptions packingOptions = new ImagePacker.PackingOptions();
@@ -480,5 +495,34 @@ public class util extends AbilitySlice {
         imagePacker.finalizePacking();
         byte[] bytes = byteArrayOutputStream.toByteArray();
         return Base64.getEncoder().encodeToString(bytes);
+    }
+
+    public static byte[] readInputStream(InputStream inputStream) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        byte[] buffer = new byte[1024];
+
+        int length = -1;
+
+        try {
+            while ((length = inputStream.read(buffer)) != -1) {
+                baos.write(buffer, 0, length);
+            }
+            baos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        byte[] data = baos.toByteArray();
+
+        try {
+            inputStream.close();
+            baos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return data;
     }
 }

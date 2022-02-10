@@ -9,6 +9,7 @@ package com.daqin.medicinegod.slice;
 import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.provider.ChatListItemProvider;
 import com.daqin.medicinegod.provider.HomePageListItemProvider;
+import com.daqin.medicinegod.utils.imageControler.ImageSaver;
 import com.daqin.medicinegod.provider.ScreenSlidePagerProvider;
 import com.daqin.medicinegod.utils.*;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
@@ -48,8 +49,8 @@ public class MainAbilitySlice extends AbilitySlice {
 
     private BubbleNavigationLinearView mBubbleNavigationLinearView;
     //    private List<String> labelList = new ArrayList<>();
-    private static final int RESULTCODE_IMAGE_STARTCROP = 100;
-    private static final int RESULTCODE_IMAGE_CROPED = 101;
+    private static final int RESULTCODE_IMAGE_CHOOSE = 100;
+    private static final int RESULTCODE_IMAGE_CROP = 101;
     private static int newUsage_utils_1 = 0, newUsage_utils_3 = 0, elabelCount = 0;
     /**
      * @param lowKey 第一条key，查询所用
@@ -73,7 +74,7 @@ public class MainAbilitySlice extends AbilitySlice {
     private static final String DB_COLUMN_COMPANY = "COMPANY";
     private static final String DB_COLUMN_YU = "YU";
     private static final String DB_COLUMN_ELABEL = "ELABEL";
-
+    private static byte[] imgbytes = null;
 
     Image img_thing_head;
     Image btn_add_img;
@@ -106,6 +107,9 @@ public class MainAbilitySlice extends AbilitySlice {
     Text t_add_elabel3;
     Text t_add_elabel4;
     Text t_add_elabel5;
+    Text t_add_imgcrop;
+    Text t_add_imgclaer;
+    ImageSaver imageSaver;
 
 
     Text[] add_elabelview;
@@ -116,6 +120,7 @@ public class MainAbilitySlice extends AbilitySlice {
         img_thing_head = (Image) findComponentById(ResourceTable.Id_things_image_head);
         img_thing_head.setCornerRadius(100);
         btn_add_clear_context = (Button) findComponentById(ResourceTable.Id_add_clear);
+
         btn_add_otc_question = (Text) findComponentById(ResourceTable.Id_add_newOtc_question);
         btn_add_img = (Image) findComponentById(ResourceTable.Id_add_newImg);
         btn_add_newUsage_utils_1 = (Text) findComponentById(ResourceTable.Id_add_newUsage_utils_1);
@@ -144,6 +149,9 @@ public class MainAbilitySlice extends AbilitySlice {
         t_add_elabel3 = (Text) findComponentById(ResourceTable.Id_add_addNewlabel_label3);
         t_add_elabel4 = (Text) findComponentById(ResourceTable.Id_add_addNewlabel_label4);
         t_add_elabel5 = (Text) findComponentById(ResourceTable.Id_add_addNewlabel_label5);
+        t_add_imgcrop = (Text) findComponentById(ResourceTable.Id_add_imgcrop);
+        t_add_imgclaer = (Text) findComponentById(ResourceTable.Id_add_imgclear);
+
 
         add_elabelview = new Text[]{t_add_elabel1, t_add_elabel2, t_add_elabel3, t_add_elabel4, t_add_elabel5};
         add_tf_list = new TextField[]{tf_add_name, tf_add_desp, tf_add_barcode, tf_add_usage_total, tf_add_usage_time, tf_add_usage_day, tf_add_company, tf_add_yu};
@@ -172,6 +180,38 @@ public class MainAbilitySlice extends AbilitySlice {
             intentSearch.setOperation(operation);    // 将operation存入到intent中
             startAbility(intentSearch);    // 实现Ability跳转
         });
+
+
+        t_add_imgcrop.setClickedListener(new Component.ClickedListener() {
+            @Override
+            public void onClick(Component component) {
+                if (imgbytes==null){
+                    ToastUtil.showToast(getContext(), "请先选择图片才能裁剪  ");
+                }else{
+                    Intent intent = new Intent();
+                    Operation operation = new Intent.OperationBuilder()
+                            .withDeviceId("")
+                            .withBundleName(getBundleName())
+                            .withAbilityName("com.daqin.medicinegod.ImageControlAbility")
+                            .build();
+                    intent.setOperation(operation);
+                    ImageSaver.getInstance().setByte(imgbytes);
+//                    imageSaver.setByte(imgbytes);
+                    System.out.println("开始传输");
+//                    intent.setParam("startcropimage", imgbytes);
+                    startAbilityForResult(intent, RESULTCODE_IMAGE_CROP);
+                }
+
+            }
+        });
+        t_add_imgclaer.setClickedListener(new Component.ClickedListener() {
+            @Override
+            public void onClick(Component component) {
+                imgbytes = null;
+                btn_add_img.setPixelMap(ResourceTable.Media_add_imgadd);
+                btn_add_img.setScaleMode(Image.ScaleMode.CENTER);
+            }
+        });
         //添加图片的图片按钮
         btn_add_img.setClickedListener(new Component.ClickedListener() {
             @Override
@@ -188,11 +228,11 @@ public class MainAbilitySlice extends AbilitySlice {
                         intent.setOperation(opt);
                         intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
                         intent.setType("image/*");
-//                        intent.setBundle("com.huawei.photos");
-                        startAbilityForResult(intent, RESULTCODE_IMAGE_STARTCROP);
+                        intent.setBundle("com.huawei.photos");
+                        startAbilityForResult(intent, RESULTCODE_IMAGE_CHOOSE);
                     } else {
                         // 显示应用需要权限的理由，提示用户进入设置授权
-                        ToastUtil.showToast(getContext(), "请进入系统设置进行授权");
+                        ToastUtil.showToast(getContext(), "请进入系统设置进行授权  ");
                     }
                 } else {
                     // 权限已被授予
@@ -203,7 +243,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
                     intent.setType("image/*");
                     intent.setBundle("com.huawei.photos");
-                    startAbilityForResult(intent, RESULTCODE_IMAGE_STARTCROP);
+                    startAbilityForResult(intent, RESULTCODE_IMAGE_CHOOSE);
                 }
             }
         });
@@ -506,6 +546,8 @@ public class MainAbilitySlice extends AbilitySlice {
             highKey = "";
         }
         cont = getContext();
+        imageSaver = new ImageSaver();
+        imageSaver.setInstance();
         util.PreferenceUtils.putString(getContext(), "editok", "none");
         query();
         intPageStart();
@@ -1151,7 +1193,9 @@ public class MainAbilitySlice extends AbilitySlice {
     @Override
     public void onActive() {
         super.onActive();
+        System.out.println("输出流active");
         String editdone = util.PreferenceUtils.getString(getContext(), "editok");
+
         if (editdone.equals("ok")) {
             initHomepageListContainer();
             util.PreferenceUtils.putString(getContext(), "editok", "none");
@@ -1174,14 +1218,13 @@ public class MainAbilitySlice extends AbilitySlice {
 
     @Override
     public void onAbilityResult(int requestCode, int resultCode, Intent data) {
-        System.out.println("返回" + resultCode + ":" + requestCode + ":" + data);
+        System.out.println("输出了: "+ resultCode + ":" + requestCode + ":" + data);
+
         switch (requestCode) {
-            case RESULTCODE_IMAGE_STARTCROP:
+            case RESULTCODE_IMAGE_CHOOSE:
                 if (data != null) {
                     //取得图片路径
-                    String paths = data.getUriString();
                     imgpath = data.getUriString();
-
                     System.out.println("gggggggg" + imgpath);
                     //定义数据能力帮助对象
                     DataAbilityHelper helper = DataAbilityHelper.creator(getContext());
@@ -1201,7 +1244,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     //定义文件
                     FileDescriptor file = null;
                     try {
-                        file = helper.openFile(Uri.parse(paths), "r");
+                        file = helper.openFile(Uri.parse(imgpath), "r");
                     } catch (DataAbilityRemoteException | FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -1209,24 +1252,20 @@ public class MainAbilitySlice extends AbilitySlice {
                     imageSource = ImageSource.create(file, null);
                     //创建位图
                     PixelMap pixelMap = imageSource.createPixelmap(null);
-//                    addimg.setPixelMap(pixelMap);
-
+                    btn_add_img.setPixelMap(pixelMap);
 
                     //readInputStream将inputStream转换成byte[]
-                    byte[] bytes = readInputStream(inputStream);
-//                    System.out.println("ggggg"+ Arrays.toString(bytes));
-//                    System.out.println("ggggg"+ util.pixelMap2BASE64(util.byte2PixelmapImage(bytes)));
-                    //BASE64编码后上传并返回图片链接，后续使用在线图片链接
-
-                    //TODO:修复跳转去裁剪图片
-                    Intent newIntent = new Intent();
-                    newIntent.setParam("startcropimage", bytes);
-                    presentForResult(new ImageCropAbilitySlice(), newIntent, RESULTCODE_IMAGE_CROPED);
+                    imgbytes = util.readInputStream(inputStream);
+                    System.out.println(Arrays.toString(imgbytes));
 
                 }
                 break;
-            case RESULTCODE_IMAGE_CROPED:
-                btn_add_img.setPixelMap(data.getSequenceableParam("cropedimage"));
+            case RESULTCODE_IMAGE_CROP:
+                if (data!=null){
+                    if(data.getStringParam("cropedimage").equals("ok")){
+                        btn_add_img.setPixelMap(util.byte2PixelMap(ImageSaver.getInstance().getByte()));
+                    }
+                }
                 break;
             default:
                 btn_add_img.setScaleMode(Image.ScaleMode.CENTER);
@@ -1236,34 +1275,7 @@ public class MainAbilitySlice extends AbilitySlice {
         super.onAbilityResult(requestCode, resultCode, data);
     }
 
-    private byte[] readInputStream(InputStream inputStream) {
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        byte[] buffer = new byte[1024];
-
-        int length = -1;
-
-        try {
-            while ((length = inputStream.read(buffer)) != -1) {
-                baos.write(buffer, 0, length);
-            }
-            baos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        byte[] data = baos.toByteArray();
-
-        try {
-            inputStream.close();
-            baos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return data;
-    }
 
 
     //刷新数据

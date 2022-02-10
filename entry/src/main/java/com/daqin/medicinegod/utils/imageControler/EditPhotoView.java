@@ -14,9 +14,9 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.daqin.medicinegod.imagecrop;
+package com.daqin.medicinegod.utils.imageControler;
 
-import com.daqin.medicinegod.imagecrop.handler.OnBoxChangedListener;
+import com.daqin.medicinegod.utils.imageControler.handler.OnBoxChangedListener;
 import ohos.agp.components.*;
 import ohos.agp.utils.Color;
 import ohos.agp.window.service.DisplayManager;
@@ -42,7 +42,6 @@ public class EditPhotoView extends StackLayout {
     private Color cornerColor;
     private Color dotColor;
     private Color shadowColor;
-
     public EditPhotoView(Context context) {
         super(context);
         mContext = context;
@@ -53,6 +52,7 @@ public class EditPhotoView extends StackLayout {
         mContext = context;
         obtainAttributes(attrs);
     }
+
 
     public EditPhotoView(Context context, AttrSet attrs, String defStyle) {
         super(context, attrs, defStyle);
@@ -68,7 +68,7 @@ public class EditPhotoView extends StackLayout {
      */
     public void initView(Context context, EditableImage editableImage) {
         this.editableImage = editableImage;
-
+        this.mContext = context;
         selectionView = new SelectionView(context,
                 lineWidth, cornerWidth, cornerLength,
                 lineColor, cornerColor, dotColor, shadowColor, editableImage);
@@ -96,20 +96,18 @@ public class EditPhotoView extends StackLayout {
     /**
      * rotate image
      */
-    public void rotateImageView() {
+    public void rotateImageView(byte[] img,int i) {
         if (editableImage.getActiveBoxIdx() >= 0) {
             //rotate bitmap
-            editableImage.rotateOriginalImage(mContext, 90);
-
+            editableImage.rotateOriginalImage(img, i);
             //re-calculate and draw selection box
             editableImage.getActiveBox().setX1(0);
             editableImage.getActiveBox().setY1(0);
             editableImage.getActiveBox().setX2(editableImage.getActualSize()[0]);
             editableImage.getActiveBox().setY2(editableImage.getActualSize()[1]);
             selectionView.setBoxSize(editableImage, editableImage.getBoxes(), editableImage.getViewWidth(), editableImage.getViewHeight());
-
-            //set bitmap as view
             imageView.setPixelMap(editableImage.getOriginalPixelMap());
+
         }
     }
 
