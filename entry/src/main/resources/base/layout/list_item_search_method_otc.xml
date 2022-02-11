@@ -60,7 +60,7 @@
             ohos:id="$+id:srced_otc"
             ohos:height="match_content"
             ohos:width="match_content"
-            ohos:background_element="$graphic:bg_text_otc_otc_green"
+            ohos:background_element="$graphic:bg_text_otc_otc_green_one"
             ohos:bottom_margin="10vp"
 
             ohos:end_margin="10vp"

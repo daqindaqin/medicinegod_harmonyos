@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_parent"
+    ohos:width="match_parent"
+    ohos:alignment="top|vertical_center"
+    ohos:orientation="vertical">
+
+
+    <!--顶部-->
+    <DirectionalLayout
+        ohos:height="match_content"
+        ohos:width="match_parent"
+        ohos:alignment="left|vertical_center"
+        ohos:orientation="horizontal">
+
+        <Text
+            ohos:id="$+id:cg_mdc_back"
+            ohos:height="50vp"
+            ohos:width="45vp"
+            ohos:background_element="$graphic:ic_dtl_mdc_back"
+            ohos:start_margin="20vp"
+            ohos:top_margin="15vp"/>
+
+        <Text
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:bottom_margin="20vp"
+            ohos:end_margin="10vp"
+            ohos:start_margin="-10vp"
+            ohos:text="更改显示样式"
+            ohos:text_alignment="left"
+            ohos:text_color="$color:black_clear"
+            ohos:text_size="26fp"
+            ohos:text_weight="700"
+            ohos:top_margin="20vp"/>
+
+    </DirectionalLayout>
+
+    <Component
+        ohos:height="1vp"
+        ohos:width="match_parent"
+        ohos:background_element="$color:black_line"/>
+
+
+    <!--底部-->
+    <ScrollView
+        ohos:height="match_parent"
+        ohos:width="match_parent"
+        ohos:background_element="$color:white"
+        ohos:rebound_effect="true">
+
+        <DirectionalLayout
+            ohos:height="match_content"
+            ohos:width="match_parent"
+            ohos:alignment="vertical_center|top"
+            ohos:bottom_padding="150vp"
+            ohos:orientation="vertical">
+
+            <DirectionalLayout
+                ohos:id="$+id:sytle_default_layout"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:alignment="vertical_center|horizontal_center"
+                ohos:background_element="$graphic:bg_changestyle_choose"
+                ohos:margin="20vp"
+                ohos:orientation="vertical">
+
+                <Text
+                    ohos:id="$+id:sytle_default_title"
+                    ohos:height="match_content"
+                    ohos:width="match_parent"
+                    ohos:margin="10vp"
+                    ohos:text="默认样式"
+                    ohos:text_alignment="horizontal_center|vertical_center"
+                    ohos:text_color="$color:purple_clear"
+                    ohos:text_size="30vp"
+                    ohos:text_weight="500"/>
+
+                <Image
+                    ohos:id="$+id:sytle_default_img"
+
+                    ohos:height="270vp"
+                    ohos:width="190vp"
+                    ohos:image_src="$media:style_default_choose"
+                    ohos:scale_mode="stretch"/>
+            </DirectionalLayout>
+
+            <DirectionalLayout
+                ohos:id="$+id:sytle_one_layout"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:alignment="vertical_center|horizontal_center"
+                ohos:background_element="$graphic:bg_changestyle_normal"
+                ohos:bottom_padding="20vp"
+                ohos:margin="20vp"
+                ohos:orientation="vertical">
+
+                <Text
+                    ohos:id="$+id:sytle_one_title"
+                    ohos:height="match_content"
+                    ohos:width="match_parent"
+                    ohos:margin="10vp"
+                    ohos:text="1号样式"
+                    ohos:text_alignment="horizontal_center|vertical_center"
+                    ohos:text_color="$color:black_line"
+                    ohos:text_size="20vp"
+                    ohos:text_weight="500"/>
+
+                <Image
+                    ohos:id="$+id:sytle_one_img"
+                    ohos:height="90vp"
+                    ohos:width="170vp"
+                    ohos:image_src="$media:style_one"
+                    ohos:scale_mode="stretch"/>
+            </DirectionalLayout>
+
+        </DirectionalLayout>
+    </ScrollView>
+
+
+</DirectionalLayout>

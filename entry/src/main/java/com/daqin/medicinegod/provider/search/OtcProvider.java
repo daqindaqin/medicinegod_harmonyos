@@ -8,7 +8,6 @@ import ohos.agp.components.*;
 import ohos.agp.components.element.ElementScatter;
 import ohos.agp.utils.Color;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -113,19 +112,19 @@ public class OtcProvider extends BaseItemProvider {
                 case "OTC-G":
                     textOtc.setText("OTC");
                     textOtc.setVisibility(Component.VISIBLE);
-                    textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_otc_green));
+                    textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_otc_green_one));
                     textOtcDesp.setText("类型:OTC 非处方药(绿)");
                     break;
                 case "OTC-R":
                     textOtc.setText("OTC");
                     textOtc.setVisibility(Component.VISIBLE);
-                    textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_otc_red));
+                    textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_otc_red_one));
                     textOtcDesp.setText("类型:OTC 非处方药(红)");
                     break;
                 case "Rx":
                     textOtc.setText("Rx");
                     textOtc.setVisibility(Component.VISIBLE);
-                    textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_rx));
+                    textOtc.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_otc_rx_one));
                     textOtcDesp.setText("类型:Rx 处方药");
                     break;
             }
@@ -145,8 +144,14 @@ public class OtcProvider extends BaseItemProvider {
 //        本机资源ID可使用下方命令
             image.setVisibility(Component.VISIBLE);
             byte[] img = (byte[]) map.get("img");
-            image.setPixelMap(util.byte2PixelMap(img));
-            image.setCornerRadius(5);
+            if (img==null){
+                image.setPixelMap(ResourceTable.Media_addpng_default);
+                image.setScaleMode(Image.ScaleMode.CENTER);
+            }else {
+                image.setPixelMap(util.byte2PixelMap(img));
+                image.setScaleMode(Image.ScaleMode.STRETCH);
+                image.setCornerRadius(25);
+            }
 //        image.setPixelMap((int)map.get("image"));
 
         } else {

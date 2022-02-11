@@ -51,8 +51,7 @@ public class MainAbilitySlice extends AbilitySlice {
     private static final int RESULTCODE_IMAGE_CHOOSE = 100;
     private static final int RESULTCODE_IMAGE_CROP = 101;
     private static int newUsage_utils_1 = 0, newUsage_utils_3 = 0, elabelCount = 0;
-    private int dataHas = 0,dataFav=0,dataShare=0;
-
+    private int dataHas = 0,dataFav=0,dataShare=0,style = 0;
     List<String> eLABEL = new ArrayList<>();
     private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "MainAbilitySlice");
     private static final String BASE_URI = "dataability:///com.daqin.medicinegod.MedicineDataAbility";
@@ -84,7 +83,7 @@ public class MainAbilitySlice extends AbilitySlice {
     Text btn_add_newUsage_utils_3;
     Text btn_add_yu_title;
     Text btn_things_seach;
-
+    Text btn_changestyle;
     ScrollView view_add;
     TextField tf_add_name;
     TextField tf_add_desp;
@@ -150,13 +149,27 @@ public class MainAbilitySlice extends AbilitySlice {
         t_add_elabel5 = (Text) findComponentById(ResourceTable.Id_add_addNewlabel_label5);
         t_add_imgcrop = (Text) findComponentById(ResourceTable.Id_add_imgcrop);
         t_add_imgclaer = (Text) findComponentById(ResourceTable.Id_add_imgclear);
-
+        btn_changestyle =(Text)findComponentById(ResourceTable.Id_changestyle);
 
         add_elabelview = new Text[]{t_add_elabel1, t_add_elabel2, t_add_elabel3, t_add_elabel4, t_add_elabel5};
         add_tf_list = new TextField[]{tf_add_name, tf_add_desp, tf_add_barcode, tf_add_usage_total, tf_add_usage_time, tf_add_usage_day, tf_add_company, tf_add_yu};
     }
 
     public void iniClicklistener() {
+        btn_changestyle.setClickedListener(new Component.ClickedListener() {
+            @Override
+            public void onClick(Component component) {
+                Intent intentSearch = new Intent();
+                Operation operation = new Intent.OperationBuilder()
+                        .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                        .withBundleName(getBundleName())    // 包名
+                        .withAbilityName("com.daqin.medicinegod.ChangeStyleAbility")
+                        // Ability页面的名称，在本地可以缺省前面的路径
+                        .build();    // 构建代码
+                intentSearch.setOperation(operation);    // 将operation存入到intent中
+                startAbilityForResult(intentSearch,300);    // 实现Ability跳转
+            }
+        });
         //清空添加药品的列表
         btn_add_clear_context.setClickedListener(component -> clearAddTextfield());
         //otc疑问按钮
@@ -386,7 +399,7 @@ public class MainAbilitySlice extends AbilitySlice {
         //添加标签事件
         btn_addNewLabel.setClickedListener(component -> {
             //是否已经达到5个标签
-            if (elabelCount > 5) {
+            if (elabelCount >= 5) {
                 new XPopup.Builder(getContext())
                         //.setPopupCallback(new XPopupListener())
                         .dismissOnTouchOutside(false)
@@ -410,6 +423,16 @@ public class MainAbilitySlice extends AbilitySlice {
                             .asConfirm("格式受限", "您在一个标签内只能添加1到4个中文字符",
                                     " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                             .show(); // 最后一个参数绑定已有布局
+                }else if(eLABEL.contains(tf_add_elabelBox.getText().trim())){
+                    //不允许存在相同标签
+                    new XPopup.Builder(getContext())
+                            //.setPopupCallback(new XPopupListener())
+                            .dismissOnTouchOutside(false)
+                            .dismissOnBackPressed(false)
+                            .isDestroyOnDismiss(true)
+                            .asConfirm("数量受限", "您只能添加此标签一次",
+                                    " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
+                            .show(); // 最后一个参数绑定已有布局
                 } else if (tf_add_elabelBox.length() > 0 && tf_add_elabelBox.length() < 5) {
                     for (Text text : add_elabelview) {
                         if (text.getText() == null || text.getText().equals("测试标签")) {
@@ -429,8 +452,7 @@ public class MainAbilitySlice extends AbilitySlice {
         });
         //添加药品数据事件
         btn_add_ok.setClickedListener(component -> {
-            String key = util.getRandomKeyId();
-            System.out.println("生成key" + key);
+
             //检测已经选择图片
             if (imgbytes == null) {
                 view_add.fluentScrollTo(0, btn_add_img.getTop() - 100);
@@ -459,6 +481,8 @@ public class MainAbilitySlice extends AbilitySlice {
                 }
                 if (count >= 8) {
                     //添加数据
+                    String key = util.getRandomKeyId();
+                    System.out.println("生成key" + key);
                     String usa1, usa2, usa3, usageall;
                     usa1 = tf_add_usage_total.getText().trim();
                     usa2 = tf_add_usage_time.getText().trim();
@@ -494,6 +518,7 @@ public class MainAbilitySlice extends AbilitySlice {
 //        mflowLayout = (FlowLayout) findComponentById(ResourceTable.Id_flow_layout);
 //        labelList.clear();
         databaseHelper = DataAbilityHelper.creator(this);
+        style = util.PreferenceUtils.getInt(getContext(),"style");
         cont = getContext();
         imageSaver = new ImageSaver();
         imageSaver.setInstance();
@@ -830,36 +855,52 @@ public class MainAbilitySlice extends AbilitySlice {
     // 初始化药品主页的ListContainer
     private void initHomepageListContainer() {
         //1.获取xml布局中的ListContainer组件
+        Text nonelist = (Text) findComponentById(ResourceTable.Id_nonelist);
         ListContainer listContainer = (ListContainer) findComponentById(ResourceTable.Id_things_list);
-
+        listContainer.setLongClickable(false);
         // 2.实例化数据源
         List<Map<String, Object>> list = queryData();
-        // 3.初始化Provider对象
-        HomePageListItemProvider listItemProvider = new HomePageListItemProvider(list, this);
-        // 4.适配要展示的内容数据
-        listContainer.setItemProvider(listItemProvider);
-        // 5.设置每个Item的点击事件
-        listContainer.setItemClickedListener((container, component, position, id) -> {
+        if (list==null){
+            nonelist.setVisibility(Component.VISIBLE);
+            listContainer.setVisibility(Component.HIDE);
+        }else {
+            switch (style){
+                case 1:
+                    listContainer.setOrientation(Component.VERTICAL);
+                    break;
+                case 0:
+                default:
+                    listContainer.setOrientation(Component.HORIZONTAL);
+                    break;
+            }
+            nonelist.setVisibility(Component.HIDE);
+            listContainer.setVisibility(Component.VISIBLE);
+            // 3.初始化Provider对象
+            HomePageListItemProvider listItemProvider = new HomePageListItemProvider(list, this, style);
+            // 4.适配要展示的内容数据
+            listContainer.setItemProvider(listItemProvider);
+            // 5.设置每个Item的点击事件
+            listContainer.setItemClickedListener((container, component, position, id) -> {
 
-            Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
-            Map<String, Object> res = list.get(position);
+                Map<String, Object> item = (Map<String, Object>) listContainer.getItemProvider().getItem(position);
+                Map<String, Object> res = list.get(position);
 
-            //单击打开详情弹窗
-            util.PreferenceUtils.putString(getContext(), "editok", "none");
-            util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
-            Intent intentDetail = new Intent();
-            Operation operation = new Intent.OperationBuilder()
-                    .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
-                    .withBundleName(getBundleName())    // 包名
-                    .withAbilityName("com.daqin.medicinegod.DetailAbility")
-                    // Ability页面的名称，在本地可以缺省前面的路径
-                    .build();    // 构建代码
-            intentDetail.setOperation(operation);    // 将operation存入到intent中
-            startAbility(intentDetail);    // 实现Ability跳转
+                //单击打开详情弹窗
+                util.PreferenceUtils.putString(getContext(), "editok", "none");
+                util.PreferenceUtils.putString(this, "mglocalkey", res.getOrDefault("keyid", null).toString());
+                Intent intentDetail = new Intent();
+                Operation operation = new Intent.OperationBuilder()
+                        .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                        .withBundleName(getBundleName())    // 包名
+                        .withAbilityName("com.daqin.medicinegod.DetailAbility")
+                        // Ability页面的名称，在本地可以缺省前面的路径
+                        .build();    // 构建代码
+                intentDetail.setOperation(operation);    // 将operation存入到intent中
+                startAbility(intentDetail);    // 实现Ability跳转
 
 
-        });
-
+            });
+        }
     }
 
     //药品数据源
@@ -886,7 +927,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     columns, predicates);
             if (resultSet == null || resultSet.getRowCount() == 0) {
                 HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
-                return new ArrayList<>();
+                return null;
             }
             resultSet.goToFirstRow();
             do {
@@ -1232,6 +1273,14 @@ public class MainAbilitySlice extends AbilitySlice {
                         img = ImageSaver.getInstance().getByte();
                         btn_add_img.setPixelMap(util.byte2PixelMap(img));
 
+                    }
+                }
+                break;
+            case 300:
+                if (data!=null){
+                    if (data.getStringParam("changeok").equals("ok")){
+                        style = util.PreferenceUtils.getInt(getContext(),"style");
+                        initHomepageListContainer();
                     }
                 }
                 break;

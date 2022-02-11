@@ -153,19 +153,19 @@ public class DetailAbilitySlice extends AbilitySlice {
         switch (otc) {
             case "none":
                 mdc_otc.setText("(未填写)");
-                mdc_otc.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_text_otc_otc_green));
+                mdc_otc.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_text_otc_otc_green_one));
                 break;
             case "OTC-G":
                 mdc_otc.setText("OTC");
-                mdc_otc.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_text_otc_otc_green));
+                mdc_otc.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_text_otc_otc_green_one));
                 break;
             case "OTC-R":
                 mdc_otc.setText("OTC");
-                mdc_otc.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_text_otc_otc_red));
+                mdc_otc.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_text_otc_otc_red_one));
                 break;
             case "Rx":
                 mdc_otc.setText("Rx");
-                mdc_otc.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_text_otc_rx));
+                mdc_otc.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_text_otc_rx_one));
                 break;
         }
 

@@ -5,10 +5,8 @@ import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.utils.util;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.agp.components.*;
-import ohos.agp.components.element.ElementScatter;
 import ohos.agp.utils.Color;
 
-import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -116,8 +114,14 @@ public class NormalProvider extends BaseItemProvider {
 //        本机资源ID可使用下方命令
             image.setVisibility(Component.VISIBLE);
             byte[] img = (byte[]) map.get("img");
-            image.setPixelMap(util.byte2PixelMap(img));
-            image.setCornerRadius(5);
+            if (img==null){
+                image.setPixelMap(ResourceTable.Media_addpng_default);
+                image.setScaleMode(Image.ScaleMode.CENTER);
+            }else {
+                image.setPixelMap(util.byte2PixelMap(img));
+                image.setScaleMode(Image.ScaleMode.STRETCH);
+                image.setCornerRadius(25);
+            }
 //        image.setPixelMap((int)map.get("image"));
         } else {
             textName.setText((String)map.get("name"));

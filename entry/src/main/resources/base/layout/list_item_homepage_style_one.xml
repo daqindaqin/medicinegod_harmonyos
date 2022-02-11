@@ -15,7 +15,7 @@
         ohos:alignment="left|vertical_center"
         ohos:orientation="horizontal">
         <Text
-            ohos:id="$+id:text_name"
+            ohos:id="$+id:style_one_text_name"
             ohos:height="match_content"
             ohos:width="210vp"
             ohos:text="一二三四五六七八九十胶囊"
@@ -36,10 +36,10 @@
             ohos:alignment="right|vertical_center"
             ohos:end_padding="15vp">
             <Text
-                ohos:id="$+id:text_otc"
+                ohos:id="$+id:style_one_text_otc"
                 ohos:height="match_content"
                 ohos:width="50fp"
-                ohos:background_element="$graphic:bg_text_otc_otc_green"
+                ohos:background_element="$graphic:bg_text_otc_otc_green_one"
                 ohos:text="OTC"
                 ohos:text_alignment="center"
                 ohos:text_color="$color:white"
@@ -52,31 +52,31 @@
                 ohos:end_margin="5vp"
                 ohos:text_size="14fp"
                 />
-<!--
-            <DirectionalLayout
-                ohos:height="match_parent"
-                ohos:width="match_parent"
-                ohos:orientation="horizontal"
-                ohos:alignment="right|vertical_center"
-                ohos:end_margin="10vp">
-                <Text
-                    ohos:id="$+id:text_ctrl"
-                    ohos:height="match_content"
-                    ohos:width="50vp"
-                    ohos:background_element="$graphic:background_text_usemedicine"
-                    ohos:text="操作"
-                    ohos:text_alignment="center"
-                    ohos:text_color="$color:white"
-                    ohos:text_weight="700"
-                    ohos:start_padding="5vp"
-                    ohos:end_padding="5vp"
-                    ohos:top_padding="2vp"
-                    ohos:end_margin="5vp"
-                    ohos:start_margin="5vp"
-                    ohos:bottom_padding="2vp"
-                    ohos:text_size="14fp"/>
-            </DirectionalLayout>
--->
+            <!--
+                        <DirectionalLayout
+                            ohos:height="match_parent"
+                            ohos:width="match_parent"
+                            ohos:orientation="horizontal"
+                            ohos:alignment="right|vertical_center"
+                            ohos:end_margin="10vp">
+                            <Text
+                                ohos:id="$+id:text_ctrl"
+                                ohos:height="match_content"
+                                ohos:width="50vp"
+                                ohos:background_element="$graphic:background_text_usemedicine"
+                                ohos:text="操作"
+                                ohos:text_alignment="center"
+                                ohos:text_color="$color:white"
+                                ohos:text_weight="700"
+                                ohos:start_padding="5vp"
+                                ohos:end_padding="5vp"
+                                ohos:top_padding="2vp"
+                                ohos:end_margin="5vp"
+                                ohos:start_margin="5vp"
+                                ohos:bottom_padding="2vp"
+                                ohos:text_size="14fp"/>
+                        </DirectionalLayout>
+            -->
 
         </DirectionalLayout>
     </DirectionalLayout>
@@ -87,7 +87,7 @@
         ohos:alignment="top|center"
         ohos:orientation="horizontal">
         <Image
-            ohos:id="$+id:image_png"
+            ohos:id="$+id:style_one_image_png"
             ohos:height="90vp"
             ohos:width="160vp"
             ohos:start_margin="10vp"
@@ -102,7 +102,7 @@
             ohos:alignment="top|center">
 
             <Text
-                ohos:id="$+id:text_outdate"
+                ohos:id="$+id:style_one_text_outdate"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:end_margin="3vp"
@@ -130,7 +130,7 @@
                     ohos:start_margin="5vp"
                     />
                 <Text
-                    ohos:id="$+id:text_margin"
+                    ohos:id="$+id:style_one_text_margin"
                     ohos:height="match_content"
                     ohos:width="match_content"
                     ohos:max_text_lines="1"
@@ -154,7 +154,7 @@
             </DirectionalLayout>
 
             <Text
-                ohos:id="$+id:text_usage"
+                ohos:id="$+id:style_one_text_usage"
                 ohos:height="match_content"
                 ohos:width="match_parent"
                 ohos:max_text_lines="1"

@@ -100,8 +100,14 @@ public class BarCodeProvider extends BaseItemProvider {
 
             image.setVisibility(Component.VISIBLE);
             byte[] img = (byte[]) map.get("img");
-            image.setPixelMap(util.byte2PixelMap(img));
-            image.setCornerRadius(5);
+            if (img==null){
+                image.setPixelMap(ResourceTable.Media_addpng_default);
+                image.setScaleMode(Image.ScaleMode.CENTER);
+            }else {
+                image.setPixelMap(util.byte2PixelMap(img));
+                image.setScaleMode(Image.ScaleMode.STRETCH);
+                image.setCornerRadius(25);
+            }
 
         } else {
             textName.setText((String)map.get("name"));

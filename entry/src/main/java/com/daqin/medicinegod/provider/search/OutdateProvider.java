@@ -134,8 +134,14 @@ public class OutdateProvider extends BaseItemProvider {
 //        本机资源ID可使用下方命令
             image.setVisibility(Component.VISIBLE);
             byte[] img = (byte[]) map.get("img");
-            image.setPixelMap(util.byte2PixelMap(img));
-            image.setCornerRadius(5);
+            if (img==null){
+                image.setPixelMap(ResourceTable.Media_addpng_default);
+                image.setScaleMode(Image.ScaleMode.CENTER);
+            }else {
+                image.setPixelMap(util.byte2PixelMap(img));
+                image.setScaleMode(Image.ScaleMode.STRETCH);
+                image.setCornerRadius(25);
+            }
 //        image.setPixelMap((int)map.get("image"));
 
         } else {

@@ -81,6 +81,12 @@
         "name": "com.daqin.medicinegod.utils.imageControler.ImageSaver",
         "description": "传输被裁剪的图片",
         "type": "service"
+      },
+      {
+        "icon": "$media:icon",
+        "name": "com.daqin.medicinegod.ChangeStyleAbility",
+        "description": "更改药品数据显示方式",
+        "type": "page"
       }
     ],
     "metaData": {
