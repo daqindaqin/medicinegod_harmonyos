@@ -111,8 +111,8 @@
                 ohos:start_margin="5vp"
                 ohos:text="[正常使用]                            请遵医嘱、说明书使用。"
                 ohos:text_color="$color:green"
-                ohos:text_weight="700"
-                ohos:text_size="14fp"
+                ohos:text_weight="500"
+                ohos:text_size="12fp"
                 />
             <DirectionalLayout
                 ohos:height="match_content"

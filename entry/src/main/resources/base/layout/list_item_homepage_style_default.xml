@@ -6,6 +6,7 @@
     ohos:background_element="$graphic:bg_list_item_card"
     ohos:bottom_padding="10vp"
     ohos:margin="5vp"
+    ohos:shadow_color="$color:purple_clear"
     >
 
     <DependentLayout
@@ -13,18 +14,27 @@
         ohos:height="match_parent"
         ohos:width="match_content"
         ohos:layout_alignment="vertical_center|horizontal_center">
-
+        <Image
+            ohos:id="$+id:style_default_image_png"
+            ohos:height="157.5vp"
+            ohos:width="280vp"
+            ohos:image_src="$media:test"
+            ohos:scale_mode="stretch"
+            ohos:below="$id:style_default"
+            />
 
         <Text
             ohos:id="$+id:style_default_text_name"
             ohos:height="match_content"
             ohos:width="match_parent"
             ohos:text="药品名字最多显示十字"
-            ohos:text_alignment="horizontal_center|vertical_center"
-            ohos:text_color="$color:black_clear"
-            ohos:text_size="20vp"
-            ohos:text_weight="500"
-            ohos:top_margin="35vp"/>
+            ohos:text_alignment="left|vertical_center"
+            ohos:text_color="$color:black"
+            ohos:text_size="22vp"
+            ohos:text_weight="700"
+            ohos:top_margin="15vp"
+            ohos:start_margin="10vp"
+            ohos:below="$id:style_default_image_png"/>
 
         <Text
             ohos:id="$+id:style_default_text_otc"
@@ -48,7 +58,7 @@
             ohos:id="$+id:style_default_text_outdate"
             ohos:height="match_content"
             ohos:width="match_content"
-            ohos:align_start="$id:style_default_text_name"
+            ohos:align_start="$id:style_default"
             ohos:background_element="$graphic:bg_text_outdate_green_default"
             ohos:below="$id:style_default"
             ohos:bottom_padding="5vp"
@@ -62,28 +72,20 @@
             ohos:top_padding="3vp"
             />
 
-        <Image
-            ohos:id="$+id:style_default_image_png"
-            ohos:height="135vp"
-            ohos:width="240vp"
-            ohos:below="$id:style_default_text_name"
-            ohos:bottom_margin="15vp"
-            ohos:center_in_parent="true"
-            ohos:image_src="$media:test"
-            ohos:scale_mode="stretch"
-            ohos:top_margin="15vp"
-            />
+
 
         <Text
             ohos:id="$+id:style_default_text_usage"
             ohos:height="match_content"
             ohos:width="match_parent"
-            ohos:below="$id:style_default_image_png"
-            ohos:bottom_margin="10vp"
+            ohos:below="$id:style_default_text_name"
+            ohos:align_bottom="$id:style_default"
+            ohos:start_margin="10vp"
+            ohos:top_margin="10vp"
             ohos:text="3片/3次/天"
-            ohos:text_alignment="horizontal_center|vertical_center"
-            ohos:text_color="$color:green"
-            ohos:text_size="24vp"
+            ohos:text_alignment="left|vertical_center"
+            ohos:text_color="$color:black_line"
+            ohos:text_size="14vp"
             ohos:text_weight="500"
             />
     </DependentLayout>

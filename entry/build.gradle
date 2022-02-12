@@ -18,6 +18,8 @@ ohos {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.har'])
+    implementation files('src/main/lib/mysql-connector-java-5.1.49-bin.jar')
+
     testImplementation 'junit:junit:4.13.1'
     ohosTestImplementation 'com.huawei.ohos.testkit:runner:1.0.0.200'
     //底部导航栏
@@ -30,6 +32,9 @@ dependencies {
     implementation 'io.openharmony.tpc.thirdlib:BGAQRCode-zbar:1.0.5'
     implementation 'io.openharmony.tpc.thirdlib:BGAQRCode-zxing:1.0.4'
     implementation 'io.openharmony.tpc.thirdlib:BGAQRCode-core:1.0.4'
+    //http组件和json解析
+    implementation 'com.zzrv5.zzrhttp:ZZRHttp:1.0.1'
+    implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.75'
 }
 decc {
     supportType = ['html','xml']

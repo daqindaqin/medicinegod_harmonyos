@@ -6,15 +6,15 @@ import com.daqin.medicinegod.utils.imageControler.EditableImage;
 import com.daqin.medicinegod.utils.imageControler.model.ScalableBox;
 import com.daqin.medicinegod.utils.imageControler.ImageSaver;
 import com.daqin.medicinegod.utils.util;
+import com.zzrv5.mylibrary.ZZRCallBack;
+import com.zzrv5.mylibrary.ZZRHttp;
 import ohos.aafwk.ability.*;
 import ohos.aafwk.content.Intent;
 import ohos.agp.components.Button;
 import ohos.agp.components.Component;
 import ohos.media.image.PixelMap;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class ImageControlAbilitySlice extends AbilitySlice {
 
@@ -37,7 +37,7 @@ public class ImageControlAbilitySlice extends AbilitySlice {
         final EditableImage editimage = new EditableImage(util.byte2PixelMap(bytes));
         List<ScalableBox> boxes = new ArrayList<>();
 
-        boxes.add(new ScalableBox(2, 18, 880, 680));
+        boxes.add(new ScalableBox(20, 20, 800, 450));
 
         editimage.setBoxes(boxes);
 
@@ -66,6 +66,31 @@ public class ImageControlAbilitySlice extends AbilitySlice {
             public void onClick(Component component) {
                 PixelMap croppedImage = editimage.cropOriginalImage();
 //                ((Image) findComponentById(ResourceTable.Id_cropped_image)).setPixelMap(croppedImage);
+
+
+
+//                String bs64 = util.pixelMap2Base64(croppedImage);
+//                System.out.println(bs64);
+//                String url = "https://api.cloudinary.com/v1_1/wfgmqhx/image/upload";
+//                Map<String, String> map = new HashMap<>();
+//                map.put("public_id", "222");
+//                map.put("upload_preset", "mgupload");
+//                map.put("file", "data:image/jpg;base64,"+bs64);
+//
+//                ZZRHttp.post(url,map, new ZZRCallBack.CallBackString() {
+//                    @Override
+//                    public void onFailure(int i, String s) {
+//                        System.out.println("API返回失败\n"+s);
+//                    }
+//                    @Override
+//                    public void onResponse(String s) {
+//                        System.out.println("API返回成功\n"+s);
+//                        // 如果返回成功，返回的结果就会保存在 String s 中。
+//                        // s = {"code":0,"message":"0","ttl":1,"data":{"mid":383565952,"following":70,"whisper":0,"black":0,"follower":5384}}
+//                    }
+//                });
+
+
                 Intent intent = new Intent();
                 intent.setParam("cropedimage", "ok");
                 ImageSaver.getInstance().setByte(util.pixelMap2byte(croppedImage));

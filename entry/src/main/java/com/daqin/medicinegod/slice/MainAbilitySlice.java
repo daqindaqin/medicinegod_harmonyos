@@ -38,6 +38,10 @@ import ohos.media.image.PixelMap;
 import ohos.utils.net.Uri;
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.*;
 
 //修复post的bug
@@ -67,6 +71,9 @@ public class MainAbilitySlice extends AbilitySlice {
     private static final String DB_COLUMN_COMPANY = "COMPANY";
     private static final String DB_COLUMN_YU = "YU";
     private static final String DB_COLUMN_ELABEL = "ELABEL";
+    private static final String DB_COLUMN_LOVE = "LOVE";
+    private static String[] columns = new String[]{};
+
     /**
      * @param img 图片最终数据
      * @param imgbytes 图片待裁剪数据
@@ -77,6 +84,7 @@ public class MainAbilitySlice extends AbilitySlice {
     Image img_thing_head;
     Image btn_add_img;
     Button btn_add_clear_context;
+    Button btn_add_import;
     Text btn_add_otc_question;
     Text btn_add_newUsage_utils_1;
     Text btn_add_newUsage_utils_2;
@@ -107,6 +115,7 @@ public class MainAbilitySlice extends AbilitySlice {
     Text t_add_elabel5;
     Text t_add_imgcrop;
     Text t_add_imgclaer;
+
     ImageSaver imageSaver;
 
 
@@ -118,7 +127,7 @@ public class MainAbilitySlice extends AbilitySlice {
         img_thing_head = (Image) findComponentById(ResourceTable.Id_things_image_head);
         img_thing_head.setCornerRadius(100);
         btn_add_clear_context = (Button) findComponentById(ResourceTable.Id_add_clear);
-
+        btn_add_import =(Button)findComponentById(ResourceTable.Id_add_import);
         btn_add_otc_question = (Text) findComponentById(ResourceTable.Id_add_newOtc_question);
         btn_add_img = (Image) findComponentById(ResourceTable.Id_add_newImg);
         btn_add_newUsage_utils_1 = (Text) findComponentById(ResourceTable.Id_add_newUsage_utils_1);
@@ -156,6 +165,50 @@ public class MainAbilitySlice extends AbilitySlice {
     }
 
     public void iniClicklistener() {
+
+        btn_add_import.setClickedListener(new Component.ClickedListener() {
+            @Override
+            public void onClick(Component component) {
+                //要连接的数据库url,注意：此处连接的应该是服务器上的MySQl的地址
+                String url = "jdbc:mysql://139.224.48.87:3306/mg?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
+                //连接数据库使用的用户名
+                String userName = "mg";
+                //连接的数据库时使用的密码
+                String password = "mg@Qhx010394";
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        //1、加载驱动
+                                        Class.forName("com.mysql.jdbc.Driver").newInstance();
+                                        //3.连接成功，返回数据库对象
+                                        Connection connection= DriverManager.getConnection(url,userName,password);
+                                        //4.执行SQL的对象
+                                        Statement statement = connection.createStatement();
+                                        //5.执行SQL的对象去执行SQL,可能存在结果，查看返回结果
+                                        String sql="SELECT * FROM USERINFO";
+                                        java.sql.ResultSet resultSet = statement.executeQuery(sql);//返回的结果集,结果集中封装了我们全部的查询出来的结果
+                                        resultSet.toString();
+                                        while(resultSet.next()){
+
+                                            System.out.println("type_id="+resultSet.getObject("username"));
+                                            System.out.println("type_name="+resultSet.getObject("userpwd"));
+                                            System.out.println("delete_time="+resultSet.getObject("userid"));
+                                        }
+                                        //6.释放连接
+                                        resultSet.close();
+                                        statement.close();
+                                        connection.close();
+                                    }catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }).start();
+
+            }
+        });
+
         btn_changestyle.setClickedListener(new Component.ClickedListener() {
             @Override
             public void onClick(Component component) {
@@ -515,8 +568,37 @@ public class MainAbilitySlice extends AbilitySlice {
     public void onStart(Intent intent) {
         super.onStart(intent);
         super.setUIContent(ResourceTable.Layout_ability_main);
-//        mflowLayout = (FlowLayout) findComponentById(ResourceTable.Id_flow_layout);
-//        labelList.clear();
+        int isFirstStart = util.PreferenceUtils.getInt(getContext(),"isFirstStart");
+        int isLogin = util.PreferenceUtils.getInt(getContext(),"isLogin");
+        if (isFirstStart==0){
+            //TODO：权限提示的页面
+            System.out.println("首次启动跳转获取权限");
+            if (verifySelfPermission("ohos.permission.READ_MEDIA") != IBundleManager.PERMISSION_GRANTED) {
+                // 应用未被授予权限
+                if (canRequestPermission("ohos.permission.READ_MEDIA")) {
+                    // 是否可以申请弹框授权(首次申请或者用户未选择禁止且不再提示)
+                    requestPermissionsFromUser(
+                            new String[]{"ohos.permission.READ_MEDIA"}, MY_PERMISSIONS_REQUEST_READ_MEDIA);
+                }
+            }
+        }
+        if (isLogin==0 && isFirstStart==0){
+            //TODO:登录注册界面
+        }
+        columns = new String[]{
+                DB_COLUMN_KEYID,
+                DB_COLUMN_NAME,
+                DB_COLUMN_IMAGE,
+                DB_COLUMN_DESCRIPTION,
+                DB_COLUMN_OUTDATE,
+                DB_COLUMN_OTC,
+                DB_COLUMN_BARCODE,
+                DB_COLUMN_USAGE,
+                DB_COLUMN_COMPANY,
+                DB_COLUMN_YU,
+                DB_COLUMN_ELABEL,
+                DB_COLUMN_LOVE
+        };
         databaseHelper = DataAbilityHelper.creator(this);
         style = util.PreferenceUtils.getInt(getContext(),"style");
         cont = getContext();
@@ -526,14 +608,7 @@ public class MainAbilitySlice extends AbilitySlice {
         util.PreferenceUtils.putString(getContext(), "editok", "none");
         intPageStart();
         initHomepageListContainer();
-        if (verifySelfPermission("ohos.permission.READ_MEDIA") != IBundleManager.PERMISSION_GRANTED) {
-            // 应用未被授予权限
-            if (canRequestPermission("ohos.permission.READ_MEDIA")) {
-                // 是否可以申请弹框授权(首次申请或者用户未选择禁止且不再提示)
-                requestPermissionsFromUser(
-                        new String[]{"ohos.permission.READ_MEDIA"}, MY_PERMISSIONS_REQUEST_READ_MEDIA);
-            }
-        }
+
 //        Image img_homehead = (Image) findComponentById(ResourceTable.Id_home_image_head);
 //        img_homehead.setCornerRadius(150);
 //        initCommunityListContainer();
@@ -873,6 +948,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     listContainer.setOrientation(Component.HORIZONTAL);
                     break;
             }
+            System.out.println("样式"+style);
             nonelist.setVisibility(Component.HIDE);
             listContainer.setVisibility(Component.VISIBLE);
             // 3.初始化Provider对象
@@ -906,22 +982,10 @@ public class MainAbilitySlice extends AbilitySlice {
     //药品数据源
     private List<Map<String, Object>> queryData() {
         List<Map<String, Object>> list = new ArrayList<>();
-        String[] columns = new String[]{
-                DB_COLUMN_KEYID,
-                DB_COLUMN_NAME,
-                DB_COLUMN_IMAGE,
-                DB_COLUMN_DESCRIPTION,
-                DB_COLUMN_OUTDATE,
-                DB_COLUMN_OTC,
-                DB_COLUMN_BARCODE,
-                DB_COLUMN_USAGE,
-                DB_COLUMN_COMPANY,
-                DB_COLUMN_YU,
-                DB_COLUMN_ELABEL
-        };
+
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.beginsWith(DB_COLUMN_KEYID,"KEY");
+        predicates.beginsWith(DB_COLUMN_KEYID,"M-");
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
                     columns, predicates);
@@ -944,6 +1008,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -955,6 +1020,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("company", company);
                 map.put("yu", yu);
                 map.put("elabel", elabel);
+                map.put("love", love);
                 list.add(map);
                 System.out.println("query: Id :" + " keyid:" + keyid + " name:" + name + " image:" + Arrays.toString(image) + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
@@ -970,19 +1036,7 @@ public class MainAbilitySlice extends AbilitySlice {
     //药品搜索返回数据【筛选搜索】
     public static List<Map<String, Object>> queryScreenData(int method, String field, String value1, String value2) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String[] columns = new String[]{
-                DB_COLUMN_KEYID,
-                DB_COLUMN_NAME,
-                DB_COLUMN_IMAGE,
-                DB_COLUMN_DESCRIPTION,
-                DB_COLUMN_OUTDATE,
-                DB_COLUMN_OTC,
-                DB_COLUMN_BARCODE,
-                DB_COLUMN_USAGE,
-                DB_COLUMN_COMPANY,
-                DB_COLUMN_YU,
-                DB_COLUMN_ELABEL
-        };
+
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
         switch (method) {
@@ -1045,6 +1099,8 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
+
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1056,7 +1112,8 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("company", company);
                 map.put("yu", yu);
                 map.put("elabel", elabel);
-                map.put("image", ResourceTable.Media_test);
+                map.put("love", love);
+
                 list.add(map);
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
@@ -1071,19 +1128,7 @@ public class MainAbilitySlice extends AbilitySlice {
     //药品搜索返回数据【指定搜索】
     public static List<Map<String, Object>> queryAssignData(String field, String value) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String[] columns = new String[]{
-                DB_COLUMN_KEYID,
-                DB_COLUMN_NAME,
-                DB_COLUMN_IMAGE,
-                DB_COLUMN_DESCRIPTION,
-                DB_COLUMN_OUTDATE,
-                DB_COLUMN_OTC,
-                DB_COLUMN_BARCODE,
-                DB_COLUMN_USAGE,
-                DB_COLUMN_COMPANY,
-                DB_COLUMN_YU,
-                DB_COLUMN_ELABEL
-        };
+
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
         predicates.contains(field, value);
@@ -1109,6 +1154,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1120,7 +1166,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("company", company);
                 map.put("yu", yu);
                 map.put("elabel", elabel);
-                map.put("image", ResourceTable.Media_test);
+                map.put("love", love);
                 list.add(map);
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
@@ -1135,22 +1181,10 @@ public class MainAbilitySlice extends AbilitySlice {
     //药品搜索界面总数据源
     public static List<Map<String, Object>> querySearchData(String lowKey, String highKey) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String[] columns = new String[]{
-                DB_COLUMN_KEYID,
-                DB_COLUMN_NAME,
-                DB_COLUMN_IMAGE,
-                DB_COLUMN_DESCRIPTION,
-                DB_COLUMN_OUTDATE,
-                DB_COLUMN_OTC,
-                DB_COLUMN_BARCODE,
-                DB_COLUMN_USAGE,
-                DB_COLUMN_COMPANY,
-                DB_COLUMN_YU,
-                DB_COLUMN_ELABEL
-        };
+
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.beginsWith(DB_COLUMN_KEYID,"KEY");
+        predicates.beginsWith(DB_COLUMN_KEYID,"M-");
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
                     columns, predicates);
@@ -1173,6 +1207,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1184,7 +1219,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("company", company);
                 map.put("yu", yu);
                 map.put("elabel", elabel);
-                map.put("image", ResourceTable.Media_test);
+                map.put("love", love);
                 list.add(map);
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
@@ -1202,7 +1237,6 @@ public class MainAbilitySlice extends AbilitySlice {
         super.onActive();
         System.out.println("输出流active");
         String editdone = util.PreferenceUtils.getString(getContext(), "editok");
-
         if (editdone.equals("ok")) {
             initHomepageListContainer();
             util.PreferenceUtils.putString(getContext(), "editok", "none");
@@ -1294,22 +1328,10 @@ public class MainAbilitySlice extends AbilitySlice {
 
     //TODO：刷新个人界面数据
     public int queryMeData() {
-        String[] columns = new String[]{
-                DB_COLUMN_KEYID,
-                DB_COLUMN_NAME,
-                DB_COLUMN_IMAGE,
-                DB_COLUMN_DESCRIPTION,
-                DB_COLUMN_OUTDATE,
-                DB_COLUMN_OTC,
-                DB_COLUMN_BARCODE,
-                DB_COLUMN_USAGE,
-                DB_COLUMN_COMPANY,
-                DB_COLUMN_YU,
-                DB_COLUMN_ELABEL
-        };
+
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.beginsWith(DB_COLUMN_OUTDATE,"KEY");
+        predicates.beginsWith(DB_COLUMN_OUTDATE,"M-");
         int count = 0;
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
@@ -1332,8 +1354,9 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
-                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
+                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel+"love"+love);
             } while (resultSet.goToNextRow());
             dataHas = count;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
@@ -1343,23 +1366,10 @@ public class MainAbilitySlice extends AbilitySlice {
     }
     //刷新数据
     public void query() {
-        String[] columns = new String[]{
-                DB_COLUMN_KEYID,
-                DB_COLUMN_NAME,
-                DB_COLUMN_IMAGE,
-                DB_COLUMN_DESCRIPTION,
-                DB_COLUMN_OUTDATE,
-                DB_COLUMN_OTC,
-                DB_COLUMN_BARCODE,
-                DB_COLUMN_USAGE,
-                DB_COLUMN_COMPANY,
-                DB_COLUMN_YU,
-                DB_COLUMN_ELABEL
-        };
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
 //        predicates.between(DB_COLUMN_KEYID, lowKey, highKey);
-        predicates.beginsWith(DB_COLUMN_KEYID,"KEY");
+        predicates.beginsWith(DB_COLUMN_KEYID,"M-");
         int count = 0;
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
@@ -1382,8 +1392,10 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
+
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
-                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
+                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel+"love"+love);
             } while (resultSet.goToNextRow());
             dataHas = count;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
@@ -1394,19 +1406,7 @@ public class MainAbilitySlice extends AbilitySlice {
     public static Map<String, Object> querySingleData(String idkey) {
         Map<String, Object> map = new HashMap<>();
 //            Map<String, Object> map = new HashMap<String, Object>();
-        String[] columns = new String[]{
-                DB_COLUMN_KEYID,
-                DB_COLUMN_NAME,
-                DB_COLUMN_IMAGE,
-                DB_COLUMN_DESCRIPTION,
-                DB_COLUMN_OUTDATE,
-                DB_COLUMN_OTC,
-                DB_COLUMN_BARCODE,
-                DB_COLUMN_USAGE,
-                DB_COLUMN_COMPANY,
-                DB_COLUMN_YU,
-                DB_COLUMN_ELABEL
-        };
+
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
         predicates.equalTo(DB_COLUMN_KEYID, idkey);
@@ -1430,6 +1430,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1441,7 +1442,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("company", company);
                 map.put("yu", yu);
                 map.put("elabel", elabel);
-                map.put("image", ResourceTable.Media_test);
+                map.put("love", love);
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
             } while (resultSet.goToNextRow());
@@ -1453,19 +1454,7 @@ public class MainAbilitySlice extends AbilitySlice {
     }
 
     public static boolean isPresentkeyId(String keyid) {
-        String[] columns = new String[]{
-                DB_COLUMN_KEYID,
-                DB_COLUMN_NAME,
-                DB_COLUMN_IMAGE,
-                DB_COLUMN_DESCRIPTION,
-                DB_COLUMN_OUTDATE,
-                DB_COLUMN_OTC,
-                DB_COLUMN_BARCODE,
-                DB_COLUMN_USAGE,
-                DB_COLUMN_COMPANY,
-                DB_COLUMN_YU,
-                DB_COLUMN_ELABEL
-        };
+
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
         predicates.equalTo(DB_COLUMN_KEYID, keyid);
@@ -1496,7 +1485,7 @@ public class MainAbilitySlice extends AbilitySlice {
         valuesBucket.putString(DB_COLUMN_COMPANY, company);
         valuesBucket.putString(DB_COLUMN_YU, yu);
         valuesBucket.putString(DB_COLUMN_ELABEL, elabel);
-
+        valuesBucket.putString(DB_COLUMN_LOVE, "no");
         try {
             if (databaseHelper.insert(Uri.parse(BASE_URI + DATA_PATH), valuesBucket) != -1) {
                 HiLog.info(LABEL_LOG, "insert successful");

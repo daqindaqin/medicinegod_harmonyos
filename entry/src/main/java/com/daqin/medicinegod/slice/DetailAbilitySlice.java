@@ -24,6 +24,7 @@ import ohos.data.rdb.ValuesBucket;
 import ohos.data.resultset.ResultSet;
 import ohos.eventhandler.EventHandler;
 import ohos.eventhandler.EventRunner;
+import ohos.hiviewdfx.HiLog;
 import ohos.media.image.PixelMap;
 import ohos.miscservices.pasteboard.PasteData;
 import ohos.miscservices.pasteboard.SystemPasteboard;
@@ -38,7 +39,7 @@ public class DetailAbilitySlice extends AbilitySlice {
     private static final String DATA_PATH = "/medicine";
     private static final String DB_COLUMN_KEYID = "KEYID";
     private static final String DB_COLUMN_NAME = "NAME";
-    private static final String DB_COLUMN_IMAGEPATH = "IMAGEPATH";
+    private static final String DB_COLUMN_IMAGE = "IMAGE";
     private static final String DB_COLUMN_DESCRIPTION = "DESCRIPTION";
     private static final String DB_COLUMN_OUTDATE = "OUTDATE";
     private static final String DB_COLUMN_OTC = "OTC";
@@ -47,6 +48,9 @@ public class DetailAbilitySlice extends AbilitySlice {
     private static final String DB_COLUMN_COMPANY = "COMPANY";
     private static final String DB_COLUMN_YU = "YU";
     private static final String DB_COLUMN_ELABEL = "ELABEL";
+    private static final String DB_COLUMN_LOVE = "LOVE";
+
+
 
     private Map<String, Object> mdc_SingleData;
     private String localKEY = null;
@@ -69,9 +73,16 @@ public class DetailAbilitySlice extends AbilitySlice {
     Image mdc_img;
     Image mdc_img_barcode;
 
-    Text mdc_more;
-    Text mdc_back;
 
+    Image mdc_love;
+    Image mdc_use;
+    Image mdc_edit;
+    Image mdc_share;
+    Image mdc_back;
+
+    Text mdc_delete;
+    Text mdc_copy;
+    String love = "no";
     @Override
     protected void onStop() {
         super.onStop();
@@ -82,7 +93,16 @@ public class DetailAbilitySlice extends AbilitySlice {
         mdc_img.setPixelMap(util.byte2PixelMap(img));
         mdc_name.setText((String) mdc_SingleData.get("name"));
         mdc_desp.setText("        " + (String) mdc_SingleData.get("description"));
-
+        love = (String) mdc_SingleData.get("love");
+        switch (love){
+            case "yes":
+                mdc_love.setPixelMap(ResourceTable.Media_dtl_mdc_love_yes);
+                break;
+            case "no":
+            default:
+                mdc_love.setPixelMap(ResourceTable.Media_dtl_mdc_love_no);
+                break;
+        }
         String[] tmplist = mdc_SingleData.get("elabel").toString().split("@@");
         String[] otclist = new String[]{"", "", "", "", ""};
         String s = "";
@@ -209,6 +229,19 @@ public class DetailAbilitySlice extends AbilitySlice {
         mdc_yu.setText("预计可再使用" + (String) mdc_SingleData.get("yu") + textUagesAll[1] + "后购买;\n"
                 + "或再使用预计" + (yuall / yuus) + "次后购买新药品。");
 
+        int yu = Integer.parseInt(mdc_SingleData.get("yu").toString());
+        int yu_yu = (yu - Integer.parseInt(textUagesAll[0]));
+        if (yu_yu<=0){
+            //editok属性包括{ ok (修改完成) , none(无) }
+            util.PreferenceUtils.putString(getContext(), "editok", "ok");
+            mdc_yu.setText("此药品你已经没有啦！\n"
+                    + "赶紧去准备一点吧~");
+        }else{
+            //editok属性包括{ ok (修改完成) , none(无) }
+            util.PreferenceUtils.putString(getContext(), "editok", "ok");
+            mdc_yu.setText("预计可再使用" + yu_yu + textUagesAll[1] + "后购买;\n"
+                    + "或再使用预计" + (yu_yu / yuus) + "次后购买新药品。");
+        }
 
     }
 
@@ -220,7 +253,7 @@ public class DetailAbilitySlice extends AbilitySlice {
         super.setUIContent(ResourceTable.Layout_ability_main_detail);
         databaseHelper = DataAbilityHelper.creator(this);
         mdc_img = (Image) findComponentById(ResourceTable.Id_dtl_mdc_img);
-        mdc_img.setCornerRadius(25);
+//        mdc_img.setCornerRadius(125);
         mdc_img_barcode = (Image) findComponentById(ResourceTable.Id_dtl_mdc_barcode_img);
         mdc_name = (Text) findComponentById(ResourceTable.Id_dtl_mdc_name);
         mdc_desp = (Text) findComponentById(ResourceTable.Id_dtl_mdc_desp);
@@ -237,30 +270,179 @@ public class DetailAbilitySlice extends AbilitySlice {
         mdc_elabel4 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel4);
         mdc_elabel5 = (Text) findComponentById(ResourceTable.Id_dtl_mdc_elabel5);
 
+        mdc_delete=(Text)findComponentById(ResourceTable.Id_dtl_mdc_delete);
+        mdc_delete.setClickedListener(component -> {
+            //删除
+            new XPopup.Builder(getContext())
+                    //.setPopupCallback(new XPopupListener())
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .asConfirm("是否删除", "        您正在进行删除" + mdc_name.getText() + "的操作，是否确认删除？\n" +
+                                    "        注意：此操作不可逆！",
+                            "返回", "确认删除",
+                            new OnConfirmListener() {
+                                @Override
+                                public void onConfirm() {
+                                    // 置换key
+                                    DataAbilityPredicates predicates = new DataAbilityPredicates();
+                                    predicates.equalTo(DB_COLUMN_KEYID, localKEY);
+                                    String[] columns = new String[]{
+                                            DB_COLUMN_KEYID,
+                                            DB_COLUMN_NAME,
+                                            DB_COLUMN_IMAGE,
+                                            DB_COLUMN_DESCRIPTION,
+                                            DB_COLUMN_OUTDATE,
+                                            DB_COLUMN_OTC,
+                                            DB_COLUMN_BARCODE,
+                                            DB_COLUMN_USAGE,
+                                            DB_COLUMN_COMPANY,
+                                            DB_COLUMN_YU,
+                                            DB_COLUMN_ELABEL,
+                                            DB_COLUMN_LOVE
+                                    };
+                                    try {
+                                        ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
+                                                columns, predicates);
+                                        if (resultSet == null || resultSet.getRowCount() == 0) {
+                                            ToastUtil.showToast(getContext(), "未找到该条药品信息  ");
+                                        }else{
+                                            util.PreferenceUtils.putString(getContext(), "editok", "ok");
+                                            MainAbilitySlice.delete(localKEY);
+                                            terminate();
+                                        }
+                                    } catch (DataAbilityRemoteException e) {
+                                        e.printStackTrace();
+                                        ToastUtil.showToast(getContext(), "删除失败  ");
+                                    }
+                                }
+                            }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
+                    .show(); // 最后一个参数绑定已有布局
+        });
+        mdc_copy=(Text)findComponentById(ResourceTable.Id_dtl_mdc_copy);
+        mdc_copy.setClickedListener(component -> {
+            ValuesBucket valuesBucket = new ValuesBucket();
+            valuesBucket.putString(DB_COLUMN_KEYID, util.getRandomKeyId());
+            valuesBucket.putString(DB_COLUMN_NAME, (String) mdc_SingleData.get("name"));
+            valuesBucket.putByteArray(DB_COLUMN_IMAGE, (byte[]) mdc_SingleData.get("img"));
+            valuesBucket.putString(DB_COLUMN_DESCRIPTION, (String) mdc_SingleData.get("description"));
+            valuesBucket.putLong(DB_COLUMN_OUTDATE, util.getDateFromString(mdc_SingleData.get("outdate").toString()));
+            valuesBucket.putString(DB_COLUMN_OTC, (String) mdc_SingleData.get("otc"));
+            valuesBucket.putString(DB_COLUMN_BARCODE, (String) mdc_SingleData.get("barcode"));
+            valuesBucket.putString(DB_COLUMN_USAGE, (String) mdc_SingleData.get("usage"));
+            valuesBucket.putString(DB_COLUMN_COMPANY, (String) mdc_SingleData.get("company"));
+            valuesBucket.putString(DB_COLUMN_YU, (String) mdc_SingleData.get("yu"));
+            valuesBucket.putString(DB_COLUMN_ELABEL, (String) mdc_SingleData.get("elabel"));
+            valuesBucket.putString(DB_COLUMN_LOVE, (String) mdc_SingleData.get("love"));
+            try {
+                if (databaseHelper.insert(Uri.parse(BASE_URI + DATA_PATH), valuesBucket) != -1) {
+                    //消息弹框
+                    util.PreferenceUtils.putString(getContext(), "editok", "ok");
+                    new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                            .dismissOnTouchOutside(false)
+                            .dismissOnBackPressed(false)
+                            .isDestroyOnDismiss(true)
+                            .asConfirm("复制成功", " 您已成功复制此药品，返回主页可查看。\n",
+                                    " ", "确认",null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
+                            .show(); // 最后一个参数绑定已有布局
+                }
+            } catch (DataAbilityRemoteException | IllegalStateException exception) {
+                //消息弹框
+                new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .asConfirm("复制失败", "出现错误，请稍后重试\n"+exception,
+                                " ", "确认",null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
+                        .show(); // 最后一个参数绑定已有布局
+            }
 
-        mdc_back = (Text) findComponentById(ResourceTable.Id_dtl_mdc_back);
+        });
+
+        mdc_back = (Image) findComponentById(ResourceTable.Id_dtl_mdc_back);
+        mdc_back.setCornerRadius(100);
         mdc_back.setClickedListener(l -> {
             terminate();
         });
-        mdc_more = (Text) findComponentById(ResourceTable.Id_dtl_mdc_more);
-        mdc_more.setClickedListener(l -> {
-            new XPopup.Builder(getContext())
-                    .hasShadowBg(true)
-                    .isDestroyOnDismiss(true) // 对于只使用一次的弹窗，推荐设置这个
-                    .atView(mdc_more)  // 依附于所点击的Commonent，内部会自动判断在上方或者下方显示
-                    .isComponentMode(true, mdc_more) // Component实现模式
-                    .asAttachList(new String[]{"  使 用  ", "  编 辑  ", "  分 享  ", "  复 制  ", "  删 除  "},
-                            new int[]{ResourceTable.Media_dtl_mdc_use,
-                                    ResourceTable.Media_dtl_mdc_edit,
-                                    ResourceTable.Media_dtl_mdc_share,
-                                    ResourceTable.Media_dtl_mdc_copy,
-                                    ResourceTable.Media_dtl_mdc_delete},
-                            new OnSelectListener() {
-                                @Override
-                                public void onSelect(int position, String text) {
-                                    popupClick(position);
-                                }
-                            }, 0, 0).show();
+
+        mdc_love= (Image)findComponentById(ResourceTable.Id_dtl_mdc_love);
+        mdc_love.setClickedListener(component -> {
+            DataAbilityPredicates predicates = new DataAbilityPredicates();
+            predicates.equalTo(DB_COLUMN_KEYID, localKEY);
+            ValuesBucket valuesBucket = new ValuesBucket();
+            if (love.equals("no")){
+                love ="yes";
+            }else if (love.equals("yes")){
+                love = "no";
+            }
+            valuesBucket.putString(DB_COLUMN_LOVE,love);
+            try {
+                if (databaseHelper.update(Uri.parse(BASE_URI + DATA_PATH), valuesBucket, predicates) != -1) {
+                    switch (love){
+                        case "yes":
+                            mdc_love.setPixelMap(ResourceTable.Media_dtl_mdc_love_yes);
+                            break;
+                        case "no":
+                        default:
+                            mdc_love.setPixelMap(ResourceTable.Media_dtl_mdc_love_no);
+                            break;
+                    }
+                }
+            } catch (DataAbilityRemoteException | IllegalStateException exception) {
+                ToastUtil.showToast(getContext(), "收藏失败  ");
+            }
+        });
+        mdc_share= (Image)findComponentById(ResourceTable.Id_dtl_mdc_share);
+        //TODO:分享
+        mdc_edit= (Image)findComponentById(ResourceTable.Id_dtl_mdc_edit);
+        mdc_edit.setClickedListener(component -> {
+            //弹出弹框编辑后再返回
+            Intent intentEdit = new Intent();
+            Operation operation = new Intent.OperationBuilder()
+                    .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                    .withBundleName(getBundleName())    // 包名
+                    .withAbilityName("com.daqin.medicinegod.EditAbility")
+                    // Ability页面的名称，在本地可以缺省前面的路径
+                    .build();    // 构建代码
+            intentEdit.setOperation(operation);    // 将operation存入到intent中
+            startAbility(intentEdit);    // 实现Ability跳转
+        });
+        mdc_use= (Image)findComponentById(ResourceTable.Id_dtl_mdc_use);
+        mdc_use.setClickedListener(component -> {
+            //使用药品(现实生活中的使用，可由此定位)
+
+            DataAbilityPredicates predicates = new DataAbilityPredicates();
+            predicates.equalTo(DB_COLUMN_KEYID, localKEY);
+            ValuesBucket valuesBucket = new ValuesBucket();
+
+            try {
+                if (databaseHelper.update(Uri.parse(BASE_URI + DATA_PATH), valuesBucket, predicates) != -1) {
+                    int yu = Integer.parseInt(mdc_SingleData.get("yu").toString());
+                    int yu_yu = (yu - Integer.parseInt(textUagesAll[0]));
+                    if (yu_yu<=0){
+                        valuesBucket.putString(DB_COLUMN_YU, "0");
+                        //editok属性包括{ ok (修改完成) , none(无) }
+                        util.PreferenceUtils.putString(getContext(), "editok", "ok");
+                        int yuus = Integer.parseInt(textUagesAll[0]);
+                        mdc_yu.setText("此药品你已经没有啦！\n"
+                                + "赶紧去准备一点吧~");
+                    }else{
+                        valuesBucket.putString(DB_COLUMN_YU, String.valueOf(yu_yu));
+                        //editok属性包括{ ok (修改完成) , none(无) }
+                        util.PreferenceUtils.putString(getContext(), "editok", "ok");
+                        int yuus = Integer.parseInt(textUagesAll[0]);
+                        mdc_yu.setText("预计可再使用" + yu_yu + textUagesAll[1] + "后购买;\n"
+                                + "或再使用预计" + (yu_yu / yuus) + "次后购买新药品。");
+                    }
+
+                    ToastUtil.showToast(getContext(), "已记为使用一次该药品  ");
+                }
+            } catch (DataAbilityRemoteException | IllegalStateException exception) {
+                ToastUtil.showToast(getContext(), "使用失败  ");
+            }
+
         });
 
 
@@ -293,99 +475,6 @@ public class DetailAbilitySlice extends AbilitySlice {
 
     }
 
-
-    public void popupClick(int position) {
-        switch (position) {
-            case 0:
-                //使用药品(现实生活中的使用，可由此定位)
-                int yu = Integer.parseInt(mdc_SingleData.get("yu").toString());
-                int yu_yu = (yu - Integer.parseInt(textUagesAll[0]));
-                DataAbilityPredicates predicates = new DataAbilityPredicates();
-                predicates.equalTo(DB_COLUMN_KEYID, localKEY);
-                ValuesBucket valuesBucket = new ValuesBucket();
-                valuesBucket.putString(DB_COLUMN_YU, String.valueOf(yu_yu));
-                try {
-                    if (databaseHelper.update(Uri.parse(BASE_URI + DATA_PATH), valuesBucket, predicates) != -1) {
-                        //editok属性包括{ ok (修改完成) , none(无) }
-                        util.PreferenceUtils.putString(getContext(), "editok", "ok");
-                        mdc_SingleData.put("yu", yu_yu);
-                        int yuus = Integer.parseInt(textUagesAll[0]);
-                        mdc_yu.setText("预计可再使用" + yu_yu + textUagesAll[1] + "后购买;\n"
-                                + "或再使用预计" + (yu_yu / yuus) + "次后购买新药品。");
-                        ToastUtil.showToast(getContext(), "已记为使用一次该药品  ");
-                    }
-                } catch (DataAbilityRemoteException | IllegalStateException exception) {
-                    ToastUtil.showToast(getContext(), "使用失败  ");
-                }
-
-                break;
-            case 1:
-                //弹出弹框编辑后再返回
-                Intent intentEdit = new Intent();
-                Operation operation = new Intent.OperationBuilder()
-                        .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
-                        .withBundleName(getBundleName())    // 包名
-                        .withAbilityName("com.daqin.medicinegod.EditAbility")
-                        // Ability页面的名称，在本地可以缺省前面的路径
-                        .build();    // 构建代码
-                intentEdit.setOperation(operation);    // 将operation存入到intent中
-                startAbility(intentEdit);    // 实现Ability跳转
-                break;
-            case 2:
-                //分享
-                break;
-            case 3:
-                //复制
-                break;
-            case 4:
-                //删除
-                new XPopup.Builder(getContext())
-                        //.setPopupCallback(new XPopupListener())
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
-                        .isDestroyOnDismiss(true)
-                        .asConfirm("是否删除", "        您正在进行删除" + mdc_name.getText() + "的操作，是否确认删除？\n" +
-                                        "        注意：此操作不可逆！",
-                                "返回", "确认删除",
-                                new OnConfirmListener() {
-                                    @Override
-                                    public void onConfirm() {
-                                        // 置换key
-                                        DataAbilityPredicates predicates = new DataAbilityPredicates();
-                                        predicates.beginsWith(DB_COLUMN_KEYID, "KEY");
-                                        String[] columns = new String[]{
-                                                DB_COLUMN_KEYID,
-                                                DB_COLUMN_NAME,
-                                                DB_COLUMN_IMAGEPATH,
-                                                DB_COLUMN_DESCRIPTION,
-                                                DB_COLUMN_OUTDATE,
-                                                DB_COLUMN_OTC,
-                                                DB_COLUMN_BARCODE,
-                                                DB_COLUMN_USAGE,
-                                                DB_COLUMN_COMPANY,
-                                                DB_COLUMN_YU,
-                                                DB_COLUMN_ELABEL
-                                        };
-                                        try {
-                                            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
-                                                    columns, predicates);
-                                            if (resultSet == null || resultSet.getRowCount() == 0) {
-                                                ToastUtil.showToast(getContext(), "未找到该条药品信息  ");
-                                            }else{
-                                                util.PreferenceUtils.putString(getContext(), "editok", "ok");
-                                                MainAbilitySlice.delete(localKEY);
-                                                terminate();
-                                            }
-                                        } catch (DataAbilityRemoteException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }, null, false, ResourceTable.Layout_popup_comfirm_with_cancel_redconfirm)
-                        .show(); // 最后一个参数绑定已有布局
-                break;
-        }
-
-    }
 
 
     //创建条码

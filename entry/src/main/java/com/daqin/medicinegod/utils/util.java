@@ -24,6 +24,10 @@ import ohos.utils.net.Uri;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -501,8 +505,8 @@ public class util extends AbilitySlice {
         String base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random random = new Random();
         StringBuilder sb = new StringBuilder();
-        sb.append("KEY");
-        for (int i = 0; i < 13; i++) {
+        sb.append("M-");
+        for (int i = 0; i < 16; i++) {
             int number = random.nextInt(base.length());
             sb.append(base.charAt(number));
         }

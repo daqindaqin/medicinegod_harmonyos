@@ -18,6 +18,15 @@ public class ChangeStyleAbilitySlice extends AbilitySlice {
     DirectionalLayout one_layout;
     Text one_title;
     Image one_img;
+
+    @Override
+    protected void onBackPressed() {
+        super.onBackPressed();
+        Intent intent1 = new Intent();
+        intent1.setParam("changeok","ok");
+        getAbility().setResult(300,intent1);
+    }
+
     @Override
     protected void onStart(Intent intent) {
         super.onStart(intent);
@@ -55,7 +64,6 @@ public class ChangeStyleAbilitySlice extends AbilitySlice {
                 default_title.setTextColor(new Color(Color.rgb(198,140,208)));
                 default_title.setTextSize(100);
                 default_img.setPixelMap(ResourceTable.Media_style_default_choose);
-                util.PreferenceUtils.putInt(getContext(),"style",0);
                 one_layout.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_changestyle_normal));
                 one_title.setTextColor(new Color(Color.rgb(165,165,165)));
                 one_title.setTextSize(70);

@@ -35,6 +35,7 @@ public class MedicineDataAbility extends Ability {
     private static final String DB_COLUMN_COMPANY = "COMPANY";
     private static final String DB_COLUMN_YU = "YU";
     private static final String DB_COLUMN_ELABEL = "ELABEL";
+    private static final String DB_COLUMN_LOVE = "LOVE";
 
     private static final int DB_VERSION = 1;
 
@@ -57,7 +58,8 @@ public class MedicineDataAbility extends Ability {
                     + DB_COLUMN_USAGE + " text not null, "
                     + DB_COLUMN_COMPANY + " text not null, "
                     + DB_COLUMN_YU + " text not null, "
-                    + DB_COLUMN_ELABEL + "  long text not null "
+                    + DB_COLUMN_ELABEL + "  long text not null, "
+                    + DB_COLUMN_LOVE + "  text not null "
                     + ")"
             );
         }
@@ -105,7 +107,7 @@ public class MedicineDataAbility extends Ability {
         values.putString(DB_COLUMN_COMPANY, value.getString(DB_COLUMN_COMPANY));
         values.putString(DB_COLUMN_YU, value.getString(DB_COLUMN_YU));
         values.putString(DB_COLUMN_ELABEL, value.getString(DB_COLUMN_ELABEL));
-
+        values.putString(DB_COLUMN_LOVE, value.getString(DB_COLUMN_LOVE));
         int index = (int) rdbStore.insert(DB_TAB_NAME, values);
         DataAbilityHelper.creator(this, uri).notifyChange(uri);
         return index;

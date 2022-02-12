@@ -7,7 +7,7 @@
         ohos:color="$color:black_light2"/>
 
     <corners
-        ohos:radius="20vp"/>
+        ohos:radius="16vp"/>
 
 <!--
     <stroke

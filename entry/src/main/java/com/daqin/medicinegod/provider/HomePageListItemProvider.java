@@ -231,7 +231,7 @@ public class HomePageListItemProvider extends BaseItemProvider {
                 } else {
                     image.setPixelMap(util.byte2PixelMap(img1));
                     image.setScaleMode(Image.ScaleMode.STRETCH);
-                    image.setCornerRadius(25);
+                    image.setCornerRadius(55);
                 }
                 //过期提醒
                 //示例：
