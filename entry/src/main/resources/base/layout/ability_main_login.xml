@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_parent"
+    ohos:width="match_parent"
+    ohos:alignment="bottom|horizontal_center"
+    ohos:background_element="$color:blue_clear">
+
+    <Text
+        ohos:height="match_content"
+        ohos:width="match_parent"
+        ohos:bottom_margin="10vp"
+        ohos:end_margin="20vp"
+        ohos:start_margin="20vp"
+        ohos:text="登录"
+        ohos:text_alignment="right|vertical_center"
+        ohos:text_color="$color:white"
+        ohos:text_size="32vp"
+        ohos:text_weight="700"
+        ohos:top_margin="50vp"/>
+
+    <Text
+        ohos:id="$+id:lg_goto"
+        ohos:height="match_content"
+        ohos:width="match_parent"
+        ohos:bottom_margin="10vp"
+        ohos:end_margin="20vp"
+        ohos:start_margin="20vp"
+        ohos:text="←没有账号?  去注册"
+        ohos:text_alignment="left|vertical_center"
+        ohos:text_color="$color:white"
+        ohos:text_size="18vp"
+        ohos:text_weight="300"
+        ohos:top_margin="20vp"/>
+
+        <DirectionalLayout
+            ohos:height="match_content"
+            ohos:width="match_parent"
+            ohos:orientation="vertical"
+            ohos:background_element="$graphic:bg_login">
+
+            <!--占位符开始-->
+            <Text
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:bottom_margin="5vp"
+                ohos:end_margin="5vp"
+                ohos:start_margin="30vp"
+                ohos:text="邮箱"
+                ohos:text_alignment="left|vertical_center"
+                ohos:text_color="$color:black_clear"
+                ohos:text_size="24vp"
+                ohos:text_weight="700"
+                ohos:top_margin="20vp"
+                ohos:visibility="invisible"/>
+            <TextField
+
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:background_element="$graphic:bg_rglg_textfield"
+                ohos:bottom_margin="10vp"
+                ohos:bottom_padding="10vp"
+                ohos:end_margin="30vp"
+                ohos:end_padding="10vp"
+                ohos:hint="填入绑定的邮箱"
+                ohos:hint_color="$color:black_line"
+                ohos:max_text_lines="1"
+                ohos:start_margin="30vp"
+                ohos:start_padding="15vp"
+                ohos:text_color="$color:black"
+                ohos:text_input_type="pattern_text_email_address"
+                ohos:text_size="18vp"
+                ohos:text_weight="500"
+                ohos:top_margin="5vp"
+                ohos:top_padding="5vp"
+                ohos:visibility="invisible"
+                />
+            <!--占位符结束-->
+
+            <!--登录名-->
+            <Text
+                ohos:height="match_content"
+                ohos:width="match_content"
+                ohos:end_margin="5vp"
+                ohos:start_margin="30vp"
+                ohos:text="用户名"
+                ohos:text_alignment="left|vertical_center"
+                ohos:text_color="$color:black_clear"
+                ohos:text_size="24vp"
+                ohos:text_weight="700"/>
+            <TextField
+                ohos:id="$+id:lg_userlname"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:background_element="$graphic:bg_rglg_textfield"
+                ohos:bottom_margin="10vp"
+                ohos:bottom_padding="10vp"
+                ohos:end_margin="30vp"
+                ohos:end_padding="10vp"
+                ohos:hint="6-12个字母或数字组成"
+                ohos:hint_color="$color:black_line"
+                ohos:max_text_lines="1"
+                ohos:start_margin="30vp"
+                ohos:start_padding="15vp"
+                ohos:text_color="$color:black"
+                ohos:text_size="18vp"
+                ohos:text_weight="500"
+                ohos:top_margin="5vp"
+                ohos:top_padding="5vp"
+                />
+            <Text
+                ohos:id="$+id:lg_userlname_status"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:end_margin="30vp"
+                ohos:multiple_lines="true"
+                ohos:start_margin="30vp"
+                ohos:text="用户名"
+                ohos:text_alignment="left|vertical_center"
+                ohos:text_color="$color:red"
+                ohos:text_size="14vp"
+                ohos:text_weight="300"
+                ohos:visibility="hide"
+                />
+
+            <!--密码-->
+            <Text
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:bottom_margin="5vp"
+                ohos:end_margin="5vp"
+                ohos:start_margin="30vp"
+                ohos:text="密码"
+                ohos:text_alignment="left|vertical_center"
+                ohos:text_color="$color:black_clear"
+                ohos:text_size="24vp"
+                ohos:text_weight="700"
+                ohos:top_margin="20vp"/>
+            <TextField
+                ohos:id="$+id:lg_userpwd"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:background_element="$graphic:bg_rglg_textfield"
+                ohos:bottom_margin="10vp"
+                ohos:bottom_padding="10vp"
+                ohos:end_margin="30vp"
+                ohos:end_padding="10vp"
+                ohos:hint="密码"
+                ohos:hint_color="$color:black_line"
+                ohos:max_text_lines="1"
+                ohos:start_margin="30vp"
+                ohos:start_padding="15vp"
+                ohos:text_color="$color:black"
+                ohos:text_input_type="pattern_password"
+                ohos:text_size="18vp"
+                ohos:text_weight="500"
+                ohos:top_margin="5vp"
+                ohos:top_padding="5vp"
+                />
+            <Text
+                ohos:id="$+id:lg_userpwd_status"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:end_margin="30vp"
+                ohos:multiple_lines="true"
+                ohos:start_margin="30vp"
+                ohos:text="密码由6-12个字母、数字、下划线、@、点组成"
+                ohos:text_alignment="left|vertical_center"
+                ohos:text_color="$color:red"
+                ohos:text_size="14vp"
+                ohos:text_weight="300"
+                ohos:visibility="hide"
+
+                />
+
+            <!--占位符开始-->
+            <Text
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:end_margin="30vp"
+                ohos:multiple_lines="true"
+                ohos:start_margin="30vp"
+                ohos:text="邮箱格式不正确"
+                ohos:text_alignment="left|vertical_center"
+                ohos:text_color="$color:red"
+                ohos:text_size="14vp"
+                ohos:text_weight="300"
+
+                ohos:visibility="hide"
+                />
+            <DirectionalLayout
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:alignment="left|vertical_center"
+                ohos:orientation="horizontal"
+                ohos:visibility="invisible">
+
+                <TextField
+                    ohos:height="match_content"
+                    ohos:width="150vp"
+                    ohos:background_element="$graphic:bg_rglg_textfield"
+                    ohos:bottom_margin="5vp"
+                    ohos:bottom_padding="5vp"
+                    ohos:end_margin="5vp"
+                    ohos:end_padding="10vp"
+                    ohos:hint="0000"
+                    ohos:hint_color="$color:black_line"
+                    ohos:letter_spacing="1"
+                    ohos:max_text_lines="1"
+                    ohos:start_margin="30vp"
+                    ohos:start_padding="15vp"
+                    ohos:text_color="$color:black"
+                    ohos:text_input_type="pattern_number"
+                    ohos:text_size="18vp"
+                    ohos:text_weight="500"
+                    ohos:top_margin="10vp"
+                    ohos:top_padding="10vp"
+                    />
+
+                <Text
+
+                    ohos:height="match_content"
+                    ohos:width="140vp"
+                    ohos:background_element="$graphic:bg_rglg_textfield"
+                    ohos:bottom_padding="12vp"
+                    ohos:end_margin="30vp"
+                    ohos:end_padding="10vp"
+                    ohos:start_margin="5vp"
+                    ohos:start_padding="15vp"
+                    ohos:text="获取验证码"
+                    ohos:text_alignment="horizontal_center|vertical_center"
+                    ohos:text_color="$color:blue"
+                    ohos:text_size="16vp"
+                    ohos:text_weight="500"
+                    ohos:top_margin="8vp"
+                    ohos:top_padding="12vp"
+                    />
+            </DirectionalLayout>
+            <!--占位符结束-->
+
+            <!--登录-->
+            <Text
+                ohos:id="$+id:lg_ok"
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:background_element="$graphic:bg_rglg_btn"
+                ohos:bottom_margin="20vp"
+                ohos:bottom_padding="10vp"
+                ohos:end_margin="30vp"
+                ohos:letter_spacing="0.2"
+                ohos:start_margin="30vp"
+                ohos:text="登 录"
+                ohos:text_alignment="horizontal_center|vertical_center"
+                ohos:text_color="$color:white"
+                ohos:text_size="20vp"
+                ohos:text_weight="700"
+                ohos:top_margin="10vp"
+                ohos:top_padding="10vp"
+                />
+
+            <!--占位符开始-->
+            <Text
+
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:bottom_margin="5vp"
+                ohos:end_margin="5vp"
+                ohos:start_margin="30vp"
+                ohos:text="手机号"
+                ohos:text_alignment="left|vertical_center"
+                ohos:text_color="$color:black_clear"
+                ohos:text_size="24vp"
+                ohos:text_weight="700"
+                ohos:visibility="invisible"
+                ohos:top_margin="20vp"/>
+            <TextField
+
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:background_element="$graphic:bg_rglg_textfield"
+                ohos:bottom_margin="10vp"
+                ohos:bottom_padding="10vp"
+                ohos:end_margin="30vp"
+                ohos:end_padding="10vp"
+                ohos:hint="填入绑定的11位手机号"
+                ohos:hint_color="$color:black_line"
+                ohos:letter_spacing="0.3"
+                ohos:max_text_lines="1"
+                ohos:start_margin="30vp"
+                ohos:start_padding="15vp"
+                ohos:text_color="$color:black"
+                ohos:text_input_type="pattern_phone"
+                ohos:text_size="18vp"
+                ohos:text_weight="500"
+                ohos:visibility="invisible"
+                ohos:top_margin="5vp"
+                ohos:top_padding="5vp"
+                />
+            <Text
+                ohos:height="match_content"
+                ohos:width="match_parent"
+                ohos:end_margin="30vp"
+                ohos:multiple_lines="true"
+                ohos:start_margin="30vp"
+                ohos:text="手机号不正确"
+                ohos:text_alignment="left|vertical_center"
+                ohos:text_color="$color:red"
+                ohos:text_size="14vp"
+                ohos:text_weight="300"
+                ohos:visibility="hide"
+
+                />
+            <!--占位符结束-->
+
+        </DirectionalLayout>
+
+
+
+</DirectionalLayout>
+
+
+

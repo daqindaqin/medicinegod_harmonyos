@@ -28,11 +28,11 @@ import java.util.List;
  *
  * @since 2021-04-09
  */
-public class ScreenSlidePagerProvider extends PageSliderProvider {
+public class MainScreenSlidePagerProvider extends PageSliderProvider {
     private final Context context;
     private final List<DependentLayout> fragmentList;
 
-    public ScreenSlidePagerProvider(Context context, List<DependentLayout> fragmentList) {
+    public MainScreenSlidePagerProvider(Context context, List<DependentLayout> fragmentList) {
         this.context = context;
         this.fragmentList = fragmentList;
     }

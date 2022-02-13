@@ -10,7 +10,7 @@ import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.provider.ChatListItemProvider;
 import com.daqin.medicinegod.provider.HomePageListItemProvider;
 import com.daqin.medicinegod.utils.imageControler.ImageSaver;
-import com.daqin.medicinegod.provider.ScreenSlidePagerProvider;
+import com.daqin.medicinegod.provider.MainScreenSlidePagerProvider;
 import com.daqin.medicinegod.utils.*;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
 import com.lxj.xpopup.XPopup;
@@ -40,7 +40,6 @@ import ohos.utils.net.Uri;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.*;
 
@@ -584,6 +583,15 @@ public class MainAbilitySlice extends AbilitySlice {
         }
         if (isLogin==0 && isFirstStart==0){
             //TODO:登录注册界面
+            Intent intentSearch = new Intent();
+            Operation operation = new Intent.OperationBuilder()
+                    .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                    .withBundleName(getBundleName())    // 包名
+                    .withAbilityName("com.daqin.medicinegod.RgLgAbility")
+                    // Ability页面的名称，在本地可以缺省前面的路径
+                    .build();    // 构建代码
+            intentSearch.setOperation(operation);    // 将operation存入到intent中
+            startAbility(intentSearch);    // 实现Ability跳转
         }
         columns = new String[]{
                 DB_COLUMN_KEYID,
@@ -728,7 +736,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
     //底部栏相关
     private void initPagerSlider(ArrayList<DependentLayout> fragList) {
-        ScreenSlidePagerProvider pagerAdapter = new ScreenSlidePagerProvider(this, fragList);
+        MainScreenSlidePagerProvider pagerAdapter = new MainScreenSlidePagerProvider(this, fragList);
 
         mBubbleNavigationLinearView =
                 (BubbleNavigationLinearView) findComponentById(ResourceTable.Id_bottom_navigation_view_linear);

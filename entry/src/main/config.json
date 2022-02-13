@@ -93,6 +93,12 @@
         "name": "com.daqin.medicinegod.ChangeStyleAbility",
         "description": "更改药品数据显示方式",
         "type": "page"
+      },
+      {
+        "icon": "$media:icon",
+        "name": "com.daqin.medicinegod.RgLgAbility",
+        "description": "",
+        "type": "page"
       }
     ],
     "metaData": {

@@ -19,6 +19,7 @@ ohos {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.har'])
     implementation files('src/main/lib/mysql-connector-java-5.1.49-bin.jar')
+    implementation files('src/main/lib/commons-email-1.5.jar')
 
     testImplementation 'junit:junit:4.13.1'
     ohosTestImplementation 'com.huawei.ohos.testkit:runner:1.0.0.200'

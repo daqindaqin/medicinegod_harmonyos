@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_parent"
+    ohos:width="match_parent">
+    <!--登录注册页-->
+    <PageSlider
+        ohos:id="$+id:pager_slider"
+        ohos:height="match_parent"
+        ohos:width="match_parent"/>
+
+</DirectionalLayout>

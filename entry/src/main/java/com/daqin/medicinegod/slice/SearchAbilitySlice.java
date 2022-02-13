@@ -107,11 +107,14 @@ public class SearchAbilitySlice extends AbilitySlice {
             public void onFocusChange(Component component, boolean b) {
                 if (b) {
                     clearScreen();
+                    tf_src_src_box.addTextObserver(textUpdateObserver);
+                }else{
+                    tf_src_src_box.removeTextObserver(textUpdateObserver);
                 }
 
             }
         });
-        tf_src_src_box.addTextObserver(textUpdateObserver);
+
 
 
     }
