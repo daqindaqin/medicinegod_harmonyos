@@ -1,4 +1,4 @@
-package com.daqin.medicinegod;
+package com.daqin.medicinegod.data;
 
 
 import ohos.aafwk.ability.Ability;
@@ -17,25 +17,26 @@ import ohos.utils.net.Uri;
 import java.io.FileDescriptor;
 
 
-public class MedicineDataAbility extends Ability {
-    private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "allmedicine");
+public class PersonDataAbility extends Ability {
+    private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "person");
 
-    private static final String DB_NAME = "allmedicine.db";
+    private static final String DB_NAME = "MedicineGod.db";
 
-    private static final String DB_TAB_NAME = "MEDICINE";
+    private static final String DB_TAB_NAME = "PERSON";
 
-    private static final String DB_COLUMN_KEYID = "KEYID";
-    private static final String DB_COLUMN_NAME = "NAME";
-    private static final String DB_COLUMN_IMAGE = "IMAGE";
-    private static final String DB_COLUMN_DESCRIPTION = "DESCRIPTION";
-    private static final String DB_COLUMN_OUTDATE = "OUTDATE";
-    private static final String DB_COLUMN_OTC = "OTC";
-    private static final String DB_COLUMN_BARCODE = "BARCODE";
-    private static final String DB_COLUMN_USAGE = "USAGE";
-    private static final String DB_COLUMN_COMPANY = "COMPANY";
-    private static final String DB_COLUMN_YU = "YU";
-    private static final String DB_COLUMN_ELABEL = "ELABEL";
-    private static final String DB_COLUMN_LOVE = "LOVE";
+    private static final String DB_COLUMN_ID = "ID";
+    private static final String DB_COLUMN_LNAME = "LNAME";
+    private static final String DB_COLUMN_SNAME = "SNAME";
+    private static final String DB_COLUMN_PWD = "PWD";
+    private static final String DB_COLUMN_HEAD = "HEAD";
+    private static final String DB_COLUMN_FRIEND = "FRIEND";
+    private static final String DB_COLUMN_PHONE = "PHONE";
+    private static final String DB_COLUMN_MAIL = "MAIL";
+    private static final String DB_COLUMN_RGTIME = "RGTIME";
+    private static final String DB_COLUMN_ONLINE = "ONLINE";
+    private static final String DB_COLUMN_HAS = "HAS";
+    private static final String DB_COLUMN_VIP = "VIP";
+    private static final String DB_COLUMN_VIPYU = "VIPYU";
 
     private static final int DB_VERSION = 1;
 
@@ -48,18 +49,19 @@ public class MedicineDataAbility extends Ability {
         public void onCreate(RdbStore store) {
             store.executeSql("create table if not exists "
                     + DB_TAB_NAME + " ("
-                    + DB_COLUMN_KEYID + " text not null, "
-                    + DB_COLUMN_NAME + " text not null, "
-                    + DB_COLUMN_IMAGE + " blob not null, "
-                    + DB_COLUMN_DESCRIPTION + " long text not null, "
-                    + DB_COLUMN_OUTDATE + " long int not null, "
-                    + DB_COLUMN_OTC + " text not null, "
-                    + DB_COLUMN_BARCODE + " text not null, "
-                    + DB_COLUMN_USAGE + " text not null, "
-                    + DB_COLUMN_COMPANY + " text not null, "
-                    + DB_COLUMN_YU + " text not null, "
-                    + DB_COLUMN_ELABEL + "  long text not null, "
-                    + DB_COLUMN_LOVE + "  text not null "
+                    + DB_COLUMN_ID + " text not null, "
+                    + DB_COLUMN_LNAME + " text not null, "
+                    + DB_COLUMN_SNAME + " text not null, "
+                    + DB_COLUMN_PWD + " text not null, "
+                    + DB_COLUMN_HEAD + " blob, "
+                    + DB_COLUMN_FRIEND + " long text not null, "
+                    + DB_COLUMN_PHONE + " text not null, "
+                    + DB_COLUMN_MAIL + " text not null, "
+                    + DB_COLUMN_RGTIME + " text not null, "
+                    + DB_COLUMN_ONLINE + " text not null, "
+                    + DB_COLUMN_HAS + "  long text not null, "
+                    + DB_COLUMN_VIP + "  text not null, "
+                    + DB_COLUMN_VIPYU + "  text not null "
                     + ")"
             );
         }
@@ -72,7 +74,7 @@ public class MedicineDataAbility extends Ability {
     @Override
     public void onStart(Intent intent) {
         super.onStart(intent);
-        HiLog.info(LABEL_LOG, "MedicineDataAbility onStart");
+        HiLog.info(LABEL_LOG, "PersonDataAbility onStart");
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         rdbStore = databaseHelper.getRdbStore(config, DB_VERSION, rdbOpenCallback, null);
     }
@@ -89,25 +91,26 @@ public class MedicineDataAbility extends Ability {
 
     @Override
     public int insert(Uri uri, ValuesBucket value) {
-        HiLog.info(LABEL_LOG, "MedicineDataAbility insert");
+        HiLog.info(LABEL_LOG, "PersonDataAbility insert");
         String path = uri.getLastPath();
-        if (!"medicine".equals(path)) {
+        if (!"person".equals(path)) {
             HiLog.info(LABEL_LOG, "DataAbility insert path is not matched");
             return -1;
         }
         ValuesBucket values = new ValuesBucket();
-        values.putString(DB_COLUMN_KEYID, value.getString(DB_COLUMN_KEYID));
-        values.putString(DB_COLUMN_NAME, value.getString(DB_COLUMN_NAME));
-        values.putByteArray(DB_COLUMN_IMAGE, value.getByteArray(DB_COLUMN_IMAGE));
-        values.putString(DB_COLUMN_DESCRIPTION, value.getString(DB_COLUMN_DESCRIPTION));
-        values.putLong(DB_COLUMN_OUTDATE, value.getLong(DB_COLUMN_OUTDATE));
-        values.putString(DB_COLUMN_OTC, value.getString(DB_COLUMN_OTC));
-        values.putString(DB_COLUMN_BARCODE, value.getString(DB_COLUMN_BARCODE));
-        values.putString(DB_COLUMN_USAGE, value.getString(DB_COLUMN_USAGE));
-        values.putString(DB_COLUMN_COMPANY, value.getString(DB_COLUMN_COMPANY));
-        values.putString(DB_COLUMN_YU, value.getString(DB_COLUMN_YU));
-        values.putString(DB_COLUMN_ELABEL, value.getString(DB_COLUMN_ELABEL));
-        values.putString(DB_COLUMN_LOVE, value.getString(DB_COLUMN_LOVE));
+        values.putString(DB_COLUMN_ID, value.getString(DB_COLUMN_ID));
+        values.putString(DB_COLUMN_LNAME, value.getString(DB_COLUMN_LNAME));
+        values.putString(DB_COLUMN_SNAME, value.getString(DB_COLUMN_SNAME));
+        values.putString(DB_COLUMN_PWD, value.getString(DB_COLUMN_PWD));
+        values.putByteArray(DB_COLUMN_HEAD, value.getByteArray(DB_COLUMN_HEAD));
+        values.putString(DB_COLUMN_FRIEND, value.getString(DB_COLUMN_FRIEND));
+        values.putString(DB_COLUMN_PHONE, value.getString(DB_COLUMN_PHONE));
+        values.putString(DB_COLUMN_MAIL, value.getString(DB_COLUMN_MAIL));
+        values.putString(DB_COLUMN_RGTIME, value.getString(DB_COLUMN_RGTIME));
+        values.putString(DB_COLUMN_ONLINE, value.getString(DB_COLUMN_ONLINE));
+        values.putString(DB_COLUMN_HAS, value.getString(DB_COLUMN_HAS));
+        values.putString(DB_COLUMN_VIP, value.getString(DB_COLUMN_VIP));
+        values.putString(DB_COLUMN_VIPYU, value.getString(DB_COLUMN_VIPYU));
         int index = (int) rdbStore.insert(DB_TAB_NAME, values);
         DataAbilityHelper.creator(this, uri).notifyChange(uri);
         return index;

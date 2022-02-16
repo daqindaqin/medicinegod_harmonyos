@@ -26,6 +26,7 @@ import ohos.aafwk.content.Operation;
 import ohos.agp.components.*;
 import ohos.agp.utils.LayoutAlignment;
 import ohos.agp.window.dialog.ToastDialog;
+import ohos.agp.window.service.WindowManager;
 import ohos.app.Context;
 import ohos.bundle.IBundleManager;
 import ohos.data.dataability.DataAbilityPredicates;
@@ -57,22 +58,40 @@ public class MainAbilitySlice extends AbilitySlice {
     private int dataHas = 0,dataFav=0,dataShare=0,style = 0;
     List<String> eLABEL = new ArrayList<>();
     private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "MainAbilitySlice");
-    private static final String BASE_URI = "dataability:///com.daqin.medicinegod.MedicineDataAbility";
-    private static final String DATA_PATH = "/medicine";
-    private static final String DB_COLUMN_KEYID = "KEYID";
-    private static final String DB_COLUMN_NAME = "NAME";
-    private static final String DB_COLUMN_IMAGE = "IMAGE";
-    private static final String DB_COLUMN_DESCRIPTION = "DESCRIPTION";
-    private static final String DB_COLUMN_OUTDATE = "OUTDATE";
-    private static final String DB_COLUMN_OTC = "OTC";
-    private static final String DB_COLUMN_BARCODE = "BARCODE";
-    private static final String DB_COLUMN_USAGE = "USAGE";
-    private static final String DB_COLUMN_COMPANY = "COMPANY";
-    private static final String DB_COLUMN_YU = "YU";
-    private static final String DB_COLUMN_ELABEL = "ELABEL";
-    private static final String DB_COLUMN_LOVE = "LOVE";
-    private static String[] columns = new String[]{};
+    private static final String BASE_URI_MEDICINE = "dataability:///com.daqin.medicinegod.data.MedicineDataAbility";
+    private static final String DATA_PATH_MEDICINE = "/medicine";
+    private static final String DB_COLUMN_MEDICINE_KEYID = "KEYID";
+    private static final String DB_COLUMN_MEDICINE_NAME = "NAME";
+    private static final String DB_COLUMN_MEDICINE_IMAGE = "IMAGE";
+    private static final String DB_COLUMN_MEDICINE_DESCRIPTION = "DESCRIPTION";
+    private static final String DB_COLUMN_MEDICINE_OUTDATE = "OUTDATE";
+    private static final String DB_COLUMN_MEDICINE_OTC = "OTC";
+    private static final String DB_COLUMN_MEDICINE_BARCODE = "BARCODE";
+    private static final String DB_COLUMN_MEDICINE_USAGE = "USAGE";
+    private static final String DB_COLUMN_MEDICINE_COMPANY = "COMPANY";
+    private static final String DB_COLUMN_MEDICINE_YU = "YU";
+    private static final String DB_COLUMN_MEDICINE_ELABEL = "ELABEL";
+    private static final String DB_COLUMN_MEDICINE_LOVE = "LOVE";
+    private static String[] columns_medicine = new String[]{};
 
+    private static final String BASE_URI_PERSON = "dataability:///com.daqin.medicinegod.data.PersonDataAbility";
+    private static final String DATA_PATH_PERSON = "/person";
+    private static final String DB_COLUMN_PERSON_ID = "ID";
+    private static final String DB_COLUMN_PERSON_LNAME = "LNAME";
+    private static final String DB_COLUMN_PERSON_SNAME = "SNAME";
+    private static final String DB_COLUMN_PERSON_PWD = "PWD";
+    private static final String DB_COLUMN_PERSON_HEAD = "HEAD";
+    private static final String DB_COLUMN_PERSON_FRIEND = "FRIEND";
+    private static final String DB_COLUMN_PERSON_PHONE = "PHONE";
+    private static final String DB_COLUMN_PERSON_MAIL = "MAIL";
+    private static final String DB_COLUMN_PERSON_RGTIME = "RGTIME";
+    private static final String DB_COLUMN_PERSON_ONLINE = "ONLINE";
+    private static final String DB_COLUMN_PERSON_HAS = "HAS";
+    private static final String DB_COLUMN_PERSON_VIP = "VIP";
+    private static final String DB_COLUMN_PERSON_VIPYU = "VIPYU";
+    private static String[] columns_person = new String[]{};
+
+    private static Map<String, Object> personData = new HashMap<>();
     /**
      * @param img 图片最终数据
      * @param imgbytes 图片待裁剪数据
@@ -567,6 +586,7 @@ public class MainAbilitySlice extends AbilitySlice {
     public void onStart(Intent intent) {
         super.onStart(intent);
         super.setUIContent(ResourceTable.Layout_ability_main);
+        this.getWindow().setInputPanelDisplayType(WindowManager.LayoutConfig.INPUT_ADJUST_RESIZE);
         int isFirstStart = util.PreferenceUtils.getInt(getContext(),"isFirstStart");
         int isLogin = util.PreferenceUtils.getInt(getContext(),"isLogin");
         if (isFirstStart==0){
@@ -593,27 +613,42 @@ public class MainAbilitySlice extends AbilitySlice {
             intentSearch.setOperation(operation);    // 将operation存入到intent中
             startAbility(intentSearch);    // 实现Ability跳转
         }
-        columns = new String[]{
-                DB_COLUMN_KEYID,
-                DB_COLUMN_NAME,
-                DB_COLUMN_IMAGE,
-                DB_COLUMN_DESCRIPTION,
-                DB_COLUMN_OUTDATE,
-                DB_COLUMN_OTC,
-                DB_COLUMN_BARCODE,
-                DB_COLUMN_USAGE,
-                DB_COLUMN_COMPANY,
-                DB_COLUMN_YU,
-                DB_COLUMN_ELABEL,
-                DB_COLUMN_LOVE
+        columns_medicine = new String[]{
+                DB_COLUMN_MEDICINE_KEYID,
+                DB_COLUMN_MEDICINE_NAME,
+                DB_COLUMN_MEDICINE_IMAGE,
+                DB_COLUMN_MEDICINE_DESCRIPTION,
+                DB_COLUMN_MEDICINE_OUTDATE,
+                DB_COLUMN_MEDICINE_OTC,
+                DB_COLUMN_MEDICINE_BARCODE,
+                DB_COLUMN_MEDICINE_USAGE,
+                DB_COLUMN_MEDICINE_COMPANY,
+                DB_COLUMN_MEDICINE_YU,
+                DB_COLUMN_MEDICINE_ELABEL,
+                DB_COLUMN_MEDICINE_LOVE
+        };
+        columns_person = new String[]{
+                DB_COLUMN_PERSON_ID,
+                DB_COLUMN_PERSON_LNAME,
+                DB_COLUMN_PERSON_SNAME,
+                DB_COLUMN_PERSON_PWD ,
+                DB_COLUMN_PERSON_HEAD ,
+                DB_COLUMN_PERSON_FRIEND ,
+                DB_COLUMN_PERSON_PHONE ,
+                DB_COLUMN_PERSON_MAIL ,
+                DB_COLUMN_PERSON_RGTIME ,
+                DB_COLUMN_PERSON_ONLINE,
+                DB_COLUMN_PERSON_HAS ,
+                DB_COLUMN_PERSON_VIP ,
+                DB_COLUMN_PERSON_VIPYU
         };
         databaseHelper = DataAbilityHelper.creator(this);
         style = util.PreferenceUtils.getInt(getContext(),"style");
+        util.PreferenceUtils.putInt(getContext(),"isFirstStart",1);
         cont = getContext();
         imageSaver = new ImageSaver();
         imageSaver.setInstance();
         query();
-        util.PreferenceUtils.putString(getContext(), "editok", "none");
         intPageStart();
         initHomepageListContainer();
 
@@ -993,10 +1028,10 @@ public class MainAbilitySlice extends AbilitySlice {
 
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.beginsWith(DB_COLUMN_KEYID,"M-");
+        predicates.beginsWith(DB_COLUMN_MEDICINE_KEYID,"M-");
         try {
-            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
-                    columns, predicates);
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE),
+                    columns_medicine, predicates);
             if (resultSet == null || resultSet.getRowCount() == 0) {
                 HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
                 return null;
@@ -1005,18 +1040,18 @@ public class MainAbilitySlice extends AbilitySlice {
             do {
                 Map<String, Object> map = new HashMap<>();
 //            Map<String, Object> map = new HashMap<String, Object>();
-                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
-                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
-                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
-                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
-                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
-                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
-                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
-                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
-                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
-                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
+                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_KEYID));
+                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_NAME));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_IMAGE));
+                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DESCRIPTION));
+                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OUTDATE));
+                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OTC));
+                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_BARCODE));
+                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_USAGE));
+                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_COMPANY));
+                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
+                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1086,8 +1121,8 @@ public class MainAbilitySlice extends AbilitySlice {
         }
 
         try {
-            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
-                    columns, predicates);
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE),
+                    columns_medicine, predicates);
             if (resultSet == null || resultSet.getRowCount() == 0) {
                 HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
                 return null;
@@ -1096,18 +1131,18 @@ public class MainAbilitySlice extends AbilitySlice {
             do {
                 Map<String, Object> map = new HashMap<>();
 //            Map<String, Object> map = new HashMap<String, Object>();
-                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
-                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
-                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
-                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
-                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
-                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
-                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
-                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
-                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
-                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
+                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_KEYID));
+                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_NAME));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_IMAGE));
+                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DESCRIPTION));
+                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OUTDATE));
+                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OTC));
+                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_BARCODE));
+                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_USAGE));
+                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_COMPANY));
+                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
+                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
 
                 map.put("keyid", keyid);
                 map.put("img", image);
@@ -1141,8 +1176,8 @@ public class MainAbilitySlice extends AbilitySlice {
         DataAbilityPredicates predicates = new DataAbilityPredicates();
         predicates.contains(field, value);
         try {
-            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
-                    columns, predicates);
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE),
+                    columns_medicine, predicates);
             if (resultSet == null || resultSet.getRowCount() == 0) {
                 HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
                 return null;
@@ -1151,18 +1186,18 @@ public class MainAbilitySlice extends AbilitySlice {
             do {
                 Map<String, Object> map = new HashMap<>();
 //            Map<String, Object> map = new HashMap<String, Object>();
-                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
-                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
-                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
-                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
-                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
-                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
-                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
-                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
-                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
-                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
+                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_KEYID));
+                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_NAME));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_IMAGE));
+                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DESCRIPTION));
+                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OUTDATE));
+                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OTC));
+                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_BARCODE));
+                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_USAGE));
+                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_COMPANY));
+                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
+                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1192,10 +1227,10 @@ public class MainAbilitySlice extends AbilitySlice {
 
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.beginsWith(DB_COLUMN_KEYID,"M-");
+        predicates.beginsWith(DB_COLUMN_MEDICINE_KEYID,"M-");
         try {
-            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
-                    columns, predicates);
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE),
+                    columns_medicine, predicates);
             if (resultSet == null || resultSet.getRowCount() == 0) {
                 HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
                 return null;
@@ -1204,18 +1239,18 @@ public class MainAbilitySlice extends AbilitySlice {
             do {
                 Map<String, Object> map = new HashMap<>();
 //            Map<String, Object> map = new HashMap<String, Object>();
-                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
-                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
-                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
-                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
-                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
-                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
-                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
-                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
-                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
-                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
+                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_KEYID));
+                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_NAME));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_IMAGE));
+                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DESCRIPTION));
+                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OUTDATE));
+                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OTC));
+                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_BARCODE));
+                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_USAGE));
+                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_COMPANY));
+                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
+                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1248,6 +1283,22 @@ public class MainAbilitySlice extends AbilitySlice {
         if (editdone.equals("ok")) {
             initHomepageListContainer();
             util.PreferenceUtils.putString(getContext(), "editok", "none");
+        }
+        String rgdone = util.PreferenceUtils.getString(getContext(), "rgok");
+        System.out.println("结果"+rgdone);
+        if (rgdone.equals("ok")) {
+            personData = queryPerson();
+            System.out.println("结果"+personData);
+            if(personData!=null&&!personData.toString().equals("{}")) {
+                util.PreferenceUtils.putInt(getContext(),"isFirstStart",1);
+                util.PreferenceUtils.putInt(getContext(),"isLogin",1);
+                byte[] headimg = (byte[]) personData.get(DB_COLUMN_PERSON_HEAD);
+                img_thing_head.setPixelMap(util.byte2PixelMap(headimg));
+                util.PreferenceUtils.putString(getContext(), "rgok", "none");
+            }else{
+
+            }
+
         }
     }
 
@@ -1339,11 +1390,11 @@ public class MainAbilitySlice extends AbilitySlice {
 
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.beginsWith(DB_COLUMN_OUTDATE,"M-");
+        predicates.beginsWith(DB_COLUMN_MEDICINE_OUTDATE,"M-");
         int count = 0;
         try {
-            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
-                    columns, predicates);
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE),
+                    columns_medicine, predicates);
             if (resultSet == null || resultSet.getRowCount() == 0) {
                 HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
                 return 0;
@@ -1351,18 +1402,18 @@ public class MainAbilitySlice extends AbilitySlice {
             resultSet.goToFirstRow();
             do {
                 count++;
-                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
-                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
-                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
-                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
-                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
-                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
-                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
-                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
-                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
-                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
+                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_KEYID));
+                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_NAME));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_IMAGE));
+                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DESCRIPTION));
+                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OUTDATE));
+                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OTC));
+                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_BARCODE));
+                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_USAGE));
+                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_COMPANY));
+                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
+                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel+"love"+love);
             } while (resultSet.goToNextRow());
@@ -1376,12 +1427,12 @@ public class MainAbilitySlice extends AbilitySlice {
     public void query() {
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-//        predicates.between(DB_COLUMN_KEYID, lowKey, highKey);
-        predicates.beginsWith(DB_COLUMN_KEYID,"M-");
+//        predicates.between(DB_COLUMN_MEDICINE_KEYID, lowKey, highKey);
+        predicates.beginsWith(DB_COLUMN_MEDICINE_KEYID,"M-");
         int count = 0;
         try {
-            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
-                    columns, predicates);
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE),
+                    columns_medicine, predicates);
             if (resultSet == null || resultSet.getRowCount() == 0) {
                 HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
                 return;
@@ -1389,18 +1440,18 @@ public class MainAbilitySlice extends AbilitySlice {
             resultSet.goToFirstRow();
             do {
                 count++;
-                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
-                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
-                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
-                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
-                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
-                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
-                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
-                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
-                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
-                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
+                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_KEYID));
+                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_NAME));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_IMAGE));
+                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DESCRIPTION));
+                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OUTDATE));
+                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OTC));
+                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_BARCODE));
+                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_USAGE));
+                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_COMPANY));
+                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
+                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
 
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel+"love"+love);
@@ -1417,28 +1468,28 @@ public class MainAbilitySlice extends AbilitySlice {
 
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.equalTo(DB_COLUMN_KEYID, idkey);
+        predicates.equalTo(DB_COLUMN_MEDICINE_KEYID, idkey);
         try {
-            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
-                    columns, predicates);
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE),
+                    columns_medicine, predicates);
             if (resultSet == null || resultSet.getRowCount() == 0) {
                 HiLog.info(LABEL_LOG, "query: resultSet is null or no result found");
                 return null;
             }
             resultSet.goToFirstRow();
             do {
-                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_KEYID));
-                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_NAME));
-                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_IMAGE));
-                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_DESCRIPTION));
-                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_OUTDATE));
-                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_OTC));
-                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_BARCODE));
-                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_USAGE));
-                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_COMPANY));
-                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_YU));
-                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_ELABEL));
-                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_LOVE));
+                String keyid = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_KEYID));
+                String name = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_NAME));
+                byte[] image = resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_IMAGE));
+                String description = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DESCRIPTION));
+                long outdate = resultSet.getLong(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OUTDATE));
+                String otc = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_OTC));
+                String barcode = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_BARCODE));
+                String usage = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_USAGE));
+                String company = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_COMPANY));
+                String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
+                String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
+                String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1465,11 +1516,11 @@ public class MainAbilitySlice extends AbilitySlice {
 
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.equalTo(DB_COLUMN_KEYID, keyid);
+        predicates.equalTo(DB_COLUMN_MEDICINE_KEYID, keyid);
         boolean isPresent = true;
         try {
-            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
-                    columns, predicates);
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE),
+                    columns_medicine, predicates);
             isPresent = resultSet != null && resultSet.getRowCount() != 0;
         } catch (DataAbilityRemoteException | IllegalStateException ignored) {
         }
@@ -1482,20 +1533,20 @@ public class MainAbilitySlice extends AbilitySlice {
                        String barcode, String usage, String company,
                        String yu, String elabel) {
         ValuesBucket valuesBucket = new ValuesBucket();
-        valuesBucket.putString(DB_COLUMN_KEYID, keyid);
-        valuesBucket.putString(DB_COLUMN_NAME, name);
-        valuesBucket.putByteArray(DB_COLUMN_IMAGE, image);
-        valuesBucket.putString(DB_COLUMN_DESCRIPTION, description);
-        valuesBucket.putLong(DB_COLUMN_OUTDATE, util.getDateFromString(outdate));
-        valuesBucket.putString(DB_COLUMN_OTC, otc);
-        valuesBucket.putString(DB_COLUMN_BARCODE, barcode);
-        valuesBucket.putString(DB_COLUMN_USAGE, usage);
-        valuesBucket.putString(DB_COLUMN_COMPANY, company);
-        valuesBucket.putString(DB_COLUMN_YU, yu);
-        valuesBucket.putString(DB_COLUMN_ELABEL, elabel);
-        valuesBucket.putString(DB_COLUMN_LOVE, "no");
+        valuesBucket.putString(DB_COLUMN_MEDICINE_KEYID, keyid);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_NAME, name);
+        valuesBucket.putByteArray(DB_COLUMN_MEDICINE_IMAGE, image);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_DESCRIPTION, description);
+        valuesBucket.putLong(DB_COLUMN_MEDICINE_OUTDATE, util.getDateFromString(outdate));
+        valuesBucket.putString(DB_COLUMN_MEDICINE_OTC, otc);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_BARCODE, barcode);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_USAGE, usage);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_COMPANY, company);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_YU, yu);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_ELABEL, elabel);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_LOVE, "no");
         try {
-            if (databaseHelper.insert(Uri.parse(BASE_URI + DATA_PATH), valuesBucket) != -1) {
+            if (databaseHelper.insert(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE), valuesBucket) != -1) {
                 HiLog.info(LABEL_LOG, "insert successful");
                 //消息弹框
                 new XPopup.Builder(getContext())
@@ -1526,21 +1577,21 @@ public class MainAbilitySlice extends AbilitySlice {
                               String barcode, String usage, String company,
                               String yu, String elabel) {
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.equalTo(DB_COLUMN_KEYID, keyid);
+        predicates.equalTo(DB_COLUMN_MEDICINE_KEYID, keyid);
 
         ValuesBucket valuesBucket = new ValuesBucket();
-        valuesBucket.putString(DB_COLUMN_NAME, name);
-        valuesBucket.putByteArray(DB_COLUMN_IMAGE, image);
-        valuesBucket.putString(DB_COLUMN_DESCRIPTION, description);
-        valuesBucket.putLong(DB_COLUMN_OUTDATE, util.getDateFromString(outdate));
-        valuesBucket.putString(DB_COLUMN_OTC, otc);
-        valuesBucket.putString(DB_COLUMN_BARCODE, barcode);
-        valuesBucket.putString(DB_COLUMN_USAGE, usage);
-        valuesBucket.putString(DB_COLUMN_COMPANY, company);
-        valuesBucket.putString(DB_COLUMN_YU, yu);
-        valuesBucket.putString(DB_COLUMN_ELABEL, elabel);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_NAME, name);
+        valuesBucket.putByteArray(DB_COLUMN_MEDICINE_IMAGE, image);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_DESCRIPTION, description);
+        valuesBucket.putLong(DB_COLUMN_MEDICINE_OUTDATE, util.getDateFromString(outdate));
+        valuesBucket.putString(DB_COLUMN_MEDICINE_OTC, otc);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_BARCODE, barcode);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_USAGE, usage);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_COMPANY, company);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_YU, yu);
+        valuesBucket.putString(DB_COLUMN_MEDICINE_ELABEL, elabel);
         try {
-            if (databaseHelper.update(Uri.parse(BASE_URI + DATA_PATH), valuesBucket, predicates) != -1) {
+            if (databaseHelper.update(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE), valuesBucket, predicates) != -1) {
                 HiLog.info(LABEL_LOG, "update successful");
                 ToastUtil.showToast(cont, "修改成功  ");
             }
@@ -1553,9 +1604,9 @@ public class MainAbilitySlice extends AbilitySlice {
     //删除
     public static void delete(String keyid) {
         DataAbilityPredicates predicates = new DataAbilityPredicates()
-                .equalTo(DB_COLUMN_KEYID, keyid);
+                .equalTo(DB_COLUMN_MEDICINE_KEYID, keyid);
         try {
-            if (databaseHelper.delete(Uri.parse(BASE_URI + DATA_PATH), predicates) != -1) {
+            if (databaseHelper.delete(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE), predicates) != -1) {
                 HiLog.info(LABEL_LOG, "delete successful");
                 ToastUtil.showToast(cont, "删除成功  ");
             }
@@ -1564,7 +1615,43 @@ public class MainAbilitySlice extends AbilitySlice {
             ToastUtil.showToast(cont, "删除失败，请重试  ");
         }
     }
+    public static Map<String, Object> queryPerson() {
+        // 构造查询条件
+        Map<String, Object> map = new HashMap<>();
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+//        predicates.between(DB_COLUMN_MEDICINE_KEYID, lowKey, highKey);
+        predicates.beginsWith(DB_COLUMN_PERSON_ID, "P-");
+        try {
+            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_PERSON + DATA_PATH_PERSON),
+                    columns_person, predicates);
+            if (resultSet == null || resultSet.getRowCount() == 0) {
+                System.out.println("query:resultSet is null or no result found");
+                return null;
+            } else {
+                resultSet.goToFirstRow();
+                    map.put(DB_COLUMN_PERSON_ID, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_ID)));
+                    map.put(DB_COLUMN_PERSON_LNAME, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_LNAME)));
+                    map.put(DB_COLUMN_PERSON_HEAD, resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_HEAD)));
+                    map.put(DB_COLUMN_PERSON_SNAME, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_SNAME)));
+                    map.put(DB_COLUMN_PERSON_PWD, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_PWD)));
+                    map.put(DB_COLUMN_PERSON_PHONE, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_PHONE)));
+                    map.put(DB_COLUMN_PERSON_MAIL, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_MAIL)));
+                    map.put(DB_COLUMN_PERSON_FRIEND, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_FRIEND)));
+                    map.put(DB_COLUMN_PERSON_RGTIME, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_RGTIME)));
+                    map.put(DB_COLUMN_PERSON_ONLINE, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_ONLINE)));
+                    map.put(DB_COLUMN_PERSON_HAS, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_HAS)));
+                    map.put(DB_COLUMN_PERSON_VIP, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_VIP)));
+                    map.put(DB_COLUMN_PERSON_VIPYU, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_VIPYU)));
+                    System.out.println("map"+map);
 
+                return map;
+
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            System.out.println("query: dataRemote exception | illegalStateException");
+        }
+        return map;
+    }
     public static class XPopupListener extends SimpleCallback {
         @Override
         public void onCreated(BasePopupView pv) {

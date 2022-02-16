@@ -17,12 +17,13 @@
                     ohos:id="$+id:things_image_head"
                     ohos:height="45vp"
                     ohos:width="45vp"
-                    ohos:scale_mode="stretch"
-                    ohos:image_src="$media:head"
+                    ohos:scale_mode="zoom_center"
+                    ohos:image_src="$media:homepage_head_default"
                     ohos:top_margin="15vp"
                     ohos:start_margin="20vp"
                     ohos:end_margin="5vp"
                     ohos:bottom_margin="5vp"
+                    ohos:background_element="$color:white"
                     />
                 <DirectionalLayout
                     ohos:height="match_parent"

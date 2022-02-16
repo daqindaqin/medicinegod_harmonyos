@@ -35,7 +35,7 @@ import java.util.*;
 
 public class DetailAbilitySlice extends AbilitySlice {
     private static DataAbilityHelper databaseHelper;
-    private static final String BASE_URI = "dataability:///com.daqin.medicinegod.MedicineDataAbility";
+    private static final String BASE_URI = "dataability:///com.daqin.medicinegod.data.MedicineDataAbility";
     private static final String DATA_PATH = "/medicine";
     private static final String DB_COLUMN_KEYID = "KEYID";
     private static final String DB_COLUMN_NAME = "NAME";

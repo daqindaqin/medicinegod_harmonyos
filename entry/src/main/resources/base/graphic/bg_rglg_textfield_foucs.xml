@@ -7,5 +7,5 @@
         ohos:color="$color:black_light2"/>
     <stroke
         ohos:width="1vp"
-        ohos:color="$color:blue"/>
+        ohos:color="$color:blue_clear"/>
 </shape>

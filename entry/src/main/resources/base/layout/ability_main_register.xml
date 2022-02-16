@@ -6,20 +6,62 @@
     ohos:width="match_parent"
     ohos:alignment="bottom|horizontal_center"
     ohos:background_element="$color:blue_clear">
-
-
+<DirectionalLayout
+    ohos:height="match_content"
+    ohos:width="match_parent"
+    ohos:orientation="horizontal"
+    ohos:alignment="left|vertical_center">
+    <DirectionalLayout
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:orientation="vertical"
+        ohos:alignment="left|vertical_center">
+        <Text
+            ohos:id="$+id:rg_back"
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:bottom_margin="10vp"
+            ohos:end_margin="20vp"
+            ohos:start_margin="20vp"
+            ohos:text="←我暂时不想注册/登录"
+            ohos:text_alignment="left|vertical_center"
+            ohos:text_color="$color:white"
+            ohos:text_size="16vp"
+            ohos:text_weight="300"
+            ohos:top_margin="20vp"/>
         <Text
             ohos:height="match_content"
-            ohos:width="match_parent"
+            ohos:width="match_content"
             ohos:bottom_margin="10vp"
             ohos:end_margin="20vp"
             ohos:start_margin="20vp"
             ohos:text="注册新用户"
             ohos:text_alignment="left|vertical_center"
             ohos:text_color="$color:white"
-            ohos:text_size="32vp"
+            ohos:text_size="34vp"
             ohos:text_weight="700"
-            ohos:top_margin="50vp"/>
+            ohos:top_margin="5vp"/>
+    </DirectionalLayout>
+
+    <DirectionalLayout
+        ohos:height="match_content"
+        ohos:width="match_parent"
+        ohos:alignment="vertical_center|right"
+        ohos:start_padding="0vp"
+        ohos:end_padding="20vp"
+        ohos:bottom_padding="10vp">
+        <Image
+            ohos:id="$+id:rg_head"
+            ohos:height="80vp"
+            ohos:width="80vp"
+            ohos:image_src="$media:homepage_head_default"
+            ohos:scale_mode="zoom_center"
+            ohos:top_margin="30vp"/>
+    </DirectionalLayout>
+
+
+</DirectionalLayout>
+
 
         <Text
             ohos:id="$+id:rg_goto"
@@ -36,6 +78,7 @@
             ohos:top_margin="20vp"/>
 
         <ScrollView
+            ohos:id="$+id:rg_srcview"
             ohos:height="match_parent"
             ohos:width="match_parent"
             ohos:background_element="$graphic:bg_register">
@@ -43,7 +86,9 @@
             <DirectionalLayout
                 ohos:height="match_content"
                 ohos:width="match_parent"
-                ohos:orientation="vertical">
+                ohos:orientation="vertical"
+                ohos:alignment="horizontal_center|vertical_center">
+
                 <!--登录名-->
                 <DirectionalLayout
                     ohos:height="match_content"
@@ -83,6 +128,7 @@
                     ohos:end_margin="30vp"
                     ohos:end_padding="10vp"
                     ohos:hint="6-12个字母或数字组成"
+                    ohos:input_enter_key_type="enter_key_type_next"
                     ohos:hint_color="$color:black_line"
                     ohos:max_text_lines="1"
                     ohos:start_margin="30vp"
@@ -110,18 +156,32 @@
                     />
 
                 <!--密码-->
-                <Text
+                <DirectionalLayout
                     ohos:height="match_content"
                     ohos:width="match_parent"
-                    ohos:bottom_margin="5vp"
-                    ohos:end_margin="5vp"
-                    ohos:start_margin="30vp"
-                    ohos:text="密码"
-                    ohos:text_alignment="left|vertical_center"
-                    ohos:text_color="$color:black_clear"
-                    ohos:text_size="24vp"
-                    ohos:text_weight="700"
-                    ohos:top_margin="20vp"/>
+                    ohos:orientation="horizontal"
+                    ohos:alignment="vertical_center">
+                    <Text
+                        ohos:height="match_content"
+                        ohos:width="match_content"
+                        ohos:bottom_margin="10vp"
+                        ohos:end_margin="5vp"
+                        ohos:start_margin="30vp"
+                        ohos:text="密码"
+                        ohos:text_alignment="left|vertical_center"
+                        ohos:text_color="$color:black_clear"
+                        ohos:text_size="24vp"
+                        ohos:text_weight="700"
+                        ohos:top_margin="20vp"/>
+                    <Image
+                        ohos:id="$+id:rg_showhidepwd"
+                        ohos:height="30vp"
+                        ohos:width="30vp"
+                        ohos:top_margin="10vp"
+                        ohos:image_src="$media:rg_hidepwd"
+                        ohos:scale_mode="zoom_center"/>
+                </DirectionalLayout>
+
 
                 <TextField
                     ohos:id="$+id:rg_userpwd"
@@ -132,7 +192,8 @@
                     ohos:bottom_padding="10vp"
                     ohos:end_margin="30vp"
                     ohos:end_padding="10vp"
-                    ohos:hint="6-12个字母数字_ @ . 组成"
+                    ohos:hint="6-16个字母数字_ @ . 组成"
+                    ohos:input_enter_key_type="enter_key_type_next"
                     ohos:hint_color="$color:black_line"
                     ohos:max_text_lines="1"
                     ohos:start_margin="30vp"
@@ -177,7 +238,7 @@
 
                 <TextField
                     ohos:id="$+id:rg_usermail"
-
+                    ohos:input_enter_key_type="enter_key_type_next"
                     ohos:height="match_content"
                     ohos:width="match_parent"
                     ohos:background_element="$graphic:bg_rglg_textfield"
@@ -191,7 +252,6 @@
                     ohos:start_margin="30vp"
                     ohos:start_padding="15vp"
                     ohos:text_color="$color:black"
-                    ohos:text_input_type="pattern_text_email_address"
                     ohos:text_size="18vp"
                     ohos:text_weight="500"
                     ohos:top_margin="5vp"
@@ -225,6 +285,7 @@
                         ohos:height="match_content"
                         ohos:width="150vp"
                         ohos:background_element="$graphic:bg_rglg_textfield"
+                        ohos:input_enter_key_type="enter_key_type_next"
                         ohos:bottom_margin="5vp"
                         ohos:bottom_padding="5vp"
                         ohos:end_margin="5vp"
@@ -245,7 +306,6 @@
 
                     <Text
                         ohos:id="$+id:rg_usermail_sendcode"
-
                         ohos:height="match_content"
                         ohos:width="140vp"
                         ohos:background_element="$graphic:bg_rglg_textfield"
@@ -295,7 +355,7 @@
 
                 <TextField
                     ohos:id="$+id:rg_userphone"
-
+                    ohos:input_enter_key_type="enter_key_type_done"
                     ohos:height="match_content"
                     ohos:width="match_parent"
                     ohos:background_element="$graphic:bg_rglg_textfield"
@@ -310,7 +370,7 @@
                     ohos:start_margin="30vp"
                     ohos:start_padding="15vp"
                     ohos:text_color="$color:black"
-                    ohos:text_input_type="pattern_phone"
+                    ohos:text_input_type="pattern_number"
                     ohos:text_size="18vp"
                     ohos:text_weight="500"
                     ohos:top_margin="5vp"

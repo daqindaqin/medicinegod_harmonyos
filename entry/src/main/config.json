@@ -50,13 +50,23 @@
       },
       {
         "permissions": [
-          "com.huawei.codelab.DataAbilityShellProvider.PROVIDER"
+          "com.daqin.medicinegod.DataAbilityShellProvider.PROVIDER"
         ],
-        "name": "com.daqin.medicinegod.MedicineDataAbility",
+        "name": "com.daqin.medicinegod.data.MedicineDataAbility",
         "icon": "$media:icon",
-        "description": "数据库",
+        "description": "药品数据库",
         "type": "data",
-        "uri": "dataability://com.daqin.medicinegod.MedicineDataAbility"
+        "uri": "dataability://com.daqin.medicinegod.data.MedicineDataAbility"
+      },
+      {
+        "permissions": [
+          "com.daqin.medicinegod.DataAbilityShellProvider.PROVIDER"
+        ],
+        "icon": "$media:icon",
+        "name": "com.daqin.medicinegod.data.PersonDataAbility",
+        "description": "个人数据库",
+        "type": "data",
+        "uri": "dataability://com.daqin.medicinegod.data.PersonDataAbility"
       },
       {
         "icon": "$media:icon",
@@ -97,7 +107,7 @@
       {
         "icon": "$media:icon",
         "name": "com.daqin.medicinegod.RgLgAbility",
-        "description": "",
+        "description": "登录注册页面",
         "type": "page"
       }
     ],
@@ -110,6 +120,9 @@
       ]
     },
     "reqPermissions": [
+      {
+        "name": "com.daqin.medicinegod.DataAbilityShellProvider.PROVIDER"
+      },
       {
         "name": "ohos.permission.READ_MEDIA",
         "reason": "选择药品图片以供上传使用",
