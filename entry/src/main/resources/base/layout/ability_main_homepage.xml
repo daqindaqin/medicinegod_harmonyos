@@ -6,108 +6,110 @@
     ohos:alignment="top"
     ohos:background_element="$color:white">
 
+        <!--头部-->
+
         <DirectionalLayout
-            ohos:id="$+id:things_head_of_top"
-            ohos:height="70vp"
+            ohos:id="$+id:hp_head_of_top"
+            ohos:height="match_content"
             ohos:width="match_parent"
             ohos:alignment="left|vertical_center"
-            ohos:orientation="horizontal"
-            >
-                <Image
-                    ohos:id="$+id:things_image_head"
-                    ohos:height="45vp"
-                    ohos:width="45vp"
-                    ohos:scale_mode="zoom_center"
-                    ohos:image_src="$media:homepage_head_default"
-                    ohos:top_margin="15vp"
-                    ohos:start_margin="20vp"
-                    ohos:end_margin="5vp"
-                    ohos:bottom_margin="5vp"
-                    ohos:background_element="$color:white"
-                    />
+            ohos:orientation="horizontal">
                 <DirectionalLayout
-                    ohos:height="match_parent"
-                    ohos:width="match_parent"
-                    ohos:orientation="horizontal"
-                    ohos:alignment="vertical_center|left">
-                        <DirectionalLayout
+                    ohos:height="match_content"
+                    ohos:width="match_content"
+                    ohos:orientation="vertical"
+                    ohos:alignment="left|vertical_center">
+                        <Text
+                            ohos:id="$+id:hp_showtitle"
                             ohos:height="match_content"
                             ohos:width="match_content"
-                            ohos:orientation="vertical"
-                            ohos:alignment="left|vertical_center"
-                            >
-                                <!--名字定义最多8个中文字符/16英文-->
-                                <Text
-                                    ohos:id="$+id:things_title_in_user"
-                                    ohos:height="match_content"
-                                    ohos:width="match_content"
-                                    ohos:text_size="18fp"
-                                    ohos:text_alignment="left|vertical_center"
-                                    ohos:text_color="$color:black_clear"
-                                    ohos:text_weight="700"
-                                    ohos:text="用户名字要八个字"
-                                    ohos:scrollable="true"
-                                    ohos:top_margin="15vp"
-                                    ohos:start_margin="5vp"
-                                    ohos:end_margin="5vp"
-                                    ohos:bottom_margin="5vp"
-                                    ohos:max_text_lines="1"
-                                    ohos:max_width="140vp"
-                                    />
-                                <Text
-                                    ohos:id="$+id:online_status"
-                                    ohos:height="match_content"
-                                    ohos:width="match_content"
-                                    ohos:text_size="14fp"
-                                    ohos:text_alignment="left|vertical_center"
-                                    ohos:text_color="$color:red_clear"
-                                    ohos:text_weight="500"
-                                    ohos:text="● 未启用云端"
-                                    ohos:start_margin="5vp"/>
-                        </DirectionalLayout>
-                        <DirectionalLayout
+                            ohos:text_size="30vp"
+                            ohos:text_alignment="left|vertical_center"
+                            ohos:text_color="$color:black_clear"
+                            ohos:text_weight="700"
+                            ohos:multiple_lines="true"
+                            ohos:max_text_lines="2"
+                            ohos:text="欢迎回来，"
+                            ohos:top_margin="30vp"
+                            ohos:start_margin="20vp"
+                            ohos:end_margin="5vp"
+                            ohos:bottom_margin="5vp"
+                            />
+                        <Text
+                            ohos:id="$+id:hp_showtitle_username"
                             ohos:height="match_content"
-                            ohos:width="match_parent"
-                            ohos:alignment="right|vertical_center"
-                            >
-                                <Text
-                                    ohos:id="$+id:things_textField_search"
-                                    ohos:height="40fp"
-                                    ohos:width="match_parent"
-                                    ohos:min_width="150vp"
-                                    ohos:text_size="14fp"
-                                    ohos:text_alignment="left"
-                                    ohos:text_color="#000000"
-                                    ohos:layout_alignment="left|vertical_center"
-                                    ohos:background_element="$graphic:bg_textfield_search"
-                                    ohos:element_right="$media:search"
-                                    ohos:element_padding="5vp"
-                                    ohos:padding="10vp"
-                                    ohos:top_margin="20vp"
-                                    ohos:bottom_margin="20vp"
-                                    ohos:start_margin="10vp"
-                                    ohos:end_margin="20vp"/>
-                        </DirectionalLayout>
+                            ohos:width="match_content"
+                            ohos:text_size="24vp"
+                            ohos:text_alignment="left|vertical_center"
+                            ohos:text_color="$color:black_clear"
+                            ohos:text_weight="700"
+                            ohos:multiple_lines="true"
+                            ohos:max_text_lines="2"
+                            ohos:text="用户名最多八个字"
+                            ohos:top_margin="5vp"
+                            ohos:start_margin="20vp"
+                            ohos:end_margin="5vp"
+                            ohos:bottom_margin="20vp"
+                            />
                 </DirectionalLayout>
-
-
-
-
+                <DirectionalLayout
+                        ohos:height="match_content"
+                        ohos:width="match_parent"
+                        ohos:orientation="vertical"
+                        ohos:start_padding="5vp"
+                        ohos:end_padding="15vp"
+                        ohos:alignment="right|vertical_center">
+                        <Image
+                            ohos:id="$+id:hp_image_head"
+                            ohos:height="60vp"
+                            ohos:width="60vp"
+                            ohos:scale_mode="zoom_center"
+                            ohos:image_src="$media:homepage_head_default"
+                            ohos:top_margin="10vp"
+                            ohos:start_margin="5vp"
+                            ohos:end_margin="5vp"
+                            ohos:bottom_margin="5vp"
+                            ohos:background_element="$color:white"
+                            />
+                </DirectionalLayout>
         </DirectionalLayout>
 
 
+
+
+        <!--伪搜索框-->
+        <Text
+            ohos:id="$+id:things_textField_search"
+            ohos:height="40fp"
+            ohos:width="match_parent"
+            ohos:min_width="150vp"
+            ohos:text_size="14fp"
+            ohos:text_alignment="left"
+            ohos:text_color="$color:black_clear"
+            ohos:text="试试搜索点什么吧"
+            ohos:background_element="$graphic:bg_textfield_search"
+            ohos:below="$id:hp_head_of_top"
+            ohos:element_right="$media:ic_search"
+            ohos:element_padding="5vp"
+            ohos:padding="10vp"
+            ohos:top_margin="10vp"
+            ohos:bottom_margin="5vp"
+            ohos:start_margin="20vp"
+            ohos:end_margin="20vp"/>
+
         <DirectionalLayout
+            ohos:id="$+id:hp_dataLayout"
             ohos:height="match_parent"
             ohos:width="match_parent"
             ohos:orientation="vertical"
             ohos:margin="5vp"
-            ohos:below="$id:things_head_of_top">
+            ohos:below="$id:things_textField_search">
                 <DirectionalLayout
                     ohos:height="match_content"
                     ohos:width="match_parent"
                     ohos:orientation="horizontal"
                     ohos:alignment="vertical_center|left"
-                    ohos:top_margin="10vp"
+                    ohos:top_margin="5vp"
                     ohos:bottom_margin="5vp">
                         <Text
                             ohos:height="match_content"
@@ -144,7 +146,7 @@
                     ohos:visibility="visible"
                     />
                 <ListContainer
-                    ohos:id="$+id:things_list"
+                    ohos:id="$+id:hp_list_data"
                     ohos:orientation="horizontal"
                     ohos:height="match_parent"
                     ohos:width="match_parent"
@@ -157,6 +159,10 @@
 
                     />
         </DirectionalLayout>
+
+
+
+
 
 
 

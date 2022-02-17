@@ -19,7 +19,7 @@
     "name": ".MyApplication",
     "mainAbility": "com.daqin.medicinegod.MainAbility",
     "deviceType": [
-      "phone"
+      "phone","tablet"
     ],
     "distro": {
       "deliveryWithInstall": true,
@@ -136,6 +136,15 @@
       {
         "name": "android.permission.INTERNET",
         "reason": "上传图片、用户登录所用",
+        "usedScene": {
+          "ability": [
+            "com.daqin.medicinegod.MainAbility"
+          ],
+          "when": "always"
+        }
+      },{
+        "name": "android.permission.WRITE_EXTERNAL_STORAGE",
+        "reason": "测试",
         "usedScene": {
           "ability": [
             "com.daqin.medicinegod.MainAbility"

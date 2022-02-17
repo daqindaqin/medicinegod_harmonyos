@@ -106,6 +106,19 @@
                 ohos:scale_mode="center"
                 />
             <Text
+                ohos:id="$+id:add_imgdefault"
+                ohos:height="match_content"
+                ohos:width="match_content"
+                ohos:text_weight="500"
+                ohos:text="使用默认图片"
+                ohos:padding="10vp"
+                ohos:text_size="18vp"
+                ohos:text_color="$color:white"
+                ohos:below="$id:add_line1"
+                ohos:align_start="$+id:add_newImg"
+                ohos:margin="10vp"
+                ohos:background_element="$graphic:bg_add_imgutil"/>
+            <Text
                 ohos:id="$+id:add_imgcrop"
                 ohos:height="match_content"
                 ohos:width="match_content"

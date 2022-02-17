@@ -7,6 +7,7 @@ package com.daqin.medicinegod.slice;
  */
 
 import com.daqin.medicinegod.ResourceTable;
+import com.daqin.medicinegod.RgLgAbility;
 import com.daqin.medicinegod.provider.ChatListItemProvider;
 import com.daqin.medicinegod.provider.HomePageListItemProvider;
 import com.daqin.medicinegod.utils.imageControler.ImageSaver;
@@ -18,12 +19,14 @@ import com.lxj.xpopup.core.BasePopupView;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.SimpleCallback;
 import com.lxj.xpopup.util.ToastUtil;
+import com.sxu.shadowdrawable.ShadowDrawable;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.ability.DataAbilityHelper;
 import ohos.aafwk.ability.DataAbilityRemoteException;
 import ohos.aafwk.content.Intent;
 import ohos.aafwk.content.Operation;
 import ohos.agp.components.*;
+import ohos.agp.utils.Color;
 import ohos.agp.utils.LayoutAlignment;
 import ohos.agp.window.dialog.ToastDialog;
 import ohos.agp.window.service.WindowManager;
@@ -99,7 +102,7 @@ public class MainAbilitySlice extends AbilitySlice {
     byte[] img = null;
     private static byte[] imgbytes = null;
 
-    Image img_thing_head;
+    Image img_hp_head;
     Image btn_add_img;
     Button btn_add_clear_context;
     Button btn_add_import;
@@ -133,17 +136,22 @@ public class MainAbilitySlice extends AbilitySlice {
     Text t_add_elabel5;
     Text t_add_imgcrop;
     Text t_add_imgclaer;
+    Text t_add_imgdefault;
+
+
+    Text t_hp_title;
+    Text t_hp_title_usersname;
 
     ImageSaver imageSaver;
 
-
+    DirectionalLayout view_hp_head_of_top;
     Text[] add_elabelview;
     TextField[] add_tf_list;
 
 
     public void iniView() {
-        img_thing_head = (Image) findComponentById(ResourceTable.Id_things_image_head);
-        img_thing_head.setCornerRadius(100);
+        img_hp_head = (Image) findComponentById(ResourceTable.Id_hp_image_head);
+        img_hp_head.setCornerRadius(100);
         btn_add_clear_context = (Button) findComponentById(ResourceTable.Id_add_clear);
         btn_add_import =(Button)findComponentById(ResourceTable.Id_add_import);
         btn_add_otc_question = (Text) findComponentById(ResourceTable.Id_add_newOtc_question);
@@ -154,6 +162,8 @@ public class MainAbilitySlice extends AbilitySlice {
         btn_add_yu_title = (Text) findComponentById(ResourceTable.Id_add_newYu_title);
         btn_things_seach = (Text) findComponentById(ResourceTable.Id_things_textField_search);
         view_add = (ScrollView) findComponentById(ResourceTable.Id_add_scrollview);
+        view_hp_head_of_top=(DirectionalLayout)findComponentById(ResourceTable.Id_hp_head_of_top);
+        ShadowDrawable.setShadowDrawable(view_hp_head_of_top, Color.getIntColor("#FFFFFF"), 50,Color.getIntColor("#25000000"), 5, 0, 10);
         tf_add_name = (TextField) findComponentById(ResourceTable.Id_add_newName);
         tf_add_desp = (TextField) findComponentById(ResourceTable.Id_add_newDescription);
         tf_add_outdate_year = (Picker) findComponentById(ResourceTable.Id_add_newOutdate_year);
@@ -176,7 +186,10 @@ public class MainAbilitySlice extends AbilitySlice {
         t_add_elabel5 = (Text) findComponentById(ResourceTable.Id_add_addNewlabel_label5);
         t_add_imgcrop = (Text) findComponentById(ResourceTable.Id_add_imgcrop);
         t_add_imgclaer = (Text) findComponentById(ResourceTable.Id_add_imgclear);
+        t_add_imgdefault = (Text)findComponentById(ResourceTable.Id_add_imgdefault);
         btn_changestyle =(Text)findComponentById(ResourceTable.Id_changestyle);
+        t_hp_title =(Text)findComponentById(ResourceTable.Id_hp_showtitle);
+        t_hp_title_usersname =(Text)findComponentById(ResourceTable.Id_hp_showtitle_username);
 
         add_elabelview = new Text[]{t_add_elabel1, t_add_elabel2, t_add_elabel3, t_add_elabel4, t_add_elabel5};
         add_tf_list = new TextField[]{tf_add_name, tf_add_desp, tf_add_barcode, tf_add_usage_total, tf_add_usage_time, tf_add_usage_day, tf_add_company, tf_add_yu};
@@ -270,6 +283,8 @@ public class MainAbilitySlice extends AbilitySlice {
             public void onClick(Component component) {
                 if (imgbytes == null) {
                     ToastUtil.showToast(getContext(), "请先选择图片才能裁剪  ");
+                }else if (btn_add_img.getScaleMode()== Image.ScaleMode.CENTER){
+                    ToastUtil.showToast(getContext(), "默认图片无法裁剪  ");
                 } else {
                     Intent intent = new Intent();
                     Operation operation = new Intent.OperationBuilder()
@@ -287,12 +302,22 @@ public class MainAbilitySlice extends AbilitySlice {
 
             }
         });
+        //清除已有的图片
         t_add_imgclaer.setClickedListener(new Component.ClickedListener() {
             @Override
             public void onClick(Component component) {
                 imgbytes = null;
                 btn_add_img.setPixelMap(ResourceTable.Media_add_imgadd);
                 btn_add_img.setScaleMode(Image.ScaleMode.CENTER);
+            }
+        });
+        //设置默认图片
+        t_add_imgdefault.setClickedListener(new Component.ClickedListener() {
+            @Override
+            public void onClick(Component component) {
+                btn_add_img.setPixelMap(ResourceTable.Media_addpng_default);
+                btn_add_img.setScaleMode(Image.ScaleMode.CENTER);
+                imgbytes = util.pixelMap2byte(btn_add_img.getPixelMap());
             }
         });
         //添加图片的图片按钮
@@ -586,7 +611,7 @@ public class MainAbilitySlice extends AbilitySlice {
     public void onStart(Intent intent) {
         super.onStart(intent);
         super.setUIContent(ResourceTable.Layout_ability_main);
-        this.getWindow().setInputPanelDisplayType(WindowManager.LayoutConfig.INPUT_ADJUST_RESIZE);
+        this.getWindow().setInputPanelDisplayType(WindowManager.LayoutConfig.INPUT_ADJUST_PAN);
         int isFirstStart = util.PreferenceUtils.getInt(getContext(),"isFirstStart");
         int isLogin = util.PreferenceUtils.getInt(getContext(),"isLogin");
         if (isFirstStart==0){
@@ -613,6 +638,7 @@ public class MainAbilitySlice extends AbilitySlice {
             intentSearch.setOperation(operation);    // 将operation存入到intent中
             startAbility(intentSearch);    // 实现Ability跳转
         }
+        //一定要和库内列一模一样，否则异常
         columns_medicine = new String[]{
                 DB_COLUMN_MEDICINE_KEYID,
                 DB_COLUMN_MEDICINE_NAME,
@@ -627,6 +653,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 DB_COLUMN_MEDICINE_ELABEL,
                 DB_COLUMN_MEDICINE_LOVE
         };
+        //一定要和库内列一模一样，否则异常
         columns_person = new String[]{
                 DB_COLUMN_PERSON_ID,
                 DB_COLUMN_PERSON_LNAME,
@@ -651,19 +678,19 @@ public class MainAbilitySlice extends AbilitySlice {
         query();
         intPageStart();
         initHomepageListContainer();
+        iniView();
+        iniCalendarPicker();
+        iniClicklistener();
 
 //        Image img_homehead = (Image) findComponentById(ResourceTable.Id_home_image_head);
 //        img_homehead.setCornerRadius(150);
 //        initCommunityListContainer();
 //        initChatListContainer();
-        iniView();
-        iniCalendarPicker();
-        iniClicklistener();
 
     }
 
     //对话框的监听事件
-    class dialogListener extends SimpleCallback {
+    static class dialogListener extends SimpleCallback {
         @Override
         public void onCreated(BasePopupView pv) {
 
@@ -805,6 +832,7 @@ public class MainAbilitySlice extends AbilitySlice {
             viewPager.setCurrentPage(position, true);
             switch (position) {
                 case 0:
+                    ShadowDrawable.setShadowDrawable(view_hp_head_of_top, Color.getIntColor("#FFFFFF"), 50,Color.getIntColor("#25000000"), 5, 0, 10);
                     initHomepageListContainer();
                     break;
                 case 1:
@@ -974,7 +1002,7 @@ public class MainAbilitySlice extends AbilitySlice {
     private void initHomepageListContainer() {
         //1.获取xml布局中的ListContainer组件
         Text nonelist = (Text) findComponentById(ResourceTable.Id_nonelist);
-        ListContainer listContainer = (ListContainer) findComponentById(ResourceTable.Id_things_list);
+        ListContainer listContainer = (ListContainer) findComponentById(ResourceTable.Id_hp_list_data);
         listContainer.setLongClickable(false);
         // 2.实例化数据源
         List<Map<String, Object>> list = queryData();
@@ -1288,17 +1316,24 @@ public class MainAbilitySlice extends AbilitySlice {
         System.out.println("结果"+rgdone);
         if (rgdone.equals("ok")) {
             personData = queryPerson();
-            System.out.println("结果"+personData);
             if(personData!=null&&!personData.toString().equals("{}")) {
                 util.PreferenceUtils.putInt(getContext(),"isFirstStart",1);
                 util.PreferenceUtils.putInt(getContext(),"isLogin",1);
                 byte[] headimg = (byte[]) personData.get(DB_COLUMN_PERSON_HEAD);
-                img_thing_head.setPixelMap(util.byte2PixelMap(headimg));
+                img_hp_head.setPixelMap(util.byte2PixelMap(headimg));
                 util.PreferenceUtils.putString(getContext(), "rgok", "none");
-            }else{
-
+                t_hp_title_usersname.setText((String)personData.get(DB_COLUMN_PERSON_SNAME));
             }
 
+        }
+        int isLogin = util.PreferenceUtils.getInt(getContext(),"isLogin");
+        if (isLogin!=0){
+            personData = queryPerson();
+            if(personData!=null&&!personData.toString().equals("{}")) {
+                byte[] headimg = (byte[]) personData.get(DB_COLUMN_PERSON_HEAD);
+                img_hp_head.setPixelMap(util.byte2PixelMap(headimg));
+                t_hp_title_usersname.setText((String)personData.get(DB_COLUMN_PERSON_SNAME));
+            }
         }
     }
 
@@ -1642,7 +1677,6 @@ public class MainAbilitySlice extends AbilitySlice {
                     map.put(DB_COLUMN_PERSON_HAS, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_HAS)));
                     map.put(DB_COLUMN_PERSON_VIP, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_VIP)));
                     map.put(DB_COLUMN_PERSON_VIPYU, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_VIPYU)));
-                    System.out.println("map"+map);
 
                 return map;
 
@@ -1652,6 +1686,37 @@ public class MainAbilitySlice extends AbilitySlice {
         }
         return map;
     }
+    public static void insertPerson(String id, String lname, String sname,
+                       String pwd, byte[] head, String friend,
+                       String phone, String mail, String rgtime,
+                       String online, String has, String vip, String vipyu) {
+        ValuesBucket valuesBucket = new ValuesBucket();
+        valuesBucket.putString(DB_COLUMN_PERSON_ID, id);
+        valuesBucket.putString(DB_COLUMN_PERSON_LNAME, lname);
+        valuesBucket.putByteArray(DB_COLUMN_PERSON_HEAD, head);
+        valuesBucket.putString(DB_COLUMN_PERSON_SNAME, sname);
+        valuesBucket.putString(DB_COLUMN_PERSON_PWD, pwd);
+        valuesBucket.putString(DB_COLUMN_PERSON_FRIEND, friend);
+        valuesBucket.putString(DB_COLUMN_PERSON_PHONE, phone);
+        valuesBucket.putString(DB_COLUMN_PERSON_MAIL, mail);
+        valuesBucket.putString(DB_COLUMN_PERSON_RGTIME, rgtime);
+        valuesBucket.putString(DB_COLUMN_PERSON_ONLINE, online);
+        valuesBucket.putString(DB_COLUMN_PERSON_HAS, has);
+        valuesBucket.putString(DB_COLUMN_PERSON_VIP, vip);
+        valuesBucket.putString(DB_COLUMN_PERSON_VIPYU, vipyu);
+        try {
+            if (databaseHelper.insert(Uri.parse(BASE_URI_PERSON + DATA_PATH_PERSON), valuesBucket) != -1) {
+                util.PreferenceUtils.putString(cont, "rgok", "ok");
+                System.out.println("person insert successful");
+                System.out.println("注册成功");
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+//            ToastUtil.showToast(this, "注册成功，但登录失败，请重试  ");
+            exception.printStackTrace();
+            System.out.println("登录出错");
+        }
+    }
+
     public static class XPopupListener extends SimpleCallback {
         @Override
         public void onCreated(BasePopupView pv) {

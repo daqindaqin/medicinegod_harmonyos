@@ -1,25 +1,19 @@
 apply plugin: 'com.huawei.ohos.hap'
 apply plugin: 'com.huawei.ohos.decctest'
+//签名
+//apply plugin: 'com.huawei.agconnect'
 //For instructions on signature configuration, see https://developer.harmonyos.com/cn/docs/documentation/doc-guides/ide_debug_device-0000001053822404#section1112183053510
 ohos {
     compileSdkVersion 7
     defaultConfig {
-        compatibleSdkVersion 5
+        compatibleSdkVersion 4
     }
-    buildTypes {
-        release {
-            proguardOpt {
-                proguardEnabled false
-                rulesFiles 'proguard-rules.pro'
-            }
-        }
-    }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.har'])
     implementation files('src/main/lib/mysql-connector-java-5.1.49-bin.jar')
-    implementation files('src/main/lib/commons-email-1.5.jar')
 
     testImplementation 'junit:junit:4.13.1'
     ohosTestImplementation 'com.huawei.ohos.testkit:runner:1.0.0.200'
@@ -36,7 +30,15 @@ dependencies {
     //http组件和json解析
     implementation 'com.zzrv5.zzrhttp:ZZRHttp:1.0.1'
     implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.75'
+    //签名
+//    implementation 'com.huawei.agconnect:agconnect-core-harmony:1.0.0.300'
+    //阴影
+    implementation('com.gitee.chinasoft_ohos:ShadowDrawable:1.0.0')
+
+    //邮件
+    implementation 'com.sun.mail:android-mail:1.5.5'
+    implementation 'com.sun.mail:android-activation:1.5.5'
 }
 decc {
-    supportType = ['html','xml']
+    supportType = ['html', 'xml']
 }

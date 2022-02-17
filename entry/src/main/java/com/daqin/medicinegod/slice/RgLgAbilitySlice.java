@@ -4,31 +4,35 @@ import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.provider.RgLgScreenSlidePagerProvider;
 import com.daqin.medicinegod.utils.util;
 import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.interfaces.OnCancelListener;
-import com.lxj.xpopup.interfaces.OnConfirmListener;
-import com.lxj.xpopup.util.ToastUtil;
+
+import com.sun.mail.util.MailSSLSocketFactory;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.ability.DataAbilityHelper;
-import ohos.aafwk.ability.DataAbilityRemoteException;
 import ohos.aafwk.content.Intent;
 import ohos.agp.components.*;
 import ohos.agp.components.element.ElementScatter;
+import ohos.agp.utils.Color;
 import ohos.agp.window.service.WindowManager;
-import ohos.data.dataability.DataAbilityPredicates;
-import ohos.data.rdb.ValuesBucket;
-import ohos.data.resultset.ResultSet;
-import ohos.hiviewdfx.HiLog;
-import ohos.media.image.PixelMap;
-import ohos.utils.net.Uri;
 
+
+import javax.activation.DataHandler;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.daqin.medicinegod.slice.MainAbilitySlice.insertPerson;
 import static ohos.agp.components.InputAttribute.*;
 
 
@@ -39,6 +43,8 @@ public class RgLgAbilitySlice extends AbilitySlice {
     private static final String CONNECT_CONFIG = "characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
     private static final String CONNECT_DB_USERNAME = "root";//用户名
     private static final String CONNECT_DB_USERPWD = "123456";//密码
+    private static final String FromMail = "你的邮箱";
+    private static final String FromSecret = "邮箱授权码";
 
     private static final String BASE_URI = "dataability:///com.daqin.medicinegod.data.PersonDataAbility";
     private static final String DATA_PATH = "/person";
@@ -64,6 +70,7 @@ public class RgLgAbilitySlice extends AbilitySlice {
     private static final Pattern userphone = Pattern.compile("^[0-9]{11}+$");
 
     private static String[] columns = new String[]{};
+    private static int mailCode = 0 ;
 
 
     private List<Component> mPageViewList = new ArrayList<>();
@@ -92,7 +99,8 @@ public class RgLgAbilitySlice extends AbilitySlice {
     Text t_back;
     Image t_r_showhidepwd;
     Image t_r_head;
-    TextField[] tf_ = new TextField[]{};
+    TextField[] tf_r = new TextField[]{};
+    static String l_lname, l_lpwd;
 
 
     boolean showhidepwd = false;
@@ -102,7 +110,6 @@ public class RgLgAbilitySlice extends AbilitySlice {
         super.onStart(intent);
         super.setUIContent(ResourceTable.Layout_ability_main_rglg);
         this.getWindow().setInputPanelDisplayType(WindowManager.LayoutConfig.INPUT_ADJUST_PAN);
-
         columns = new String[]{
                 CONNECT_DB_LNAME,
                 CONNECT_DB_SNAME,
@@ -155,8 +162,8 @@ public class RgLgAbilitySlice extends AbilitySlice {
         t_l_ok = (Text) findComponentById(ResourceTable.Id_lg_ok);
         t_back = (Text) findComponentById(ResourceTable.Id_rg_back);
 
-        tf_ = new TextField[]{tf_r_userlname, tf_r_userpwd, tf_r_usermail, tf_r_userphone, tf_l_userlname, tf_l_userpwd};
-        for (TextField textField : tf_) {
+        tf_r = new TextField[]{tf_r_userlname, tf_r_userpwd, tf_r_usermail, tf_r_userphone, tf_l_userlname, tf_l_userpwd};
+        for (TextField textField : tf_r) {
             textField.setFocusChangedListener(new Component.FocusChangedListener() {
                 @Override
                 public void onFocusChange(Component component, boolean b) {
@@ -178,11 +185,9 @@ public class RgLgAbilitySlice extends AbilitySlice {
         t_r_toLogin.setClickedListener(component -> mPageSlider.setCurrentPage(1));
         t_back.setClickedListener(component -> terminate());
         t_r_ok.setClickedListener(component -> {
-
             try {
                 startRegister();
             } catch (Exception e) {
-                System.out.println("错误");
                 e.printStackTrace();
             }
 
@@ -199,36 +204,124 @@ public class RgLgAbilitySlice extends AbilitySlice {
                 showhidepwd = true;
             }
         });
+        Random random = new Random();
+        t_r_mail_sendCode.setClickedListener(component -> {
+            t_r_mail_sendCode.setText("请稍后...");
+            t_r_mail_sendCode.setTextColor(new Color(Color.rgb(68,94,238)));
+            t_r_mail_sendCode.setClickable(false);
+            //生成4位随机数
+            mailCode = random.nextInt(9999 - 1000 + 1) + 1000;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Properties props = new Properties();
+                        props.setProperty("mail.smtp.auth", "true");
+                        props.setProperty("mail.transport.protocol", "smtp");
+                        props.put("mail.smtp.ssl.enable", "true");
+                        props.put("mail.host", "smtp.163.com");
+                        Session session = Session.getInstance(props, new Authenticator() {
+                            @Override
+                            protected PasswordAuthentication getPasswordAuthentication() {
+                                return new PasswordAuthentication(FromMail,FromSecret);
+                            }
+                        });
+                        MimeMessage msg = new MimeMessage(session);
+                        msg.setFrom(new InternetAddress(FromMail));
+                        msg.setSubject("【药神】绑定邮箱验证码");
+                        msg.setSentDate(new Date());
+                        System.out.println("mailcode"+mailCode);
+                        msg.setText("您的验证码是["+mailCode+"]\n您正在进行邮箱绑定的操作，如非您的操作，请忽略此邮件。\n官方人员不会向您索要任何信息，请勿上当！");
+                        Transport transport=session.getTransport();
+                        transport.connect();
+                        transport.sendMessage(msg, new Address[]{new InternetAddress(tf_r_usermail.getText().trim())});
+                        transport.close();
+
+                        Timer timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            int countdown = 60;
+                            @Override
+                            public void run() {
+                                //跳转主线程异步方法来更新UI
+                                getMainTaskDispatcher().asyncDispatch(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (countdown<1){
+                                            t_r_mail_sendCode.setText("获取验证码");
+                                            t_r_mail_sendCode.setTextColor(new Color(Color.rgb(68,94,238)));
+                                            t_r_mail_sendCode.setClickable(true);
+                                            timer.cancel();
+                                        }else {
+                                            countdown--;
+                                            t_r_mail_sendCode.setText("请等待" + countdown + "秒");
+                                            t_r_mail_sendCode.setTextColor(new Color(Color.rgb(100,100,100)));
+                                        }
+                                    }
+                                });
+                            }
+                        }, 0, 1000);
+                    } catch (MessagingException mex) {
+                        System.out.println("send failed, exception: " + mex);
+                        //跳转主线程异步方法来更新UI
+                        getMainTaskDispatcher().asyncDispatch(new Runnable() {
+                            @Override
+                            public void run() {
+                                t_r_mail_sendCode.setClickable(true);
+                                t_r_mail_sendCode.setText("发送失败");
+                                t_r_mail_sendCode.setTextColor(new Color(Color.rgb(255,0,0)));
+                            }
+                        });
+
+
+
+
+                    }
+
+                }
+            }).start();
+
+
+        });
     }
 
     private void startRegister() throws Exception {
         Matcher matcher;
         boolean isRight = true;
-//        Pattern[] patterns = new Pattern[]{userlname, userpwd, usermail, userphone};
-//        TextField[] textFields = new TextField[]{tf_r_userlname, tf_r_userpwd, tf_r_usermail, tf_r_userphone};
-//        Text[] texts = new Text[]{t_r_userlname_status, t_r_userpwd_status, t_r_usermail_status, t_r_userphone_status};
-//        String[] strings = new String[]{
-//                "用户名应由6-12个字母、数字或其组合而成\n正确示例:abc123 (√)\n错误示例:abc/*+ (×)",
-//                "密码应由6-16个字母、数字 . @ _ 或其组合而成\n正确示例:abc123.@_ (√)\n错误示例:abc/*+ (×)",
-//                "您填写的邮箱格式不正确\n正确示例:23333333@qq.com (√)\n错误示例:abc/*@1*.com (×)",
-//                "您填写的手机号不正确\n正确示例:12345678901 (11位)\n错误示例:23333 (×)"};
-//        for (int i = 0; i < patterns.length; i++) {
-//            matcher = patterns[i].matcher(textFields[i].getText().trim());
-//            if (!matcher.matches()) {
-//                isRight = false;
-//                texts[i].setVisibility(Component.VISIBLE);
-//                texts[i].setText(strings[i]);
-//                textFields[i].setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield_err));
-//                v_r_scrollView.fluentScrollTo(0, textFields[i].getTop());
-//            } else {
-//                texts[i].setVisibility(Component.HIDE);
-//                textFields[i].setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield));
-//            }
-//        }
+        Pattern[] patterns = new Pattern[]{userlname, userpwd, usermail, userphone};
+        TextField[] textFields = new TextField[]{tf_r_userlname, tf_r_userpwd, tf_r_usermail, tf_r_userphone};
+        Text[] texts = new Text[]{t_r_userlname_status, t_r_userpwd_status, t_r_usermail_status, t_r_userphone_status};
+        String[] strings = new String[]{
+                "用户名应由6-12个字母、数字或其组合而成\n正确示例:abc123 (√)\n错误示例:abc/*+ (×)",
+                "密码应由6-16个字母、数字 . @ _ 或其组合而成\n正确示例:abc123.@_ (√)\n错误示例:abc/*+ (×)",
+                "您填写的邮箱格式不正确\n正确示例:23333333@qq.com (√)\n错误示例:abc/*@1*.com (×)",
+                "您填写的手机号不正确\n正确示例:12345678901 (11位)\n错误示例:23333 (×)"};
+        for (int i = 0; i < patterns.length; i++) {
+            matcher = patterns[i].matcher(textFields[i].getText().trim());
+            if (!matcher.matches()) {
+                isRight = false;
+                texts[i].setVisibility(Component.VISIBLE);
+                texts[i].setText(strings[i]);
+                textFields[i].setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield_err));
+                v_r_scrollView.fluentScrollTo(0, textFields[i].getTop());
+            } else {
+                texts[i].setVisibility(Component.HIDE);
+                textFields[i].setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield));
+            }
+        }
+        if (Integer.parseInt(tf_r_usermailCode.getText().trim())!=mailCode || tf_r_usermailCode.getText().length()==0){
+            isRight = false;
+            t_r_usermailCode_status.setText("验证码不正确，请检查！");
+            t_r_usermailCode_status.setVisibility(Component.VISIBLE);
+            tf_r_usermailCode.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield_err));
+        }else if(Integer.parseInt(tf_r_usermailCode.getText().trim())==mailCode ){
+            tf_r_usermailCode.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield));
+            t_r_usermailCode_status.setVisibility(Component.HIDE);
+        }
 
         if (isRight) {
             //运行注册
             System.out.println("可以注册");
+            String lname = tf_r_userpwd.getText().trim(),mail=tf_r_usermail.getText().trim(),phone=tf_r_userphone.getText().trim();
             //要连接的数据库url,注意：此处连接的应该是服务器上的MySQl的地址
             Calendar cl = new GregorianCalendar();
             String sname = "用户" + util.getRandomSNAME();
@@ -249,22 +342,22 @@ public class RgLgAbilitySlice extends AbilitySlice {
                     + CONNECT_DB_VIP + ","
                     + CONNECT_DB_VIPYU
                     + ") VALUES ("
-                    + "'" + tf_r_userlname.getText().trim() + "',"
+                    + "'" + lname + "',"
                     + "'" + sname + "',"
                     + "'" + secret + "',"
                     + "'" + Arrays.toString(util.pixelMap2byte(t_r_head.getPixelMap())) + "',"
                     + "'" + "{\"count\":\"0\",\"friendlist\":{}}',"
-                    + "'" + tf_r_userphone.getText().trim() + "',"
-                    + "'" + tf_r_usermail.getText().trim() + "',"
+                    + "'" + phone + "',"
+                    + "'" + mail + "',"
                     + "'" + util.getDateFromString(rgtime) + "',"
                     + "'" + "0',"
                     + "'" + "{\"count\":\"0\",\"medicinelist\":{}}',"
                     + "'0',"
                     + "'0'"
                     + ");";
-            final String SQL_db = "create table " + tf_r_userlname.getText().trim() + " (KEYID text not null, NAME text not null, IMAGE longblob not null, DESCRIPTION longtext not null, OUTDATE text not null, OTC text not null, BARCODE text not null, YU text not null, ELABEL text not null, LOVE int not null ,MUSE text not null, COMPANY text not null)ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            final String SQL_db = "create table " + lname + " (KEYID text not null, NAME text not null, IMAGE longblob not null, DESCRIPTION longtext not null, OUTDATE text not null, OTC text not null, BARCODE text not null, YU text not null, ELABEL text not null, LOVE int not null ,MUSE text not null, COMPANY text not null)ENGINE=InnoDB DEFAULT CHARSET=utf8;";
             ;
-            final String SQL_isHasLname = "SELECT LNAME FROM USERINFO WHERE LNAME = '" + tf_r_userlname.getText().trim() + "'";
+            final String SQL_isHasLname = "SELECT LNAME FROM USERINFO WHERE LNAME = '" + lname + "'";
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -297,6 +390,7 @@ public class RgLgAbilitySlice extends AbilitySlice {
                         }
                         //6.释放连接
                         //resultSet_getid.close();
+                        resultSet_isHasLname.close();
                         statement.close();
                         connection.close();
                     } catch (Exception e) {
@@ -325,22 +419,20 @@ public class RgLgAbilitySlice extends AbilitySlice {
                                 .show(); // 最后一个参数绑定已有布局
                         System.out.println("发生错误");
                     } else if (success) {
-                        System.out.println("运行到这");
-                        insert("P-" + tf_r_userlname.getText().trim(),
-                                tf_r_userlname.getText().trim(),
+                        insertPerson("P-" + lname,
+                                lname,
                                 sname,
                                 secret,
                                 util.pixelMap2byte(t_r_head.getPixelMap()),
                                 "{\"count\":\"0\",\"friendlist\":{}}",
-                                tf_r_userphone.getText().trim(),
-                                tf_r_usermail.getText().trim(),
+                                phone,
+                                mail,
                                 String.valueOf(util.getDateFromString(rgtime)),
                                 "0",
                                 "{\"count\":\"0\",\"medicinelist\":{}}",
                                 "0",
                                 "0");
-                        Thread.interrupted();
-                        query();
+                        terminate();
                     }
                 }
             }).start();
@@ -355,76 +447,5 @@ public class RgLgAbilitySlice extends AbilitySlice {
 
     }
 
-
-    public void insert(String id, String lname, String sname,
-                       String pwd, byte[] head, String friend,
-                       String phone, String mail, String rgtime,
-                       String online, String has, String vip, String vipyu) {
-        ValuesBucket valuesBucket = new ValuesBucket();
-        valuesBucket.putString(CONNECT_DB_ID, id);
-        valuesBucket.putString(CONNECT_DB_LNAME, lname);
-        valuesBucket.putByteArray(CONNECT_DB_HEAD, head);
-        valuesBucket.putString(CONNECT_DB_SNAME, sname);
-        valuesBucket.putString(CONNECT_DB_PWD, pwd);
-        valuesBucket.putString(CONNECT_DB_FRIEND, friend);
-        valuesBucket.putString(CONNECT_DB_PHONE, phone);
-        valuesBucket.putString(CONNECT_DB_MAIL, mail);
-        valuesBucket.putString(CONNECT_DB_RGTIME, rgtime);
-        valuesBucket.putString(CONNECT_DB_ONLINE, online);
-        valuesBucket.putString(CONNECT_DB_HAS, has);
-        valuesBucket.putString(CONNECT_DB_VIP, vip);
-        valuesBucket.putString(CONNECT_DB_VIPYU, vipyu);
-        try {
-            if (databaseHelper.insert(Uri.parse(BASE_URI + DATA_PATH), valuesBucket) != -1) {
-                util.PreferenceUtils.putString(getContext(), "rgok", "ok");
-                System.out.println("person insert successful");
-//                query();
-                System.out.println("注册成功");
-                terminate();
-//                new XPopup.Builder(getContext())
-////                        .setPopupCallback(new XPopupListener())
-//                        .dismissOnTouchOutside(false)
-//                        .dismissOnBackPressed(false)
-//                        .isDestroyOnDismiss(true)
-//                        .asConfirm("注册成功", "恭喜你",
-//                                " ", "现在进入", new OnConfirmListener() {
-//                                    @Override
-//                                    public void onConfirm() {
-//
-//                                        terminate();
-//                                    }
-//                                }, new OnCancelListener() {
-//                                    @Override
-//                                    public void onCancel() {
-//                                        terminate();
-//                                    }
-//                                }, false, ResourceTable.Layout_popup_comfirm_without_cancel)
-//                        .show(); // 最后一个参数绑定已有布局
-
-            }
-        } catch (DataAbilityRemoteException | IllegalStateException exception) {
-//            ToastUtil.showToast(this, "注册成功，但登录失败，请重试  ");
-            exception.printStackTrace();
-            query();
-            System.out.println("登录出错");
-        }
-    }
-
-    public void query() {
-        // 构造查询条件
-        DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.beginsWith(CONNECT_DB_ID, "P-");
-        try {
-            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
-                    columns, predicates);
-            if (resultSet == null || resultSet.getRowCount() == 0) {
-                System.out.println("query:resultSet is null or no result found");
-            } else {
-                System.out.println("query:" + resultSet.getRowCount());
-            }
-        } catch (DataAbilityRemoteException | IllegalStateException exception) {
-            System.out.println("query: dataRemote exception | illegalStateException");
-        }
-    }
 
 }

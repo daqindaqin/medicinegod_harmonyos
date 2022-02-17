@@ -2,7 +2,7 @@
 <DirectionalLayout
     xmlns:ohos="http://schemas.huawei.com/res/ohos"
     ohos:height="match_content"
-    ohos:width="280vp"
+    ohos:width="210vp"
     ohos:background_element="$graphic:bg_list_item_card"
     ohos:bottom_padding="10vp"
     ohos:margin="5vp"
@@ -16,8 +16,8 @@
         ohos:layout_alignment="vertical_center|horizontal_center">
         <Image
             ohos:id="$+id:style_default_image_png"
-            ohos:height="157.5vp"
-            ohos:width="280vp"
+            ohos:height="118.1vp"
+            ohos:width="210vp"
             ohos:image_src="$media:test"
             ohos:scale_mode="stretch"
             ohos:below="$id:style_default"
@@ -30,9 +30,9 @@
             ohos:text="药品名字最多显示十字"
             ohos:text_alignment="left|vertical_center"
             ohos:text_color="$color:black"
-            ohos:text_size="22vp"
+            ohos:text_size="18vp"
             ohos:text_weight="700"
-            ohos:top_margin="15vp"
+            ohos:top_margin="10vp"
             ohos:start_margin="10vp"
             ohos:below="$id:style_default_image_png"/>
 
@@ -81,7 +81,7 @@
             ohos:below="$id:style_default_text_name"
             ohos:align_bottom="$id:style_default"
             ohos:start_margin="10vp"
-            ohos:top_margin="10vp"
+            ohos:top_margin="5vp"
             ohos:text="3片/3次/天"
             ohos:text_alignment="left|vertical_center"
             ohos:text_color="$color:black_line"
