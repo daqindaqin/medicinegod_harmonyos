@@ -8,12 +8,14 @@ import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.OnInputConfirmListener;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.lxj.xpopup.util.ToastUtil;
+import com.ycuwq.datepicker.date.DatePickerDialogFragment;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.ability.DataAbilityHelper;
 import ohos.aafwk.ability.DataAbilityRemoteException;
 import ohos.aafwk.content.Intent;
 import ohos.aafwk.content.Operation;
 import ohos.agp.components.*;
+import ohos.agp.window.dialog.ToastDialog;
 import ohos.media.image.ImageSource;
 import ohos.media.image.PixelMap;
 import ohos.utils.net.Uri;
@@ -32,10 +34,9 @@ public class EditAbilitySlice extends AbilitySlice {
     boolean imgchanged = false;
     TextField edit_name;
     TextField edit_desp;
-    Picker edit_outdate_year;
-    Picker edit_outdate_month;
-    Picker edit_otc;
 
+    Picker edit_otc;
+    Text edit_date;
     TextField edit_usage_total;
     TextField edit_usage_time;
     TextField edit_usage_day;
@@ -64,6 +65,7 @@ public class EditAbilitySlice extends AbilitySlice {
     int countElabel = 0;
     int newUsage_utils_1 = 0, newUsage_utils_3 = 0;
     String[] usage;
+    String outdate;
     byte[] imgback = null;
     byte[] img = null;
     byte[] imgbytes = null;
@@ -82,9 +84,7 @@ public class EditAbilitySlice extends AbilitySlice {
         edit_usage_u3 = (Text) findComponentById(ResourceTable.Id_dtl_edit_newUsage_utils_3);
 
         edit_desp = (TextField) findComponentById(ResourceTable.Id_dtl_edit_desp);
-
-        edit_outdate_year = (Picker) findComponentById(ResourceTable.Id_dtl_edit_newOutdate_year);
-        edit_outdate_month = (Picker) findComponentById(ResourceTable.Id_dtl_edit_newOutdate_month);
+        edit_date = (Text)findComponentById(ResourceTable.Id_dtl_edit_choosedate);
         edit_otc = (Picker) findComponentById(ResourceTable.Id_dtl_edit_newOtc);
         edit_barcode = (TextField) findComponentById(ResourceTable.Id_dtl_edit_barcode);
         edit_yu = (TextField) findComponentById(ResourceTable.Id_dtl_edit_yu);
@@ -158,6 +158,20 @@ public class EditAbilitySlice extends AbilitySlice {
 
 
     private void intclicklistener() {
+        edit_date.setClickedListener(new Component.ClickedListener() {
+            @Override
+            public void onClick(Component component) {
+                DatePickerDialogFragment datePickerDialogFragment = new DatePickerDialogFragment(getContext());
+                datePickerDialogFragment.setOnDateChooseListener(new DatePickerDialogFragment.OnDateChooseListener() {
+                    @Override
+                    public void onDateChoose(int year, int month, int day) {
+                        outdate = year + "-" + month + "-1";
+                        edit_date.setText("已选:"+outdate);
+                    }
+                });
+                datePickerDialogFragment.show();
+            }
+        });
         edit_imgcrop.setClickedListener(new Component.ClickedListener() {
             @Override
             public void onClick(Component component) {
@@ -194,12 +208,10 @@ public class EditAbilitySlice extends AbilitySlice {
         });
         edit_ok.setClickedListener(component -> {
             boolean canEdit;
-
-            String name, desp, outdate, otctmp, barcodetmp = "", usageall, usa1, usa2, usa3, yu, company;
+            String name, desp, otctmp, barcodetmp = "", usageall, usa1, usa2, usa3, yu, company;
             StringBuilder label = new StringBuilder();
             name = (edit_name.getText().length() == 0 || edit_name.getText().equals(" ") || edit_name.getText().equals(edit_name.getHint())) ? edit_name.getHint() : edit_name.getText();
             desp = (edit_desp.getText().length() == 0 || edit_desp.getText().equals(" ") || edit_desp.getText().equals(edit_desp.getHint())) ? edit_desp.getHint() : edit_desp.getText();
-            outdate = edit_outdate_year.getDisplayedData()[edit_outdate_year.getValue()].replace("年", "") + "-" + edit_outdate_month.getDisplayedData()[edit_outdate_month.getValue()].replace("月", "") + "-1";
             otctmp = (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-绿") ? "OTC-G" : ((edit_otc.getDisplayedData()[edit_otc.getValue()].equals("OTC(非处方药)-红") ? "OTC-R" : (edit_otc.getDisplayedData()[edit_otc.getValue()].equals("RX(处方药)") ? "Rx" : "none"))));
             if (edit_barcode.getText().equals("") || edit_barcode.getText().equals(" ")) {
                 barcodetmp = edit_barcode.getHint();
@@ -220,6 +232,17 @@ public class EditAbilitySlice extends AbilitySlice {
                             .show(); // 最后一个参数绑定已有布局
                 }
 
+            }
+            if (outdate.equals("")){
+                canEdit = false;
+                new XPopup.Builder(getContext())
+                        //.setPopupCallback(new XPopupListener())
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .asConfirm("格式不正确", "未选择时间",
+                                " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
+                        .show(); // 最后一个参数绑定已有布局
             }
 
             if (canEdit) {
@@ -268,13 +291,7 @@ public class EditAbilitySlice extends AbilitySlice {
         edit_img.setClickedListener(new Component.ClickedListener() {
             @Override
             public void onClick(Component component) {
-                Intent intent = new Intent();
-                Operation opt = new Intent.OperationBuilder().withAction("android.intent.action.GET_CONTENT").build();
-                intent.setOperation(opt);
-                intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
-                intent.setType("image/*");
-                intent.setBundle("com.huawei.photos");
-                startAbilityForResult(intent, 100);
+                openGallery();
             }
         });
         edit_back.setClickedListener(component -> terminate());
@@ -409,7 +426,17 @@ public class EditAbilitySlice extends AbilitySlice {
         });
 
     }
-
+    private void openGallery() {
+        Intent intent = new Intent();
+//        intent.setType("video/*");
+        intent.setType("image/*");
+        intent.setAction("android.intent.action.PICK");
+        intent.setAction("android.intent.action.GET_CONTENT");
+        intent.setParam("return-data", true);
+        intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
+        intent.addFlags(0x00000001);
+        startAbilityForResult(intent, 100);
+    }
     @Override
     protected void onAbilityResult(int requestCode, int resultCode, Intent resultData) {
         super.onAbilityResult(requestCode, resultCode, resultData);
@@ -645,41 +672,14 @@ public class EditAbilitySlice extends AbilitySlice {
 
     //定义选择器
     private void iniCalendarPicker() {
+
         long data0 = (long) mgDdata.get("outdate");
-        String[] dateAll = util.getStringFromDate(data0).split("-");
-        String year, month;
-        year = dateAll[0] + "年";
-        if (Integer.parseInt(dateAll[1]) < 10) {
-            month = dateAll[1].substring(1) + "月";
-        } else {
-            month = dateAll[1] + "月";
-        }
+        String dateAll = util.getStringFromDate(data0);
 
 
-        System.out.println("输出了" + year + "-" + month);
+        System.out.println("输出了" + dateAll);
         int value = 0;
-        Calendar cal = Calendar.getInstance();
-        List<String> yearList = new ArrayList<>();
-        int year_now = cal.get(Calendar.YEAR);
-        for (int i = year_now; i <= year_now + 9; i++) {
-            yearList.add(i + "年");
-        }
-        for (int i = 0; i < 10; i++) {
-            if (yearList.get(i).equals(year)) {
-                value = i;
-            }
-        }
-        edit_outdate_year.setDisplayedData(yearList.toArray(new String[]{}));
-        edit_outdate_year.setValue(value);
-
-        String[] monthList = new String[]{"1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"};
-        for (int i = 0; i < monthList.length; i++) {
-            if (monthList[i].equals(month)) {
-                value = i;
-            }
-        }
-        edit_outdate_month.setDisplayedData(monthList);
-        edit_outdate_month.setValue(value);
+        outdate= dateAll;
 
         String[] otcList = new String[]{"OTC(非处方药)-红", "OTC(非处方药)-绿", "(留空)", "RX(处方药)"};
         otc = (String) mgDdata.get("otc");

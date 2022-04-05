@@ -54,7 +54,7 @@
             ohos:id="$+id:rg_head"
             ohos:height="80vp"
             ohos:width="80vp"
-            ohos:image_src="$media:homepage_head_default"
+            ohos:image_src="$media:homepage_head_default_man"
             ohos:scale_mode="zoom_center"
             ohos:top_margin="30vp"/>
     </DirectionalLayout>

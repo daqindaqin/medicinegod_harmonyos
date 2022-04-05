@@ -53,7 +53,7 @@ public class PersonDataAbility extends Ability {
                     + DB_COLUMN_LNAME + " text not null, "
                     + DB_COLUMN_SNAME + " text not null, "
                     + DB_COLUMN_PWD + " text not null, "
-                    + DB_COLUMN_HEAD + " blob, "
+                    + DB_COLUMN_HEAD + " long blob, "
                     + DB_COLUMN_FRIEND + " long text not null, "
                     + DB_COLUMN_PHONE + " text not null, "
                     + DB_COLUMN_MAIL + " text not null, "

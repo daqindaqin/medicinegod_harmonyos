@@ -22,12 +22,14 @@
                             ohos:width="match_parent"
                             ohos:alignment="horizontal_center|left"
                             ohos:orientation="horizontal">
-                                <!--头像和等级-->
-                                <DependentLayout
+                                <!--头像和会员-->
+                                <DirectionalLayout
                                     ohos:height="match_parent"
-                                    ohos:width="match_content">
+                                    ohos:width="match_content"
+                                    ohos:orientation="vertical"
+                                    ohos:alignment="vertical_center|horizontal_center">
                                         <Image
-                                            ohos:id="$+id:home_image_head"
+                                            ohos:id="$+id:me_head"
                                             ohos:height="60vp"
                                             ohos:width="60vp"
                                             ohos:bottom_margin="20vp"
@@ -38,19 +40,18 @@
                                             ohos:top_margin="20vp"
                                             />
                                         <Text
+                                            ohos:id="$+id:me_vip"
                                             ohos:height="match_content"
                                             ohos:width="match_content"
                                             ohos:text_alignment="horizontal_center"
-                                            ohos:text="Lv999"
+                                            ohos:text="普通会员"
                                             ohos:text_size="12vp"
                                             ohos:text_weight="500"
                                             ohos:text_color="$color:white"
                                             ohos:background_element="$graphic:bg_home_level"
                                             ohos:top_margin="-28vp"
-                                            ohos:start_margin="35vp"
-                                            ohos:below="$id:home_image_head"
                                             ohos:padding="5vp"/>
-                                </DependentLayout>
+                                </DirectionalLayout>
                                 <!--名字和签名-->
                                 <DirectionalLayout
                                     ohos:id="$+id:home_top_right"
@@ -62,9 +63,10 @@
                                     ohos:orientation="vertical">
 
                                         <Text
+                                            ohos:id="$+id:me_sname"
                                             ohos:height="match_content"
                                             ohos:width="match_parent"
-                                            ohos:hint="这里是个用户名哈哈哈哈"
+                                            ohos:hint="未登录"
                                             ohos:layout_alignment="left|vertical_center"
                                             ohos:margin="5vp"
                                             ohos:text_alignment="left"
@@ -74,9 +76,10 @@
                                             ohos:scrollable="true"/>
 
                                         <Text
+                                            ohos:id="$+id:me_lname"
                                             ohos:height="match_content"
                                             ohos:width="match_parent"
-                                            ohos:hint="这里是一条长长的签名用来好看的哈哈哈哈"
+                                            ohos:hint="ID:未登录"
                                             ohos:layout_alignment="left|vertical_center"
                                             ohos:margin="5vp"
                                             ohos:text_alignment="left"
@@ -108,12 +111,13 @@
                                     ohos:alignment="horizontal_center|vertical_center"
                                     ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
+                                            ohos:id="$+id:me_date_near"
                                             ohos:height="match_content"
                                             ohos:width="match_content"
                                             ohos:text="2"
                                             ohos:text_weight="700"
                                             ohos:text_color="$color:orange"
-                                            ohos:text_size="26vp"
+                                            ohos:text_size="28vp"
                                             ohos:margin="5vp"
                                             ohos:text_alignment="horizontal_center"/>
                                         <Text
@@ -136,12 +140,13 @@
                                     ohos:alignment="horizontal_center|vertical_center"
                                     ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
+                                            ohos:id="$+id:me_date_out"
                                             ohos:height="match_content"
                                             ohos:width="match_content"
                                             ohos:text="17"
                                             ohos:text_weight="700"
                                             ohos:text_color="$color:red"
-                                            ohos:text_size="26vp"
+                                            ohos:text_size="28vp"
                                             ohos:margin="5vp"
                                             ohos:text_alignment="horizontal_center"/>
                                         <Text
@@ -163,12 +168,13 @@
                                     ohos:alignment="horizontal_center|vertical_center"
                                     ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
+                                            ohos:id="$+id:me_date_ok"
                                             ohos:height="match_content"
                                             ohos:width="match_content"
                                             ohos:text="0"
                                             ohos:text_weight="700"
                                             ohos:text_color="$color:green"
-                                            ohos:text_size="26vp"
+                                            ohos:text_size="28vp"
                                             ohos:margin="5vp"
                                             ohos:text_alignment="horizontal_center"/>
                                         <Text
@@ -202,7 +208,7 @@
                                             ohos:text="99+"
                                             ohos:text_weight="700"
                                             ohos:text_color="$color:blue"
-                                            ohos:text_size="26vp"
+                                            ohos:text_size="28vp"
                                             ohos:margin="5vp"
                                             ohos:text_alignment="horizontal_center"/>
                                         <Text
@@ -225,16 +231,16 @@
                                     ohos:alignment="horizontal_center|vertical_center"
                                     ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
+                                            ohos:id="$+id:me_fav"
                                             ohos:height="match_content"
                                             ohos:width="match_content"
                                             ohos:text="17"
                                             ohos:text_weight="700"
                                             ohos:text_color="$color:blue"
-                                            ohos:text_size="26vp"
+                                            ohos:text_size="28vp"
                                             ohos:margin="5vp"
                                             ohos:text_alignment="horizontal_center"/>
                                         <Text
-                                            ohos:id="$+id:me_fav"
                                             ohos:height="match_content"
                                             ohos:width="match_content"
                                             ohos:text="收藏"
@@ -253,16 +259,16 @@
                                     ohos:alignment="horizontal_center|vertical_center"
                                     ohos:background_element="$graphic:bg_chat_moudle_background">
                                         <Text
+                                            ohos:id="$+id:me_share"
                                             ohos:height="match_content"
                                             ohos:width="match_content"
                                             ohos:text="0"
                                             ohos:text_weight="700"
                                             ohos:text_color="$color:blue"
-                                            ohos:text_size="26vp"
+                                            ohos:text_size="28vp"
                                             ohos:margin="5vp"
                                             ohos:text_alignment="horizontal_center"/>
                                         <Text
-                                            ohos:id="$+id:me_share"
                                             ohos:height="match_content"
                                             ohos:width="match_content"
                                             ohos:text="分享"
@@ -364,6 +370,7 @@
                         </DirectionalLayout>
 
                         <Text
+                            ohos:id="$+id:me_tuijian"
                             ohos:height="match_content"
                             ohos:width="match_parent"
                             ohos:text_size="18vp"
@@ -378,6 +385,7 @@
                             ohos:background_element="$graphic:bg_chat_moudle_background"
                             />
                         <Text
+                            ohos:id="$+id:me_qa"
                             ohos:height="match_content"
                             ohos:width="match_parent"
                             ohos:text_size="18vp"
@@ -392,6 +400,7 @@
                             ohos:background_element="$graphic:bg_chat_moudle_background"
                             />
                         <Text
+                            ohos:id="$+id:me_faceback"
                             ohos:height="match_content"
                             ohos:width="match_parent"
                             ohos:text_size="18vp"
@@ -406,6 +415,7 @@
                             ohos:background_element="$graphic:bg_chat_moudle_background"
                             />
                         <Text
+                            ohos:id="$+id:me_about"
                             ohos:height="match_content"
                             ohos:width="match_parent"
                             ohos:text_size="18vp"
@@ -420,6 +430,7 @@
                             ohos:background_element="$graphic:bg_chat_moudle_background"
                             />
                         <Text
+                            ohos:id="$+id:me_setting"
                             ohos:height="match_content"
                             ohos:width="match_parent"
                             ohos:text_size="18vp"

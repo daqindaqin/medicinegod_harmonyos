@@ -1,0 +1,37 @@
+{
+	"agcgw_all":{
+		"CN":"connect-drcn.dbankcloud.cn",
+		"CN_back":"connect-drcn.hispace.hicloud.com",
+		"DE":"connect-dre.dbankcloud.cn",
+		"DE_back":"connect-dre.hispace.hicloud.com",
+		"RU":"connect-drru.dbankcloud.cn",
+		"RU_back":"connect-drru.hispace.hicloud.com",
+		"SG":"connect-dra.dbankcloud.cn",
+		"SG_back":"connect-dra.hispace.hicloud.com"
+	},
+	"client":{
+		"cp_id":"10086000143730925",
+		"product_id":"737518067794490023",
+		"client_id":"828060119576103936",
+		"client_secret":"[!000EFFFECBD008D007A7FDB6D57B96104FFB9315E9D35FD308D0793E093A91266E6A25ED1D97266F7D4B4A3706EAB7402304F3BA3F63B274E0E449047B5D4685AB4DFA8BB321343105DAAAFB6DFA6E1BB4323A494CD2368E797479672473151D1E]",
+		"project_id":"737518067794490023",
+		"app_id":"105579117",
+		"api_key":"[!005123EE22ABDD6801D4EC73F150791CEB1201DADE907506DBA915041D36C4B09C0A22E48236277FDED7EC6C36C2C1F7DC6BF3B288C4F2EF6B06448AB9B52856116C3731DF63893F6AC31BEEB54DFD4AEDD622C0B72E8C68D86AB2C8565BB8981A60ABFA4453CFEE571685ECFCCC3F9787274C10A4EB1C376609C47378653586EE]",
+		"package_name":"com.daqin.medicinegod"
+	},
+	"oauth_client":{
+		"client_id":"105579117",
+		"client_type":30
+	},
+	"app_info":{
+		"app_id":"828060373608311616",
+		"package_name":"com.daqin.medicinegod"
+	},
+	"code":{
+		"code1":"E6A8E3DED5143FE0A8E05E9D721A5DD0",
+		"code2":"6F6E8A719FF643996A5DB7580BA45786",
+		"code3":"C303618ED4405940678916226BC468B4",
+		"code4":"B0AD374F75415C2070E1876108CFF270"
+	},
+	"configuration_version":"3.0"
+}

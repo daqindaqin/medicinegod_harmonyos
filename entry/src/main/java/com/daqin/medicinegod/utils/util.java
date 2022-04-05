@@ -18,6 +18,7 @@ import ohos.media.image.ImagePacker;
 import ohos.media.image.ImageSource;
 import ohos.media.image.PixelMap;
 import ohos.media.image.common.PixelFormat;
+import ohos.media.image.common.Rect;
 import ohos.media.image.common.Size;
 import ohos.utils.net.Uri;
 
@@ -369,13 +370,42 @@ public class util extends AbilitySlice {
         ImageSource.DecodingOptions decodingOptions = new ImageSource.DecodingOptions();
         ImageSource.SourceOptions srcOpts = new ImageSource.SourceOptions();
 
-        srcOpts.formatHint = "image/jpg";
+        srcOpts.formatHint = "image/jpeg";
         decodingOptions.rotateDegrees = 0.0f;
         decodingOptions.desiredPixelFormat = PixelFormat.ARGB_8888;
 
         return ImageSource.create(bytes, srcOpts).createPixelmap(decodingOptions);
 
+
+//
+//        ImageSource.DecodingOptions decodingOptions = new ImageSource.DecodingOptions();
+//        ImageSource.SourceOptions srcOpts = new ImageSource.SourceOptions();
+//
+//        srcOpts.formatHint = "image/png";
+//        decodingOptions.rotateDegrees = 0.0f;
+//        decodingOptions.desiredPixelFormat = PixelFormat.UNKNOWN;
+
+//        return ImageSource.create(bytes, srcOpts).createPixelmap(decodingOptions);
+
     }
+    //TODO：70%的缩略图分别存
+    public static PixelMap getThumPixelMap(PixelMap orgPixelMap,int bgScale){
+        PixelMap result;
+        PixelMap.InitializationOptions initializationOptions = new PixelMap.InitializationOptions();
+        new Size(orgPixelMap.getImageInfo().size.width / bgScale,
+                orgPixelMap.getImageInfo().size.height / bgScale);
+        initializationOptions.pixelFormat = PixelFormat.ARGB_8888;
+        result =
+                PixelMap.create(
+                        orgPixelMap,
+                        new Rect(0,0,
+                                orgPixelMap.getImageInfo().size.width,
+                                orgPixelMap.getImageInfo().size.height),
+                        initializationOptions);
+        return result;
+    }
+
+
     public static byte[] pixelMap2byte(PixelMap pixelMap){
         ImagePacker imagePacker = ImagePacker.create();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -449,8 +479,8 @@ public class util extends AbilitySlice {
 
         return data;
     }
-    public static String getSerect(String sourceStr) throws Exception {
-        sourceStr = "daqin" + sourceStr + "qin.@";
+    public static String getSerect(String lname,String sourceStr) throws Exception {
+        sourceStr = "daqin" + sourceStr + "qin.@" + lname;
         sourceStr = getSHA256(sourceStr, "daqinMG.@");
         String result = "";
         try {

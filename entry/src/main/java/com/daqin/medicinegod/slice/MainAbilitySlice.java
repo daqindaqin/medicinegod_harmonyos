@@ -7,19 +7,23 @@ package com.daqin.medicinegod.slice;
  */
 
 import com.daqin.medicinegod.ResourceTable;
-import com.daqin.medicinegod.RgLgAbility;
+import com.daqin.medicinegod.data.WebDataAbility;
 import com.daqin.medicinegod.provider.ChatListItemProvider;
 import com.daqin.medicinegod.provider.HomePageListItemProvider;
 import com.daqin.medicinegod.utils.imageControler.ImageSaver;
 import com.daqin.medicinegod.provider.MainScreenSlidePagerProvider;
 import com.daqin.medicinegod.utils.*;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
+import com.hbisoft.pickit.PickiT;
+import com.hbisoft.pickit.PickiTCallbacks;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.BasePopupView;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.SimpleCallback;
 import com.lxj.xpopup.util.ToastUtil;
 import com.sxu.shadowdrawable.ShadowDrawable;
+import com.ycuwq.datepicker.date.DatePicker;
+import com.ycuwq.datepicker.date.DatePickerDialogFragment;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.ability.DataAbilityHelper;
 import ohos.aafwk.ability.DataAbilityRemoteException;
@@ -47,8 +51,8 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.*;
 
-//修复post的bug
-public class MainAbilitySlice extends AbilitySlice {
+//TODO:修改删除功能（去掉），适配
+public class MainAbilitySlice extends AbilitySlice implements PickiTCallbacks {
     public static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;   //自定义的一个权限请求识别码，用于处理权限回调
     private static DataAbilityHelper databaseHelper;
     private static Context cont;
@@ -58,7 +62,7 @@ public class MainAbilitySlice extends AbilitySlice {
     private static final int RESULTCODE_IMAGE_CHOOSE = 100;
     private static final int RESULTCODE_IMAGE_CROP = 101;
     private static int newUsage_utils_1 = 0, newUsage_utils_3 = 0, elabelCount = 0;
-    private int dataHas = 0,dataFav=0,dataShare=0,style = 0;
+    private static int dataHas = 0, dataFav = 0, dataShare = 0, style = 0;
     List<String> eLABEL = new ArrayList<>();
     private static final HiLogLabel LABEL_LOG = new HiLogLabel(3, 0xD001100, "MainAbilitySlice");
     private static final String BASE_URI_MEDICINE = "dataability:///com.daqin.medicinegod.data.MedicineDataAbility";
@@ -75,6 +79,9 @@ public class MainAbilitySlice extends AbilitySlice {
     private static final String DB_COLUMN_MEDICINE_YU = "YU";
     private static final String DB_COLUMN_MEDICINE_ELABEL = "ELABEL";
     private static final String DB_COLUMN_MEDICINE_LOVE = "LOVE";
+    private static final String DB_COLUMN_MEDICINE_SHARE = "SHARE";
+    private static final String DB_COLUMN_MEDICINE_DELECT = "DELECT";
+
     private static String[] columns_medicine = new String[]{};
 
     private static final String BASE_URI_PERSON = "dataability:///com.daqin.medicinegod.data.PersonDataAbility";
@@ -98,10 +105,12 @@ public class MainAbilitySlice extends AbilitySlice {
     /**
      * @param img 图片最终数据
      * @param imgbytes 图片待裁剪数据
+     * @param imgdefault 默认图片
      */
-    byte[] img = null;
+    private byte[] img = null;
     private static byte[] imgbytes = null;
-
+    private static byte[] imgdefault;
+    private static String localPerson = "";
     Image img_hp_head;
     Image btn_add_img;
     Button btn_add_clear_context;
@@ -116,8 +125,11 @@ public class MainAbilitySlice extends AbilitySlice {
     ScrollView view_add;
     TextField tf_add_name;
     TextField tf_add_desp;
-    Picker tf_add_outdate_year;
-    Picker tf_add_outdate_month;
+
+    Text btn_add_date;
+    String outdate;
+
+
     Picker tf_add_otc;
     TextField tf_add_barcode;
     TextField tf_add_usage_total;
@@ -139,6 +151,22 @@ public class MainAbilitySlice extends AbilitySlice {
     Text t_add_imgdefault;
 
 
+    Image img_homehead;
+    Text t_me_sname;
+    Text t_me_lname;
+    Text t_me_vip;
+    Text t_me_date_out;
+    Text t_me_date_near;
+    Text t_me_date_ok;
+    Text t_me_has;
+    Text t_me_fav;
+    Text t_me_share;
+    Text t_me_tuijian;
+    Text t_me_qa;
+    Text t_me_faceback;
+    Text t_me_about;
+    Text t_me_setting;
+    //主页顶部栏
     Text t_hp_title;
     Text t_hp_title_usersname;
 
@@ -148,12 +176,13 @@ public class MainAbilitySlice extends AbilitySlice {
     Text[] add_elabelview;
     TextField[] add_tf_list;
 
+    private PickiT pickiT;
 
     public void iniView() {
         img_hp_head = (Image) findComponentById(ResourceTable.Id_hp_image_head);
         img_hp_head.setCornerRadius(100);
         btn_add_clear_context = (Button) findComponentById(ResourceTable.Id_add_clear);
-        btn_add_import =(Button)findComponentById(ResourceTable.Id_add_import);
+        btn_add_import = (Button) findComponentById(ResourceTable.Id_add_import);
         btn_add_otc_question = (Text) findComponentById(ResourceTable.Id_add_newOtc_question);
         btn_add_img = (Image) findComponentById(ResourceTable.Id_add_newImg);
         btn_add_newUsage_utils_1 = (Text) findComponentById(ResourceTable.Id_add_newUsage_utils_1);
@@ -162,12 +191,12 @@ public class MainAbilitySlice extends AbilitySlice {
         btn_add_yu_title = (Text) findComponentById(ResourceTable.Id_add_newYu_title);
         btn_things_seach = (Text) findComponentById(ResourceTable.Id_things_textField_search);
         view_add = (ScrollView) findComponentById(ResourceTable.Id_add_scrollview);
-        view_hp_head_of_top=(DirectionalLayout)findComponentById(ResourceTable.Id_hp_head_of_top);
-        ShadowDrawable.setShadowDrawable(view_hp_head_of_top, Color.getIntColor("#FFFFFF"), 50,Color.getIntColor("#25000000"), 5, 0, 10);
+        view_hp_head_of_top = (DirectionalLayout) findComponentById(ResourceTable.Id_hp_head_of_top);
+        ShadowDrawable.setShadowDrawable(view_hp_head_of_top, Color.getIntColor("#FFFFFF"), 50, Color.getIntColor("#25000000"), 5, 0, 10);
         tf_add_name = (TextField) findComponentById(ResourceTable.Id_add_newName);
         tf_add_desp = (TextField) findComponentById(ResourceTable.Id_add_newDescription);
-        tf_add_outdate_year = (Picker) findComponentById(ResourceTable.Id_add_newOutdate_year);
-        tf_add_outdate_month = (Picker) findComponentById(ResourceTable.Id_add_newOutdate_month);
+        btn_add_date = (Text) findComponentById(ResourceTable.Id_add_newOutDate);
+
         tf_add_otc = (Picker) findComponentById(ResourceTable.Id_add_newOtc);
         tf_add_barcode = (TextField) findComponentById(ResourceTable.Id_add_newbarCode);
         tf_add_usage_total = (TextField) findComponentById(ResourceTable.Id_add_newUsage_1);
@@ -186,16 +215,33 @@ public class MainAbilitySlice extends AbilitySlice {
         t_add_elabel5 = (Text) findComponentById(ResourceTable.Id_add_addNewlabel_label5);
         t_add_imgcrop = (Text) findComponentById(ResourceTable.Id_add_imgcrop);
         t_add_imgclaer = (Text) findComponentById(ResourceTable.Id_add_imgclear);
-        t_add_imgdefault = (Text)findComponentById(ResourceTable.Id_add_imgdefault);
-        btn_changestyle =(Text)findComponentById(ResourceTable.Id_changestyle);
-        t_hp_title =(Text)findComponentById(ResourceTable.Id_hp_showtitle);
-        t_hp_title_usersname =(Text)findComponentById(ResourceTable.Id_hp_showtitle_username);
+        t_add_imgdefault = (Text) findComponentById(ResourceTable.Id_add_imgdefault);
+        btn_changestyle = (Text) findComponentById(ResourceTable.Id_changestyle);
+        t_hp_title = (Text) findComponentById(ResourceTable.Id_hp_showtitle);
+        t_hp_title_usersname = (Text) findComponentById(ResourceTable.Id_hp_showtitle_username);
+
+
+
 
         add_elabelview = new Text[]{t_add_elabel1, t_add_elabel2, t_add_elabel3, t_add_elabel4, t_add_elabel5};
         add_tf_list = new TextField[]{tf_add_name, tf_add_desp, tf_add_barcode, tf_add_usage_total, tf_add_usage_time, tf_add_usage_day, tf_add_company, tf_add_yu};
     }
 
     public void iniClicklistener() {
+        btn_add_date.setClickedListener(new Component.ClickedListener() {
+            @Override
+            public void onClick(Component component) {
+                DatePickerDialogFragment datePickerDialogFragment = new DatePickerDialogFragment(getContext());
+                datePickerDialogFragment.setOnDateChooseListener(new DatePickerDialogFragment.OnDateChooseListener() {
+                    @Override
+                    public void onDateChoose(int year, int month, int day) {
+                        outdate = year + "-" + month + "-1";
+                        btn_add_date.setText("已选:" + outdate);
+                    }
+                });
+                datePickerDialogFragment.show();
+            }
+        });
 
         btn_add_import.setClickedListener(new Component.ClickedListener() {
             @Override
@@ -207,35 +253,35 @@ public class MainAbilitySlice extends AbilitySlice {
                 //连接的数据库时使用的密码
                 String password = "mg@Qhx010394";
 
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        //1、加载驱动
-                                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                                        //3.连接成功，返回数据库对象
-                                        Connection connection= DriverManager.getConnection(url,userName,password);
-                                        //4.执行SQL的对象
-                                        Statement statement = connection.createStatement();
-                                        //5.执行SQL的对象去执行SQL,可能存在结果，查看返回结果
-                                        String sql="SELECT * FROM USERINFO";
-                                        java.sql.ResultSet resultSet = statement.executeQuery(sql);//返回的结果集,结果集中封装了我们全部的查询出来的结果
-                                        resultSet.toString();
-                                        while(resultSet.next()){
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            //1、加载驱动
+                            Class.forName("com.mysql.jdbc.Driver").newInstance();
+                            //3.连接成功，返回数据库对象
+                            Connection connection = DriverManager.getConnection(url, userName, password);
+                            //4.执行SQL的对象
+                            Statement statement = connection.createStatement();
+                            //5.执行SQL的对象去执行SQL,可能存在结果，查看返回结果
+                            String sql = "SELECT * FROM USERINFO";
+                            java.sql.ResultSet resultSet = statement.executeQuery(sql);//返回的结果集,结果集中封装了我们全部的查询出来的结果
+                            resultSet.toString();
+                            while (resultSet.next()) {
 
-                                            System.out.println("type_id="+resultSet.getObject("username"));
-                                            System.out.println("type_name="+resultSet.getObject("userpwd"));
-                                            System.out.println("delete_time="+resultSet.getObject("userid"));
-                                        }
-                                        //6.释放连接
-                                        resultSet.close();
-                                        statement.close();
-                                        connection.close();
-                                    }catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }).start();
+                                System.out.println("type_id=" + resultSet.getObject("username"));
+                                System.out.println("type_name=" + resultSet.getObject("userpwd"));
+                                System.out.println("delete_time=" + resultSet.getObject("userid"));
+                            }
+                            //6.释放连接
+                            resultSet.close();
+                            statement.close();
+                            connection.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
 
             }
         });
@@ -251,7 +297,7 @@ public class MainAbilitySlice extends AbilitySlice {
                         // Ability页面的名称，在本地可以缺省前面的路径
                         .build();    // 构建代码
                 intentSearch.setOperation(operation);    // 将operation存入到intent中
-                startAbilityForResult(intentSearch,300);    // 实现Ability跳转
+                startAbilityForResult(intentSearch, 300);    // 实现Ability跳转
             }
         });
         //清空添加药品的列表
@@ -283,7 +329,7 @@ public class MainAbilitySlice extends AbilitySlice {
             public void onClick(Component component) {
                 if (imgbytes == null) {
                     ToastUtil.showToast(getContext(), "请先选择图片才能裁剪  ");
-                }else if (btn_add_img.getScaleMode()== Image.ScaleMode.CENTER){
+                } else if (imgbytes == imgdefault) {
                     ToastUtil.showToast(getContext(), "默认图片无法裁剪  ");
                 } else {
                     Intent intent = new Intent();
@@ -307,6 +353,7 @@ public class MainAbilitySlice extends AbilitySlice {
             @Override
             public void onClick(Component component) {
                 imgbytes = null;
+                imgdefault = null;
                 btn_add_img.setPixelMap(ResourceTable.Media_add_imgadd);
                 btn_add_img.setScaleMode(Image.ScaleMode.CENTER);
             }
@@ -315,9 +362,10 @@ public class MainAbilitySlice extends AbilitySlice {
         t_add_imgdefault.setClickedListener(new Component.ClickedListener() {
             @Override
             public void onClick(Component component) {
-                btn_add_img.setPixelMap(ResourceTable.Media_addpng_default);
-                btn_add_img.setScaleMode(Image.ScaleMode.CENTER);
-                imgbytes = util.pixelMap2byte(btn_add_img.getPixelMap());
+                btn_add_img.setPixelMap(ResourceTable.Media_add_imgdefault);
+                btn_add_img.setScaleMode(Image.ScaleMode.STRETCH);
+                imgdefault = util.pixelMap2byte(btn_add_img.getPixelMap());
+                imgbytes = imgdefault;
             }
         });
         //添加图片的图片按钮
@@ -330,14 +378,14 @@ public class MainAbilitySlice extends AbilitySlice {
                         // 是否可以申请弹框授权(首次申请或者用户未选择禁止且不再提示)
                         requestPermissionsFromUser(
                                 new String[]{"ohos.permission.READ_MEDIA"}, MY_PERMISSIONS_REQUEST_READ_MEDIA);
-
-                        Intent intent = new Intent();
+                        openGallery();
+                        /*Intent intent = new Intent();
                         Operation opt = new Intent.OperationBuilder().withAction("android.intent.action.GET_CONTENT").build();
                         intent.setOperation(opt);
                         intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
                         intent.setType("image/*");
                         intent.setBundle("com.huawei.photos");
-                        startAbilityForResult(intent, RESULTCODE_IMAGE_CHOOSE);
+                        startAbilityForResult(intent, RESULTCODE_IMAGE_CHOOSE);*/
                     } else {
                         // 显示应用需要权限的理由，提示用户进入设置授权
                         ToastUtil.showToast(getContext(), "请进入系统设置进行授权  ");
@@ -345,13 +393,15 @@ public class MainAbilitySlice extends AbilitySlice {
                 } else {
                     // 权限已被授予
                     //加载显示系统相册中的照片
-                    Intent intent = new Intent();
+                    openGallery();
+                    /*Intent intent = new Intent();
+
                     Operation opt = new Intent.OperationBuilder().withAction("android.intent.action.GET_CONTENT").build();
                     intent.setOperation(opt);
                     intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
                     intent.setType("image/*");
                     intent.setBundle("com.huawei.photos");
-                    startAbilityForResult(intent, RESULTCODE_IMAGE_CHOOSE);
+                    startAbilityForResult(intent, RESULTCODE_IMAGE_CHOOSE);*/
                 }
             }
         });
@@ -397,7 +447,7 @@ public class MainAbilitySlice extends AbilitySlice {
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
-                                    eLABEL.remove(t_add_elabel1.getText());
+                                    eLABEL.remove(t_add_elabel1.getText().trim());
                                     eLABEL.add("测试标签");
                                     t_add_elabel1.setText("测试标签");
                                     t_add_elabel1.setVisibility(Component.HIDE);
@@ -418,7 +468,7 @@ public class MainAbilitySlice extends AbilitySlice {
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
-                                    eLABEL.remove(t_add_elabel2.getText());
+                                    eLABEL.remove(t_add_elabel2.getText().trim());
                                     eLABEL.add("测试标签");
                                     t_add_elabel2.setText("测试标签");
                                     t_add_elabel2.setVisibility(Component.HIDE);
@@ -439,7 +489,7 @@ public class MainAbilitySlice extends AbilitySlice {
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
-                                    eLABEL.remove(t_add_elabel3.getText());
+                                    eLABEL.remove(t_add_elabel3.getText().trim());
                                     eLABEL.add("测试标签");
                                     t_add_elabel3.setText("测试标签");
                                     t_add_elabel3.setVisibility(Component.HIDE);
@@ -460,7 +510,7 @@ public class MainAbilitySlice extends AbilitySlice {
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
-                                    eLABEL.remove(t_add_elabel4.getText());
+                                    eLABEL.remove(t_add_elabel4.getText().trim());
                                     eLABEL.add("测试标签");
                                     t_add_elabel4.setText("测试标签");
                                     t_add_elabel4.setVisibility(Component.HIDE);
@@ -481,7 +531,7 @@ public class MainAbilitySlice extends AbilitySlice {
                             "返回", "删除", new OnConfirmListener() {
                                 @Override
                                 public void onConfirm() {
-                                    eLABEL.remove(t_add_elabel5.getText());
+                                    eLABEL.remove(t_add_elabel5.getText().trim());
                                     eLABEL.add("测试标签");
                                     t_add_elabel5.setText("测试标签");
                                     t_add_elabel5.setVisibility(Component.HIDE);
@@ -507,9 +557,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 //未达到5个标签则判断
             } else {
                 if (tf_add_elabelBox.length() == 0
-                        || tf_add_elabelBox.length() >= 5
-                        || tf_add_elabelBox.getText().equals(" ")
-                        || tf_add_elabelBox.getText().equals("  ")) {
+                        || tf_add_elabelBox.length() >= 5) {
                     //输入框内条件标签不满足则提示
                     new XPopup.Builder(getContext())
                             //.setPopupCallback(new XPopupListener())
@@ -519,7 +567,7 @@ public class MainAbilitySlice extends AbilitySlice {
                             .asConfirm("格式受限", "您在一个标签内只能添加1到4个中文字符",
                                     " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                             .show(); // 最后一个参数绑定已有布局
-                }else if(eLABEL.contains(tf_add_elabelBox.getText().trim())){
+                } else if (eLABEL.contains(tf_add_elabelBox.getText().trim())) {
                     //不允许存在相同标签
                     new XPopup.Builder(getContext())
                             //.setPopupCallback(new XPopupListener())
@@ -531,7 +579,7 @@ public class MainAbilitySlice extends AbilitySlice {
                             .show(); // 最后一个参数绑定已有布局
                 } else if (tf_add_elabelBox.length() > 0 && tf_add_elabelBox.length() < 5) {
                     for (Text text : add_elabelview) {
-                        if (text.getText() == null || text.getText().equals("测试标签")) {
+                        if (text.getText().equals("测试标签")) {
                             elabelCount++;
                             eLABEL.add(tf_add_elabelBox.getText().trim());
                             text.setText(tf_add_elabelBox.getText().trim());
@@ -555,6 +603,9 @@ public class MainAbilitySlice extends AbilitySlice {
                 ToastUtil.showToast(this, "图片不能为空");
             } else if (eLABEL == null || elabelCount == 0) {
                 view_add.fluentScrollTo(0, btn_add_ok.getTop());
+                ToastUtil.showToast(this, "药品标签不能为空");
+            } else if (outdate.equals("")) {
+                view_add.fluentScrollTo(0, btn_add_date.getTop());
                 ToastUtil.showToast(this, "药品标签不能为空");
             } else {
                 //计次，计算是否都填好了
@@ -584,20 +635,21 @@ public class MainAbilitySlice extends AbilitySlice {
                     usa2 = tf_add_usage_time.getText().trim();
                     usa3 = tf_add_usage_day.getText().trim();
                     usageall = usa1 + "-" + btn_add_newUsage_utils_1.getText() + "-" + usa2 + "-" + btn_add_newUsage_utils_2.getText() + "-" + usa3 + "-" + btn_add_newUsage_utils_3.getText();
+                    StringBuilder label = new StringBuilder();
+                    for (String s : eLABEL) {
+                        label.append(s).append("@@");
+                    }
                     insert(key,
                             tf_add_name.getText(),
                             img == null ? imgbytes : img,
                             tf_add_desp.getText(),
-                            (tf_add_outdate_year.getDisplayedData())[tf_add_outdate_year.getValue()].replace("年", "")
-                                    + "-"
-                                    + (tf_add_outdate_month.getDisplayedData())[tf_add_outdate_month.getValue()].replace("月", "")
-                                    + "-1",
+                            outdate,
                             tf_add_otc.getDisplayedData()[tf_add_otc.getValue()].equals("OTC(非处方药)-绿") ? "OTC-G" : tf_add_otc.getDisplayedData()[tf_add_otc.getValue()].equals("OTC(非处方药)-红") ? "OTC-R" : tf_add_otc.getDisplayedData()[tf_add_otc.getValue()].equals("RX(处方药)") ? "Rx" : "none",
                             tf_add_barcode.getText(),
                             usageall,
                             tf_add_company.getText(),
                             tf_add_yu.getText().trim(),
-                            eLABEL.toString());
+                            label.toString());
 
                 }
 
@@ -611,10 +663,22 @@ public class MainAbilitySlice extends AbilitySlice {
     public void onStart(Intent intent) {
         super.onStart(intent);
         super.setUIContent(ResourceTable.Layout_ability_main);
-        this.getWindow().setInputPanelDisplayType(WindowManager.LayoutConfig.INPUT_ADJUST_PAN);
-        int isFirstStart = util.PreferenceUtils.getInt(getContext(),"isFirstStart");
-        int isLogin = util.PreferenceUtils.getInt(getContext(),"isLogin");
-        if (isFirstStart==0){
+        this.getWindow().setInputPanelDisplayType(WindowManager.LayoutConfig.INPUT_ADJUST_RESIZE);
+        pickiT = new PickiT(this, this, this);
+        int isFirstStart = util.PreferenceUtils.getInt(getContext(), "isFirstStart");
+        int isLogin = util.PreferenceUtils.getInt(getContext(), "isLogin");
+        if (isLogin == 0 && isFirstStart == 0) {
+            Intent intentSearch = new Intent();
+            Operation operation = new Intent.OperationBuilder()
+                    .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                    .withBundleName(getBundleName())    // 包名
+                    .withAbilityName("com.daqin.medicinegod.RgLgAbility")
+                    // Ability页面的名称，在本地可以缺省前面的路径
+                    .build();    // 构建代码
+            intentSearch.setOperation(operation);    // 将operation存入到intent中
+            startAbility(intentSearch);    // 实现Ability跳转
+        }
+        if (isFirstStart == 0) {
             //TODO：权限提示的页面
             System.out.println("首次启动跳转获取权限");
             if (verifySelfPermission("ohos.permission.READ_MEDIA") != IBundleManager.PERMISSION_GRANTED) {
@@ -625,18 +689,6 @@ public class MainAbilitySlice extends AbilitySlice {
                             new String[]{"ohos.permission.READ_MEDIA"}, MY_PERMISSIONS_REQUEST_READ_MEDIA);
                 }
             }
-        }
-        if (isLogin==0 && isFirstStart==0){
-            //TODO:登录注册界面
-            Intent intentSearch = new Intent();
-            Operation operation = new Intent.OperationBuilder()
-                    .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
-                    .withBundleName(getBundleName())    // 包名
-                    .withAbilityName("com.daqin.medicinegod.RgLgAbility")
-                    // Ability页面的名称，在本地可以缺省前面的路径
-                    .build();    // 构建代码
-            intentSearch.setOperation(operation);    // 将operation存入到intent中
-            startAbility(intentSearch);    // 实现Ability跳转
         }
         //一定要和库内列一模一样，否则异常
         columns_medicine = new String[]{
@@ -651,27 +703,29 @@ public class MainAbilitySlice extends AbilitySlice {
                 DB_COLUMN_MEDICINE_COMPANY,
                 DB_COLUMN_MEDICINE_YU,
                 DB_COLUMN_MEDICINE_ELABEL,
-                DB_COLUMN_MEDICINE_LOVE
+                DB_COLUMN_MEDICINE_LOVE,
+                DB_COLUMN_MEDICINE_SHARE,
+                DB_COLUMN_MEDICINE_DELECT
         };
         //一定要和库内列一模一样，否则异常
         columns_person = new String[]{
                 DB_COLUMN_PERSON_ID,
                 DB_COLUMN_PERSON_LNAME,
                 DB_COLUMN_PERSON_SNAME,
-                DB_COLUMN_PERSON_PWD ,
-                DB_COLUMN_PERSON_HEAD ,
-                DB_COLUMN_PERSON_FRIEND ,
-                DB_COLUMN_PERSON_PHONE ,
-                DB_COLUMN_PERSON_MAIL ,
-                DB_COLUMN_PERSON_RGTIME ,
+                DB_COLUMN_PERSON_PWD,
+                DB_COLUMN_PERSON_HEAD,
+                DB_COLUMN_PERSON_FRIEND,
+                DB_COLUMN_PERSON_PHONE,
+                DB_COLUMN_PERSON_MAIL,
+                DB_COLUMN_PERSON_RGTIME,
                 DB_COLUMN_PERSON_ONLINE,
-                DB_COLUMN_PERSON_HAS ,
-                DB_COLUMN_PERSON_VIP ,
+                DB_COLUMN_PERSON_HAS,
+                DB_COLUMN_PERSON_VIP,
                 DB_COLUMN_PERSON_VIPYU
         };
         databaseHelper = DataAbilityHelper.creator(this);
-        style = util.PreferenceUtils.getInt(getContext(),"style");
-        util.PreferenceUtils.putInt(getContext(),"isFirstStart",1);
+        style = util.PreferenceUtils.getInt(getContext(), "style");
+        util.PreferenceUtils.putInt(getContext(), "isFirstStart", 1);
         cont = getContext();
         imageSaver = new ImageSaver();
         imageSaver.setInstance();
@@ -689,43 +743,39 @@ public class MainAbilitySlice extends AbilitySlice {
 
     }
 
-    //对话框的监听事件
-    static class dialogListener extends SimpleCallback {
-        @Override
-        public void onCreated(BasePopupView pv) {
+    @Override
+    public void pickiTonUriReturned() {
 
-        }
+    }
 
-        @Override
-        public void onShow(BasePopupView popupView) {
+    @Override
+    public void pickiTonStartListener() {
 
+    }
 
-        }
+    @Override
+    public void pickiTonProgressUpdate(int i) {
 
-        @Override
-        public void onDismiss(BasePopupView popupView) {
+    }
 
+    @Override
+    public void pickiTonCompleteListener(String path, boolean wasDriveFile,
+                                         boolean wasUnknownProvider, boolean wasSuccessful, String reason) {
+//  Check if it was a Drive/local/unknown provider file and display a Toast
+//        if (wasDriveFile) {
+//            showLongToast("Drive file was selected");
+//        } else if (wasUnknownProvider) {
+//            showLongToast("File was selected from unknown provider");
+//        } else {
+//            showLongToast("Local file was selected");
+//        }
+        if (wasSuccessful) {
 
-        }
+        } else {
 
-        @Override
-        public void beforeDismiss(BasePopupView popupView) {
-
-
-        }
-
-        // 如果你自己想拦截返回按键事件，则重写这个方法，返回true即可
-        @Override
-        public boolean onBackPressed(BasePopupView popupView) {
-//            ToastUtil.showToast(getContext(), "onBackPressed返回true，拦截了返回按键，按返回键XPopup不会关闭了");
-            return true;
-        }
-
-        @Override
-        public void onKeyBoardStateChanged(BasePopupView popupView, int height) {
-            super.onKeyBoardStateChanged(popupView, height);
         }
     }
+
 
     //清空添加药品的列表
     private void clearAddTextfield() {
@@ -832,7 +882,6 @@ public class MainAbilitySlice extends AbilitySlice {
             viewPager.setCurrentPage(position, true);
             switch (position) {
                 case 0:
-                    ShadowDrawable.setShadowDrawable(view_hp_head_of_top, Color.getIntColor("#FFFFFF"), 50,Color.getIntColor("#25000000"), 5, 0, 10);
                     initHomepageListContainer();
                     break;
                 case 1:
@@ -846,20 +895,100 @@ public class MainAbilitySlice extends AbilitySlice {
                     initChatListContainer();
                     break;
                 case 4:
-                    Image img_homehead = (Image) findComponentById(ResourceTable.Id_home_image_head);
-                    img_homehead.setCornerRadius(200);
-                    Text me_has = (Text) findComponentById(ResourceTable.Id_me_has);
-                    me_has.setText(String.valueOf(dataHas));
-                    Text me_fav = (Text) findComponentById(ResourceTable.Id_me_fav);
-                    me_fav.setText(String.valueOf(dataFav));
-                    Text me_share = (Text) findComponentById(ResourceTable.Id_me_share);
-                    me_share.setText(String.valueOf(dataShare));
+                    initMe();
                     break;
                 default:
                     break;
             }
         });
     }
+
+    private void initMe() {
+        if (personData != null && !personData.toString().equals("{}")) {
+            t_me_sname = (Text) findComponentById(ResourceTable.Id_me_sname);
+            t_me_lname = (Text) findComponentById(ResourceTable.Id_me_lname);
+            t_me_vip = (Text) findComponentById(ResourceTable.Id_me_vip);
+            t_me_date_out = (Text) findComponentById(ResourceTable.Id_me_date_out);
+            t_me_date_near = (Text) findComponentById(ResourceTable.Id_me_date_near);
+            t_me_date_ok = (Text) findComponentById(ResourceTable.Id_me_date_ok);
+            t_me_has = (Text) findComponentById(ResourceTable.Id_me_has);
+            t_me_fav = (Text) findComponentById(ResourceTable.Id_me_fav);
+            t_me_share = (Text) findComponentById(ResourceTable.Id_me_share);
+            t_me_tuijian = (Text) findComponentById(ResourceTable.Id_me_tuijian);
+            t_me_qa = (Text) findComponentById(ResourceTable.Id_me_qa);
+            t_me_faceback = (Text) findComponentById(ResourceTable.Id_me_faceback);
+            t_me_about = (Text) findComponentById(ResourceTable.Id_me_about);
+            t_me_setting = (Text) findComponentById(ResourceTable.Id_me_setting);
+            img_homehead = (Image) findComponentById(ResourceTable.Id_me_head);
+            img_homehead.setCornerRadius(200);
+            try {
+                img_homehead.setPixelMap(util.byte2PixelMap((byte[]) personData.get(DB_COLUMN_PERSON_HEAD)));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            t_me_sname.setText((String) personData.get(DB_COLUMN_PERSON_SNAME));
+            t_me_lname.setText("ID:" + (String) personData.get(DB_COLUMN_PERSON_LNAME));
+            String vip = (String) personData.get(DB_COLUMN_PERSON_VIP);
+            if (vip.equals("0")) {
+                t_me_vip.setText("免费会员");
+            } else {
+                t_me_vip.setText(" VIP ");
+            }
+
+        }
+
+        t_me_date_out.setText(util.PreferenceUtils.getInt(getContext(), "date_out") + "");
+        t_me_date_near.setText(util.PreferenceUtils.getInt(getContext(), "date_near") + "");
+        t_me_date_ok.setText(util.PreferenceUtils.getInt(getContext(), "date_ok") + "");
+        t_me_has.setText(String.valueOf(dataHas));
+        t_me_fav.setText(String.valueOf(dataFav));
+        t_me_share.setText(String.valueOf(dataShare));
+        t_me_lname.setClickedListener(new Component.ClickedListener() {
+            @Override
+            public void onClick(Component component) {
+                if (t_me_lname.getText().trim().equals("ID:未登录")) {
+                    Intent intentSearch = new Intent();
+                    Operation operation = new Intent.OperationBuilder()
+                            .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                            .withBundleName(getBundleName())    // 包名
+                            .withAbilityName("com.daqin.medicinegod.RgLgAbility")
+                            // Ability页面的名称，在本地可以缺省前面的路径
+                            .build();    // 构建代码
+                    intentSearch.setOperation(operation);    // 将operation存入到intent中
+                    startAbility(intentSearch);    // 实现Ability跳转
+                } else {
+                    Intent intentSearch = new Intent();
+                    Operation operation = new Intent.OperationBuilder()
+                            .withDeviceId("")    // 设备Id，在本地上进行跳转可以为空，跨设备进行跳转则需要传入值
+                            .withBundleName(getBundleName())    // 包名
+                            .withAbilityName("com.daqin.medicinegod.MeDetailAbility")
+                            // Ability页面的名称，在本地可以缺省前面的路径
+                            .build();    // 构建代码
+                    intentSearch.setOperation(operation);    // 将operation存入到intent中
+                    startAbility(intentSearch);    // 实现Ability跳转
+                }
+            }
+        });
+        t_me_tuijian.setClickedListener(component -> {
+            //TODO:推荐给好友
+        });
+        t_me_qa.setClickedListener(component -> {
+            //TODO:疑难解答
+        });
+        t_me_faceback.setClickedListener(component -> {
+            //TODO:反馈
+        });
+        t_me_about.setClickedListener(component -> {
+            //TODO:关于
+        });
+        t_me_setting.setClickedListener(component -> {
+
+        });
+
+    }
+
+    //TODO：图片转换出错
     // 初始化社区
     /*
     private void initCommunityListContainer(){
@@ -920,6 +1049,17 @@ public class MainAbilitySlice extends AbilitySlice {
         return list;
     }
     */
+    private void openGallery() {
+        Intent intent = new Intent();
+//        intent.setType("video/*");
+        intent.setType("image/*");
+        intent.setAction("android.intent.action.PICK");
+        intent.setAction("android.intent.action.GET_CONTENT");
+        intent.setParam("return-data", true);
+        intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
+        intent.addFlags(0x00000001);
+        startAbilityForResult(intent, RESULTCODE_IMAGE_CHOOSE);
+    }
 
     // 初始化聊天界面的ListContainer
     private void initChatListContainer() {
@@ -978,18 +1118,7 @@ public class MainAbilitySlice extends AbilitySlice {
     //定义选择器
     private void iniCalendarPicker() {
         Calendar cal = Calendar.getInstance();
-        List<String> yearList = new ArrayList<>();
-        int year_now = cal.get(Calendar.YEAR);
-        for (int i = year_now; i <= year_now + 9; i++) {
-            yearList.add(i + "年");
-        }
-
-        tf_add_outdate_year.setDisplayedData(yearList.toArray(new String[]{}));
-        tf_add_outdate_year.setValue(0);
-
-        tf_add_outdate_month.setDisplayedData(new String[]{"1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"});
-        tf_add_outdate_month.setHeight(util.getWindowWidthPx(MainAbilitySlice.this) / 4);
-        tf_add_outdate_month.setValue(0);
+        outdate = cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-1";
 
         tf_add_otc.setDisplayedData(new String[]{"OTC(非处方药)-红", "OTC(非处方药)-绿", "(留空)", "RX(处方药)"});
         tf_add_otc.setValue(2);
@@ -1006,11 +1135,16 @@ public class MainAbilitySlice extends AbilitySlice {
         listContainer.setLongClickable(false);
         // 2.实例化数据源
         List<Map<String, Object>> list = queryData();
-        if (list==null){
+        if (list == null) {
             nonelist.setVisibility(Component.VISIBLE);
             listContainer.setVisibility(Component.HIDE);
-        }else {
-            switch (style){
+            dataFav = 0;
+            dataHas = 0;
+            util.PreferenceUtils.putInt(this, "date_out", 0);
+            util.PreferenceUtils.putInt(this, "date_near", 0);
+            util.PreferenceUtils.putInt(this, "date_ok", 0);
+        } else {
+            switch (style) {
                 case 1:
                     listContainer.setOrientation(Component.VERTICAL);
                     break;
@@ -1019,7 +1153,7 @@ public class MainAbilitySlice extends AbilitySlice {
                     listContainer.setOrientation(Component.HORIZONTAL);
                     break;
             }
-            System.out.println("样式"+style);
+            System.out.println("样式" + style);
             nonelist.setVisibility(Component.HIDE);
             listContainer.setVisibility(Component.VISIBLE);
             // 3.初始化Provider对象
@@ -1056,7 +1190,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.beginsWith(DB_COLUMN_MEDICINE_KEYID,"M-");
+        predicates.beginsWith(DB_COLUMN_MEDICINE_KEYID, "M-");
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE),
                     columns_medicine, predicates);
@@ -1065,6 +1199,7 @@ public class MainAbilitySlice extends AbilitySlice {
                 return null;
             }
             resultSet.goToFirstRow();
+            dataFav = 0;
             do {
                 Map<String, Object> map = new HashMap<>();
 //            Map<String, Object> map = new HashMap<String, Object>();
@@ -1080,6 +1215,8 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
                 String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
+                String share = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_SHARE));
+                int delect = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DELECT));
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1092,6 +1229,12 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("yu", yu);
                 map.put("elabel", elabel);
                 map.put("love", love);
+                map.put("share", share);
+                map.put("delect", delect);
+
+                if (love.equals("yes")) {
+                    dataFav++;
+                }
                 list.add(map);
                 System.out.println("query: Id :" + " keyid:" + keyid + " name:" + name + " image:" + Arrays.toString(image) + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
@@ -1171,7 +1314,8 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
                 String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
-
+                String share = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_SHARE));
+                int delect = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DELECT));
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1184,6 +1328,8 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("yu", yu);
                 map.put("elabel", elabel);
                 map.put("love", love);
+                map.put("share", share);
+                map.put("delect", delect);
 
                 list.add(map);
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
@@ -1226,6 +1372,9 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
                 String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
+                String share = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_SHARE));
+                int delect = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DELECT));
+
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1238,6 +1387,9 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("yu", yu);
                 map.put("elabel", elabel);
                 map.put("love", love);
+                map.put("share", share);
+                map.put("delect", delect);
+
                 list.add(map);
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
@@ -1255,7 +1407,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.beginsWith(DB_COLUMN_MEDICINE_KEYID,"M-");
+        predicates.beginsWith(DB_COLUMN_MEDICINE_KEYID, "M-");
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE),
                     columns_medicine, predicates);
@@ -1279,6 +1431,9 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
                 String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
+                String share = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_SHARE));
+                int delect = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DELECT));
+
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1291,6 +1446,9 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("yu", yu);
                 map.put("elabel", elabel);
                 map.put("love", love);
+                map.put("share", share);
+                map.put("delect", delect);
+
                 list.add(map);
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
@@ -1312,28 +1470,89 @@ public class MainAbilitySlice extends AbilitySlice {
             initHomepageListContainer();
             util.PreferenceUtils.putString(getContext(), "editok", "none");
         }
-        String rgdone = util.PreferenceUtils.getString(getContext(), "rgok");
-        System.out.println("结果"+rgdone);
-        if (rgdone.equals("ok")) {
-            personData = queryPerson();
-            if(personData!=null&&!personData.toString().equals("{}")) {
-                util.PreferenceUtils.putInt(getContext(),"isFirstStart",1);
-                util.PreferenceUtils.putInt(getContext(),"isLogin",1);
-                byte[] headimg = (byte[]) personData.get(DB_COLUMN_PERSON_HEAD);
-                img_hp_head.setPixelMap(util.byte2PixelMap(headimg));
-                util.PreferenceUtils.putString(getContext(), "rgok", "none");
-                t_hp_title_usersname.setText((String)personData.get(DB_COLUMN_PERSON_SNAME));
+        String rgdone = util.PreferenceUtils.getString(getContext(), "rlok");
+        localPerson = util.PreferenceUtils.getString(getContext(), "localperson");
+        //登录则获取数据
+        int isLogin = util.PreferenceUtils.getInt(getContext(), "isLogin");
+        if (isLogin != 0) {
+            util.PreferenceUtils.putString(getContext(), "rlok", "none");
+            personData = queryPerson(localPerson);
+            if (personData != null && !personData.toString().equals("{}")) {
+                try {
+                    img_hp_head.setPixelMap(util.byte2PixelMap((byte[]) personData.get(DB_COLUMN_PERSON_HEAD)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                t_hp_title_usersname.setText((String) personData.get(DB_COLUMN_PERSON_SNAME));
             }
-
         }
-        int isLogin = util.PreferenceUtils.getInt(getContext(),"isLogin");
-        if (isLogin!=0){
-            personData = queryPerson();
-            if(personData!=null&&!personData.toString().equals("{}")) {
-                byte[] headimg = (byte[]) personData.get(DB_COLUMN_PERSON_HEAD);
-                img_hp_head.setPixelMap(util.byte2PixelMap(headimg));
-                t_hp_title_usersname.setText((String)personData.get(DB_COLUMN_PERSON_SNAME));
+        System.out.println("结果" + rgdone);
+        if (rgdone.equals("ok")) {
+            personData = queryPerson(localPerson);
+            System.out.println(localPerson + personData);
+            if (personData != null && !personData.toString().equals("{}")) {
+                util.PreferenceUtils.putInt(getContext(), "isFirstStart", 1);
+                util.PreferenceUtils.putInt(getContext(), "isLogin", 1);
+                try {
+                    img_hp_head.setPixelMap(util.byte2PixelMap((byte[]) personData.get(DB_COLUMN_PERSON_HEAD)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                util.PreferenceUtils.putString(getContext(), "rlok", "none");
+                t_hp_title_usersname.setText((String) personData.get(DB_COLUMN_PERSON_SNAME));
             }
+        }
+        //刷新界面
+        if (util.PreferenceUtils.getInt(getContext(), "editPerson") == 1) {
+            personData = queryPerson(localPerson);
+            PixelMap pixelMap = util.byte2PixelMap((byte[]) personData.get(DB_COLUMN_PERSON_HEAD));
+            img_hp_head.setPixelMap(pixelMap);
+            t_hp_title_usersname.setText((String) personData.get(DB_COLUMN_PERSON_SNAME));
+            img_homehead.setPixelMap(pixelMap);
+            t_me_sname.setText((String) personData.get(DB_COLUMN_PERSON_SNAME));
+            t_me_lname.setText((String) personData.get(DB_COLUMN_PERSON_LNAME));
+            String vip = (String) personData.get(DB_COLUMN_PERSON_VIP);
+            if (vip.equals("0")) {
+                t_me_vip.setText("免费会员");
+            } else {
+                t_me_vip.setText(" VIP ");
+            }
+            util.PreferenceUtils.putInt(getContext(), "editPerson", 0);
+        }
+        Map<String, Object> map = WebDataAbility.getData("select * from USERINFO where `lname` = '" + localPerson + "';",localPerson);
+
+    }
+
+    //插入数据
+    public void updatePerson(String id, String lname, String sname, String pwd, byte[] head,
+                             String friend, String phone, String mail,
+                             String online, String has, String vip,
+                             String vipyu) {
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.equalTo(DB_COLUMN_PERSON_LNAME, id);
+
+        ValuesBucket valuesBucket = new ValuesBucket();
+        valuesBucket.putString(DB_COLUMN_PERSON_ID, id);
+        valuesBucket.putString(DB_COLUMN_PERSON_LNAME, lname);
+        valuesBucket.putString(DB_COLUMN_PERSON_SNAME, sname);
+        valuesBucket.putString(DB_COLUMN_PERSON_PWD, pwd);
+        valuesBucket.putByteArray(DB_COLUMN_PERSON_HEAD, head);
+        valuesBucket.putString(DB_COLUMN_PERSON_FRIEND, friend);
+        valuesBucket.putString(DB_COLUMN_PERSON_PHONE, phone);
+        valuesBucket.putString(DB_COLUMN_PERSON_MAIL, mail);
+        valuesBucket.putString(DB_COLUMN_PERSON_ONLINE, online);
+        valuesBucket.putString(DB_COLUMN_PERSON_HAS, has);
+        valuesBucket.putString(DB_COLUMN_PERSON_VIP, vip);
+        valuesBucket.putString(DB_COLUMN_PERSON_VIPYU, vipyu);
+
+        try {
+            if (databaseHelper.update(Uri.parse(BASE_URI_PERSON + DATA_PATH_PERSON), valuesBucket, predicates) != -1) {
+                HiLog.info(LABEL_LOG, "update successful");
+                ToastUtil.showToast(cont, "修改成功  ");
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
+            ToastUtil.showToast(cont, "修改失败，请重试  ");
         }
     }
 
@@ -1354,12 +1573,13 @@ public class MainAbilitySlice extends AbilitySlice {
     @Override
     public void onAbilityResult(int requestCode, int resultCode, Intent data) {
         System.out.println("输出了: " + resultCode + ":" + requestCode + ":" + data);
-
         switch (requestCode) {
             case RESULTCODE_IMAGE_CHOOSE:
                 if (data != null) {
                     //取得图片路径
                     String imgpath = data.getUriString();
+//                    取真实地址
+//                    pickiT.getPath(data.getUri());
                     System.out.println("gggggggg" + imgpath);
                     //定义数据能力帮助对象
                     DataAbilityHelper helper = DataAbilityHelper.creator(getContext());
@@ -1405,9 +1625,9 @@ public class MainAbilitySlice extends AbilitySlice {
                 }
                 break;
             case 300:
-                if (data!=null){
-                    if (data.getStringParam("changeok").equals("ok")){
-                        style = util.PreferenceUtils.getInt(getContext(),"style");
+                if (data != null) {
+                    if (data.getStringParam("changeok").equals("ok")) {
+                        style = util.PreferenceUtils.getInt(getContext(), "style");
                         initHomepageListContainer();
                     }
                 }
@@ -1425,7 +1645,7 @@ public class MainAbilitySlice extends AbilitySlice {
 
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.beginsWith(DB_COLUMN_MEDICINE_OUTDATE,"M-");
+        predicates.beginsWith(DB_COLUMN_MEDICINE_OUTDATE, "M-");
         int count = 0;
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE),
@@ -1449,8 +1669,11 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
                 String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
+                String share = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_SHARE));
+                int delect = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DELECT));
+
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
-                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel+"love"+love);
+                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel + "love" + love + "share:" + share);
             } while (resultSet.goToNextRow());
             dataHas = count;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
@@ -1458,12 +1681,13 @@ public class MainAbilitySlice extends AbilitySlice {
         }
         return 0;
     }
+
     //刷新数据
     public void query() {
         // 构造查询条件
         DataAbilityPredicates predicates = new DataAbilityPredicates();
 //        predicates.between(DB_COLUMN_MEDICINE_KEYID, lowKey, highKey);
-        predicates.beginsWith(DB_COLUMN_MEDICINE_KEYID,"M-");
+        predicates.beginsWith(DB_COLUMN_MEDICINE_KEYID, "M-");
         int count = 0;
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE),
@@ -1487,9 +1711,10 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
                 String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
-
+                String share = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_SHARE));
+                int delect = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DELECT));
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
-                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel+"love"+love);
+                        + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel + "love" + love + "share:" + share);
             } while (resultSet.goToNextRow());
             dataHas = count;
         } catch (DataAbilityRemoteException | IllegalStateException exception) {
@@ -1525,6 +1750,8 @@ public class MainAbilitySlice extends AbilitySlice {
                 String yu = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_YU));
                 String elabel = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_ELABEL));
                 String love = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_LOVE));
+                String share = resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_SHARE));
+                int delect = resultSet.getInt(resultSet.getColumnIndexForName(DB_COLUMN_MEDICINE_DELECT));
                 map.put("keyid", keyid);
                 map.put("img", image);
                 map.put("name", name);
@@ -1537,6 +1764,9 @@ public class MainAbilitySlice extends AbilitySlice {
                 map.put("yu", yu);
                 map.put("elabel", elabel);
                 map.put("love", love);
+                map.put("share", share);
+                map.put("delect", delect);
+
                 HiLog.info(LABEL_LOG, "query: Id :" + " keyid:" + keyid + " name:" + name + " imagepath:" + image + " description:" + description + " outdate:" + outdate
                         + " otc:" + otc + " barcode:" + barcode + " :" + usage + " company:" + company + " yu:" + yu + " elabel:" + elabel);
             } while (resultSet.goToNextRow());
@@ -1580,6 +1810,8 @@ public class MainAbilitySlice extends AbilitySlice {
         valuesBucket.putString(DB_COLUMN_MEDICINE_YU, yu);
         valuesBucket.putString(DB_COLUMN_MEDICINE_ELABEL, elabel);
         valuesBucket.putString(DB_COLUMN_MEDICINE_LOVE, "no");
+        valuesBucket.putString(DB_COLUMN_MEDICINE_SHARE, "none");
+        valuesBucket.putInteger(DB_COLUMN_MEDICINE_DELECT, 0);
         try {
             if (databaseHelper.insert(Uri.parse(BASE_URI_MEDICINE + DATA_PATH_MEDICINE), valuesBucket) != -1) {
                 HiLog.info(LABEL_LOG, "insert successful");
@@ -1650,12 +1882,125 @@ public class MainAbilitySlice extends AbilitySlice {
             ToastUtil.showToast(cont, "删除失败，请重试  ");
         }
     }
-    public static Map<String, Object> queryPerson() {
+
+    public static void updateSname(String lname, String editSname) {
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.equalTo(DB_COLUMN_PERSON_LNAME, lname);
+        ValuesBucket valuesBucket = new ValuesBucket();
+        valuesBucket.putString(DB_COLUMN_PERSON_SNAME, editSname);
+        try {
+            if (databaseHelper.update(Uri.parse(BASE_URI_PERSON + DATA_PATH_PERSON), valuesBucket, predicates) != -1) {
+                HiLog.info(LABEL_LOG, "update successful");
+                ToastUtil.showToast(cont, "修改成功  ");
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
+            ToastUtil.showToast(cont, "修改失败，请重试  ");
+        }
+    }
+
+    public static void updatePwd(String lname, String editPwd) {
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.equalTo(DB_COLUMN_PERSON_LNAME, lname);
+        ValuesBucket valuesBucket = new ValuesBucket();
+        valuesBucket.putString(DB_COLUMN_PERSON_PWD, editPwd);
+        try {
+            if (databaseHelper.update(Uri.parse(BASE_URI_PERSON + DATA_PATH_PERSON), valuesBucket, predicates) != -1) {
+                HiLog.info(LABEL_LOG, "update successful");
+                ToastUtil.showToast(cont, "修改成功  ");
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
+            ToastUtil.showToast(cont, "修改失败，请重试  ");
+        }
+    }
+
+    public static void updatePhone(String lname, String editPhone) {
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.equalTo(DB_COLUMN_PERSON_LNAME, lname);
+        ValuesBucket valuesBucket = new ValuesBucket();
+        valuesBucket.putString(DB_COLUMN_PERSON_PHONE, editPhone);
+        try {
+            if (databaseHelper.update(Uri.parse(BASE_URI_PERSON + DATA_PATH_PERSON), valuesBucket, predicates) != -1) {
+                HiLog.info(LABEL_LOG, "update successful");
+                ToastUtil.showToast(cont, "修改成功  ");
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
+            ToastUtil.showToast(cont, "修改失败，请重试  ");
+        }
+    }
+
+    public static void updateHead(String lname, byte[] head) {
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.equalTo(DB_COLUMN_PERSON_LNAME, lname);
+        ValuesBucket valuesBucket = new ValuesBucket();
+        valuesBucket.putByteArray(DB_COLUMN_PERSON_HEAD, head);
+        try {
+            if (databaseHelper.update(Uri.parse(BASE_URI_PERSON + DATA_PATH_PERSON), valuesBucket, predicates) != -1) {
+                HiLog.info(LABEL_LOG, "update successful");
+                ToastUtil.showToast(cont, "修改成功  ");
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
+            ToastUtil.showToast(cont, "修改失败，请重试  ");
+        }
+    }
+
+    public static void updateLname(String lname, String editLname) {
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.equalTo(DB_COLUMN_PERSON_LNAME, lname);
+        ValuesBucket valuesBucket = new ValuesBucket();
+        valuesBucket.putString(DB_COLUMN_PERSON_LNAME, editLname);
+        try {
+            if (databaseHelper.update(Uri.parse(BASE_URI_PERSON + DATA_PATH_PERSON), valuesBucket, predicates) != -1) {
+                HiLog.info(LABEL_LOG, "update successful");
+                ToastUtil.showToast(cont, "修改成功  ");
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
+            ToastUtil.showToast(cont, "修改失败，请重试  ");
+        }
+    }
+
+    public static void updateMail(String lname, String editMail) {
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.equalTo(DB_COLUMN_PERSON_LNAME, lname);
+        ValuesBucket valuesBucket = new ValuesBucket();
+        valuesBucket.putString(DB_COLUMN_PERSON_MAIL, editMail);
+        try {
+            if (databaseHelper.update(Uri.parse(BASE_URI_PERSON + DATA_PATH_PERSON), valuesBucket, predicates) != -1) {
+                HiLog.info(LABEL_LOG, "update successful");
+                ToastUtil.showToast(cont, "修改成功  ");
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
+            ToastUtil.showToast(cont, "修改失败，请重试  ");
+        }
+    }
+
+    public static void updatePerson(String lname, String editLname) {
+        DataAbilityPredicates predicates = new DataAbilityPredicates();
+        predicates.equalTo(DB_COLUMN_PERSON_LNAME, lname);
+        ValuesBucket valuesBucket = new ValuesBucket();
+        valuesBucket.putString(DB_COLUMN_PERSON_LNAME, editLname);
+        try {
+            if (databaseHelper.update(Uri.parse(BASE_URI_PERSON + DATA_PATH_PERSON), valuesBucket, predicates) != -1) {
+                HiLog.info(LABEL_LOG, "update successful");
+                ToastUtil.showToast(cont, "修改成功  ");
+            }
+        } catch (DataAbilityRemoteException | IllegalStateException exception) {
+            HiLog.error(LABEL_LOG, "update: dataRemote exception | illegalStateException");
+            ToastUtil.showToast(cont, "修改失败，请重试  ");
+        }
+    }
+
+    public static Map<String, Object> queryPerson(String personid) {
         // 构造查询条件
         Map<String, Object> map = new HashMap<>();
         DataAbilityPredicates predicates = new DataAbilityPredicates();
 //        predicates.between(DB_COLUMN_MEDICINE_KEYID, lowKey, highKey);
-        predicates.beginsWith(DB_COLUMN_PERSON_ID, "P-");
+        predicates.equalTo(DB_COLUMN_PERSON_LNAME, personid);
         try {
             ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI_PERSON + DATA_PATH_PERSON),
                     columns_person, predicates);
@@ -1664,20 +2009,20 @@ public class MainAbilitySlice extends AbilitySlice {
                 return null;
             } else {
                 resultSet.goToFirstRow();
-                    map.put(DB_COLUMN_PERSON_ID, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_ID)));
-                    map.put(DB_COLUMN_PERSON_LNAME, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_LNAME)));
-                    map.put(DB_COLUMN_PERSON_HEAD, resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_HEAD)));
-                    map.put(DB_COLUMN_PERSON_SNAME, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_SNAME)));
-                    map.put(DB_COLUMN_PERSON_PWD, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_PWD)));
-                    map.put(DB_COLUMN_PERSON_PHONE, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_PHONE)));
-                    map.put(DB_COLUMN_PERSON_MAIL, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_MAIL)));
-                    map.put(DB_COLUMN_PERSON_FRIEND, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_FRIEND)));
-                    map.put(DB_COLUMN_PERSON_RGTIME, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_RGTIME)));
-                    map.put(DB_COLUMN_PERSON_ONLINE, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_ONLINE)));
-                    map.put(DB_COLUMN_PERSON_HAS, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_HAS)));
-                    map.put(DB_COLUMN_PERSON_VIP, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_VIP)));
-                    map.put(DB_COLUMN_PERSON_VIPYU, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_VIPYU)));
-
+                map.put(DB_COLUMN_PERSON_ID, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_ID)));
+                map.put(DB_COLUMN_PERSON_LNAME, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_LNAME)));
+                map.put(DB_COLUMN_PERSON_HEAD, resultSet.getBlob(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_HEAD)));
+                map.put(DB_COLUMN_PERSON_SNAME, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_SNAME)));
+                map.put(DB_COLUMN_PERSON_PWD, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_PWD)));
+                map.put(DB_COLUMN_PERSON_PHONE, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_PHONE)));
+                map.put(DB_COLUMN_PERSON_MAIL, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_MAIL)));
+                map.put(DB_COLUMN_PERSON_FRIEND, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_FRIEND)));
+                map.put(DB_COLUMN_PERSON_RGTIME, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_RGTIME)));
+                map.put(DB_COLUMN_PERSON_ONLINE, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_ONLINE)));
+                map.put(DB_COLUMN_PERSON_HAS, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_HAS)));
+                map.put(DB_COLUMN_PERSON_VIP, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_VIP)));
+                map.put(DB_COLUMN_PERSON_VIPYU, resultSet.getString(resultSet.getColumnIndexForName(DB_COLUMN_PERSON_VIPYU)));
+                System.out.println(map);
                 return map;
 
             }
@@ -1686,72 +2031,20 @@ public class MainAbilitySlice extends AbilitySlice {
         }
         return map;
     }
-    public static void insertPerson(String id, String lname, String sname,
-                       String pwd, byte[] head, String friend,
-                       String phone, String mail, String rgtime,
-                       String online, String has, String vip, String vipyu) {
-        ValuesBucket valuesBucket = new ValuesBucket();
-        valuesBucket.putString(DB_COLUMN_PERSON_ID, id);
-        valuesBucket.putString(DB_COLUMN_PERSON_LNAME, lname);
-        valuesBucket.putByteArray(DB_COLUMN_PERSON_HEAD, head);
-        valuesBucket.putString(DB_COLUMN_PERSON_SNAME, sname);
-        valuesBucket.putString(DB_COLUMN_PERSON_PWD, pwd);
-        valuesBucket.putString(DB_COLUMN_PERSON_FRIEND, friend);
-        valuesBucket.putString(DB_COLUMN_PERSON_PHONE, phone);
-        valuesBucket.putString(DB_COLUMN_PERSON_MAIL, mail);
-        valuesBucket.putString(DB_COLUMN_PERSON_RGTIME, rgtime);
-        valuesBucket.putString(DB_COLUMN_PERSON_ONLINE, online);
-        valuesBucket.putString(DB_COLUMN_PERSON_HAS, has);
-        valuesBucket.putString(DB_COLUMN_PERSON_VIP, vip);
-        valuesBucket.putString(DB_COLUMN_PERSON_VIPYU, vipyu);
-        try {
-            if (databaseHelper.insert(Uri.parse(BASE_URI_PERSON + DATA_PATH_PERSON), valuesBucket) != -1) {
-                util.PreferenceUtils.putString(cont, "rgok", "ok");
-                System.out.println("person insert successful");
-                System.out.println("注册成功");
-            }
-        } catch (DataAbilityRemoteException | IllegalStateException exception) {
-//            ToastUtil.showToast(this, "注册成功，但登录失败，请重试  ");
-            exception.printStackTrace();
-            System.out.println("登录出错");
+
+    @Override
+    protected void onStop() {
+        if (!isUpdatingConfigurations()) {
+            pickiT.deleteTemporaryFile(this);
         }
+        super.onStop();
     }
 
-    public static class XPopupListener extends SimpleCallback {
-        @Override
-        public void onCreated(BasePopupView pv) {
-            HiLog.info(LABEL_LOG, "onCreater");
-        }
-
-        @Override
-        public void onShow(BasePopupView popupView) {
-            HiLog.info(LABEL_LOG, "onShow");
-        }
-
-        @Override
-        public void onDismiss(BasePopupView popupView) {
-            HiLog.info(LABEL_LOG, "onDismiss");
-        }
-
-        @Override
-        public void beforeDismiss(BasePopupView popupView) {
-            HiLog.info(LABEL_LOG, "beforeDismiss");
-        }
-
-        // 如果你自己想拦截返回按键事件，则重写这个方法，返回true即可
-        @Override
-        public boolean onBackPressed(BasePopupView popupView) {
-//            ToastUtil.showToast(getContext(), "onBackPressed返回true，拦截了返回按键，按返回键XPopup不会关闭了");
-            return true;
-        }
-
-        @Override
-        public void onKeyBoardStateChanged(BasePopupView popupView, int height) {
-            super.onKeyBoardStateChanged(popupView, height);
-//            loge("tag", "onKeyBoardStateChanged height: " + height);
-        }
+    @Override
+    protected void onBackPressed() {
+        pickiT.deleteTemporaryFile(this);
+        super.onBackPressed();
     }
-
 }
 
 

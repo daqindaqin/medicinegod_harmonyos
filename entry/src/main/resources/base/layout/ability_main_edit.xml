@@ -177,37 +177,24 @@
                 ohos:text_color="$color:black_clear"
                 ohos:text_size="26fp"
                 ohos:text_weight="500"/>
-            <DirectionalLayout
+            <Text
+                ohos:id="$+id:dtl_edit_choosedate"
                 ohos:height="match_content"
                 ohos:width="match_parent"
-                ohos:orientation="horizontal"
-                ohos:alignment="left|vertical_center">
-                <Picker
-                    ohos:id="$+id:dtl_edit_newOutdate_year"
-                    ohos:height="match_content"
-                    ohos:width="100vp"
-                    ohos:below="$id:add_newOutdate_title"
-                    ohos:margin="10vp"
-                    ohos:selected_text_size="20fp"
-                    ohos:selected_text_color="$color:blue"
-                    ohos:selector_item_num="3"
-                    ohos:start_margin="30vp"
-                    ohos:wheel_mode_enabled="true"
-                    />
-                <Picker
-                    ohos:id="$+id:dtl_edit_newOutdate_month"
-                    ohos:height="match_content"
-                    ohos:width="100vp"
-                    ohos:below="$id:add_newOutdate_title"
-                    ohos:margin="10vp"
-                    ohos:max_value="11"
-                    ohos:right_of="$id:add_newOutdate_year"
-                    ohos:selected_text_color="$color:blue"
-                    ohos:selected_text_size="20fp"
-                    ohos:selector_item_num="3"
-                    ohos:wheel_mode_enabled="true"
-                    />
-            </DirectionalLayout>
+                ohos:start_margin="30vp"
+                ohos:end_margin="30vp"
+                ohos:start_padding="10vp"
+                ohos:end_padding="10vp"
+                ohos:top_margin="5vp"
+                ohos:bottom_margin="5vp"
+                ohos:top_padding="5vp"
+                ohos:bottom_padding="10vp"
+                ohos:text_size="18vp"
+                ohos:text_weight="500"
+                ohos:text_alignment="vertical_center|horizontal_center"
+                ohos:text="单击更改时间"
+                ohos:text_color="$color:white"
+                ohos:background_element="$graphic:bg_rglg_btn"/>
             <!--otc-->
             <Text
                 ohos:height="match_content"

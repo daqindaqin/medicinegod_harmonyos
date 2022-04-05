@@ -19,7 +19,8 @@
     "name": ".MyApplication",
     "mainAbility": "com.daqin.medicinegod.MainAbility",
     "deviceType": [
-      "phone","tablet"
+      "phone",
+      "tablet"
     ],
     "distro": {
       "deliveryWithInstall": true,
@@ -109,6 +110,12 @@
         "name": "com.daqin.medicinegod.RgLgAbility",
         "description": "登录注册页面",
         "type": "page"
+      },
+      {
+        "icon": "$media:icon",
+        "name": "com.daqin.medicinegod.MeDetailAbility",
+        "description": "个人详情",
+        "type": "page"
       }
     ],
     "metaData": {
@@ -142,7 +149,8 @@
           ],
           "when": "always"
         }
-      },{
+      },
+      {
         "name": "android.permission.WRITE_EXTERNAL_STORAGE",
         "reason": "测试",
         "usedScene": {

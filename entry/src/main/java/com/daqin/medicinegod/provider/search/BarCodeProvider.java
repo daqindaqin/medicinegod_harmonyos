@@ -101,7 +101,7 @@ public class BarCodeProvider extends BaseItemProvider {
             image.setVisibility(Component.VISIBLE);
             byte[] img = (byte[]) map.get("img");
             if (img==null){
-                image.setPixelMap(ResourceTable.Media_addpng_default);
+                image.setPixelMap(ResourceTable.Media_add_imgdefault);
                 image.setScaleMode(Image.ScaleMode.CENTER);
             }else {
                 image.setPixelMap(util.byte2PixelMap(img));

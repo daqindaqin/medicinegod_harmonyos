@@ -211,37 +211,31 @@
                 ohos:text_weight="500"
                 ohos:top_margin="20vp"
                 />
-            <Picker
-                ohos:id="$+id:add_newOutdate_year"
+            <Text
+                ohos:id="$+id:add_newOutDate"
                 ohos:height="match_content"
-                ohos:width="100vp"
-                ohos:below="$id:add_newOutdate_title"
-                ohos:margin="10vp"
-                ohos:selected_text_size="20fp"
-                ohos:selected_text_color="$color:blue"
-                ohos:selector_item_num="3"
+                ohos:width="match_parent"
                 ohos:start_margin="30vp"
-                ohos:wheel_mode_enabled="true"
-                />
-            <Picker
-                ohos:id="$+id:add_newOutdate_month"
-                ohos:height="match_content"
-                ohos:width="100vp"
+                ohos:end_margin="30vp"
+                ohos:start_padding="10vp"
+                ohos:end_padding="10vp"
+                ohos:top_margin="5vp"
+                ohos:bottom_margin="5vp"
+                ohos:top_padding="5vp"
+                ohos:bottom_padding="5vp"
+                ohos:text_weight="500"
+                ohos:text_size="18vp"
+                ohos:text_alignment="vertical_center|horizontal_center"
+                ohos:text="单击更改时间"
+                ohos:text_color="$color:white"
                 ohos:below="$id:add_newOutdate_title"
-                ohos:margin="10vp"
-                ohos:max_value="11"
-                ohos:selected_text_color="$color:blue"
-                ohos:right_of="$id:add_newOutdate_year"
-                ohos:selected_text_size="20fp"
-                ohos:selector_item_num="3"
-                ohos:wheel_mode_enabled="true"
-                />
+                ohos:background_element="$graphic:bg_rglg_btn"/>
             <Image
                 ohos:id="$+id:add_line4"
                 ohos:height="2vp"
                 ohos:width="match_parent"
                 ohos:background_element="$color:black_line"
-                ohos:below="$id:add_newOutdate_month"
+                ohos:below="$id:add_newOutDate"
                 />
 
             <!-- 药品OTC标识布局 -->

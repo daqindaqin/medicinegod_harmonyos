@@ -12,16 +12,20 @@ import ohos.agp.components.element.*;
 import ohos.agp.utils.Color;
 
 
+import java.security.PrivateKey;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class HomePageListItemProvider extends BaseItemProvider {
 
     private List<Map<String, Object>> list;
     private AbilitySlice slice;
     private int style;
+    private static int date_out , date_near , date_ok ;
+
 
     public HomePageListItemProvider(List<Map<String, Object>> list, AbilitySlice slice, int style) {
         this.list = list;
@@ -49,7 +53,7 @@ public class HomePageListItemProvider extends BaseItemProvider {
 
     @Override
     public Component getComponent(int position, Component convertComponent, ComponentContainer componentContainer) {
-        Component cpt ;
+        Component cpt;
         // 如果还没有convertComponent对象，那么将xml布局文件转为一个Component对象。
         if (convertComponent == null) {
             //从当前的AbilitySlice对应的xml布局中，
@@ -79,13 +83,18 @@ public class HomePageListItemProvider extends BaseItemProvider {
         map.put("yu", yu);
         map.put("elabel", elabel);
 */
-        Text textName ;
-        Text textUsage ;
+        Text textName;
+        Text textUsage;
         Text textMargin;
-        Text textOtc ;
-        Text textOutdate ;
-        Image image ;
+        Text textOtc;
+        Text textOutdate;
+        Image image;
+        String type ;
         Map<String, Object> map = list.get(position);//获取数据
+        type = (String) map.get("DELECT");
+        if (type.equals("1")){
+            return null;
+        }
         switch (style) {
             case 1:
                 textName = (Text) cpt.findComponentById(ResourceTable.Id_style_one_text_name);
@@ -156,21 +165,24 @@ public class HomePageListItemProvider extends BaseItemProvider {
                 res = util.isTimeOut(date1, timeB);
                 switch (res) {
                     case -1:
+                        date_out++;
                         textOutdate.setText("[药品过期]" + "\n" + "禁止服用 请妥善处理。");
                         textOutdate.setTextColor(new Color(Color.rgb(255, 67, 54)));
                         break;
                     case 0:
+                        date_near++;
                         textOutdate.setText("[即将过期]" + "\n" + "请提前准备新的药品。");
                         textOutdate.setTextColor(new Color(Color.rgb(255, 152, 0)));
                         break;
                     case 1:
+                        date_ok++;
                         textOutdate.setText("[正常使用]" + "\n" + "请遵医嘱、说明书使用。");
                         textOutdate.setTextColor(new Color(Color.rgb(76, 175, 80)));
                         break;
                 }
                 byte[] img0 = (byte[]) map.get("img");
                 if (img0 == null) {
-                    image.setPixelMap(ResourceTable.Media_addpng_default);
+                    image.setPixelMap(ResourceTable.Media_add_imgdefault);
                     image.setScaleMode(Image.ScaleMode.CENTER);
                 } else {
                     image.setPixelMap(util.byte2PixelMap(img0));
@@ -226,7 +238,7 @@ public class HomePageListItemProvider extends BaseItemProvider {
                 }
                 byte[] img1 = (byte[]) map.get("img");
                 if (img1 == null) {
-                    image.setPixelMap(ResourceTable.Media_addpng_default);
+                    image.setPixelMap(ResourceTable.Media_add_imgdefault);
                     image.setScaleMode(Image.ScaleMode.CENTER);
                 } else {
                     image.setPixelMap(util.byte2PixelMap(img1));
@@ -247,14 +259,17 @@ public class HomePageListItemProvider extends BaseItemProvider {
                 res = util.isTimeOut(dated1, timeD);
                 switch (res) {
                     case -1:
+                        date_out++;
                         textOutdate.setText("药品过期");
                         textOutdate.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_outdate_red_default));
                         break;
                     case 0:
+                        date_near++;
                         textOutdate.setText("即将过期");
                         textOutdate.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_outdate_yellow_default));
                         break;
                     case 1:
+                        date_ok++;
                         textOutdate.setText("正常使用");
                         textOutdate.setBackground(ElementScatter.getInstance(slice).parse(ResourceTable.Graphic_bg_text_outdate_green_default));
                         break;
@@ -262,7 +277,13 @@ public class HomePageListItemProvider extends BaseItemProvider {
                 break;
         }
 
+        util.PreferenceUtils.putInt(slice,"date_out",date_out);
+        util.PreferenceUtils.putInt(slice,"date_near",date_near);
+        util.PreferenceUtils.putInt(slice,"date_ok",date_ok);
+
+
         return cpt;
+
     }
 }
 

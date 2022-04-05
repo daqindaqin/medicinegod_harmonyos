@@ -49,6 +49,10 @@ public class DetailAbilitySlice extends AbilitySlice {
     private static final String DB_COLUMN_YU = "YU";
     private static final String DB_COLUMN_ELABEL = "ELABEL";
     private static final String DB_COLUMN_LOVE = "LOVE";
+    private static final String DB_COLUMN_SHARE = "SHARE";
+    private static final String DB_COLUMN_DELECT = "DELECT";
+
+
 
 
 
@@ -204,8 +208,6 @@ public class DetailAbilitySlice extends AbilitySlice {
 
 
         createWidthContent(barcode);
-
-
         textUagesAll = ((String) mdc_SingleData.get("usage")).split("-");
         //1-包-3-次-1-天
         if ((Integer.parseInt(textUagesAll[4].toString())) == 1) {
@@ -299,7 +301,9 @@ public class DetailAbilitySlice extends AbilitySlice {
                                             DB_COLUMN_COMPANY,
                                             DB_COLUMN_YU,
                                             DB_COLUMN_ELABEL,
-                                            DB_COLUMN_LOVE
+                                            DB_COLUMN_LOVE,
+                                            DB_COLUMN_SHARE,
+                                            DB_COLUMN_DELECT
                                     };
                                     try {
                                         ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
@@ -334,6 +338,9 @@ public class DetailAbilitySlice extends AbilitySlice {
             valuesBucket.putString(DB_COLUMN_YU, (String) mdc_SingleData.get("yu"));
             valuesBucket.putString(DB_COLUMN_ELABEL, (String) mdc_SingleData.get("elabel"));
             valuesBucket.putString(DB_COLUMN_LOVE, (String) mdc_SingleData.get("love"));
+            valuesBucket.putString(DB_COLUMN_SHARE, (String) mdc_SingleData.get("share"));
+            valuesBucket.putInteger(DB_COLUMN_DELECT, 0);
+
             try {
                 if (databaseHelper.insert(Uri.parse(BASE_URI + DATA_PATH), valuesBucket) != -1) {
                     //消息弹框
