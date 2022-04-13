@@ -48,16 +48,22 @@ import static ohos.agp.components.InputAttribute.*;
 
 
 public class RgLgAbilitySlice extends AbilitySlice {
-    private static final String CONNECT_HOST = "你的地址+端口";//如：172.0.0.1:3306
+    /*private static final String CONNECT_HOST = "你的地址+端口";//如：172.0.0.1:3306
     private static final String CONNECT_DB = "库名";//数据库库名，如：datebase
     //配置，需将数据库字段都更为utf-8才能正确插入数据，否则抛异常
     private static final String CONNECT_CONFIG = "characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
     private static final String CONNECT_DB_USERNAME = "root";//用户名
     private static final String CONNECT_DB_USERPWD = "123456";//密码
     private static final String FromMail = "你的邮箱";
-    private static final String FromSecret = "邮箱授权码";
+    private static final String FromSecret = "邮箱授权码";*/
 
-
+    private static final String CONNECT_HOST = "139.224.48.87:3306";
+    private static final String CONNECT_DB = "mg";
+    private static final String CONNECT_CONFIG = "characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
+    private static final String CONNECT_DB_USERNAME = "mg";
+    private static final String CONNECT_DB_USERPWD = "mg@Qhx010394";
+    private static final String FromMail = "wfgmqhx@163.com";
+    private static final String FromSecret = "PTYVSZLVHAUJDPYG";
 
     private static final String BASE_URI = "dataability:///com.daqin.medicinegod.data.PersonDataAbility";
     private static final String DATA_PATH = "/person";
