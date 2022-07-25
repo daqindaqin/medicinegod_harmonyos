@@ -2,6 +2,7 @@ package com.daqin.medicinegod.slice;
 
 import com.daqin.medicinegod.ResourceTable;
 import com.daqin.medicinegod.provider.RgLgScreenSlidePagerProvider;
+import com.daqin.medicinegod.utils.JdbcUtils;
 import com.daqin.medicinegod.utils.imageControler.ImageSaver;
 import com.daqin.medicinegod.utils.util;
 import com.lxj.xpopup.XPopup;
@@ -33,11 +34,9 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -48,20 +47,10 @@ import static ohos.agp.components.InputAttribute.*;
 
 
 public class RgLgAbilitySlice extends AbilitySlice {
-    /*private static final String CONNECT_HOST = "你的地址+端口";//如：172.0.0.1:3306
-    private static final String CONNECT_DB = "库名";//数据库库名，如：datebase
-    //配置，需将数据库字段都更为utf-8才能正确插入数据，否则抛异常
-    private static final String CONNECT_CONFIG = "characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
-    private static final String CONNECT_DB_USERNAME = "root";//用户名
-    private static final String CONNECT_DB_USERPWD = "123456";//密码
-    private static final String FromMail = "你的邮箱";
-    private static final String FromSecret = "邮箱授权码";*/
 
-    private static final String CONNECT_HOST = "139.224.48.87:3306";
-    private static final String CONNECT_DB = "mg";
-    private static final String CONNECT_CONFIG = "characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
-    private static final String CONNECT_DB_USERNAME = "mg";
-    private static final String CONNECT_DB_USERPWD = "mg@Qhx010394";
+//    private static final String FromMail = "你的邮箱";
+//    private static final String FromSecret = "邮箱授权码";
+
     private static final String FromMail = "wfgmqhx@163.com";
     private static final String FromSecret = "PTYVSZLVHAUJDPYG";
 
@@ -198,28 +187,25 @@ public class RgLgAbilitySlice extends AbilitySlice {
                         textField.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield));
                         if (textField == tf_l_userlname) {
                             if (tf_l_userlname.getText().length() != 0) {
-                                final String url = "jdbc:mysql://" + CONNECT_HOST + "/" + CONNECT_DB + "?" + CONNECT_CONFIG;
+
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        Connection connection = null;
+                                        PreparedStatement pps = null;
+                                        java.sql.ResultSet resultSet_head = null;
                                         try {
-                                            //1、加载驱动
-                                            Class.forName("com.mysql.jdbc.Driver").newInstance();
-                                            //3.连接成功，返回数据库对象
-                                            Connection connection = DriverManager.getConnection(url, CONNECT_DB_USERNAME, CONNECT_DB_USERPWD);
-                                            //4.执行SQL的对象
-                                            Statement statement = connection.createStatement();
-                                            //5.执行SQL的对象去执行SQL,可能存在结果，查看返回结果
-                                            java.sql.ResultSet resultSet_head = statement.executeQuery("select * from USERINFO where LNAME ='" + tf_l_userlname.getText().trim() + "'");//返回的结果集,结果集中封装了我们全部的查询出来的结果
+                                            connection = JdbcUtils.getConnection();
+                                            pps = connection.prepareStatement("select * from USERINFO where LNAME = ?");
+                                            pps.setString(1, tf_l_userlname.getText().trim());
+                                            resultSet_head = pps.executeQuery();
                                             if (resultSet_head.next()) {
                                                 t_l_head.setPixelMap(util.byte2PixelMap((byte[]) resultSet_head.getBytes(CONNECT_DB_HEAD)));
                                             }
-                                            //6.释放连接
-                                            resultSet_head.close();
-                                            statement.close();
-                                            connection.close();
                                         } catch (Exception e) {
                                             e.printStackTrace();
+                                        } finally {
+                                            JdbcUtils.closeConnection(connection, pps, resultSet_head);
                                         }
                                     }
                                 }).start();
@@ -334,7 +320,7 @@ public class RgLgAbilitySlice extends AbilitySlice {
                 t_r_showhidepwd.setPixelMap(ResourceTable.Media_rg_hidepwd);
                 showhidepwd = false;
             } else {
-                tf_r_userpwd.setTextInputType(PATTERN_TEXT_VISIBLE_PASSWORD_TYPE);
+                tf_r_userpwd.setTextInputType(PATTERN_TEXT);
                 t_r_showhidepwd.setPixelMap(ResourceTable.Media_rg_showpwd);
                 showhidepwd = true;
             }
@@ -436,36 +422,36 @@ public class RgLgAbilitySlice extends AbilitySlice {
     private void startRegister() throws Exception {
         Matcher matcher;
         boolean isRight = true;
-//        Pattern[] patterns = new Pattern[]{userlname, userpwd, usermail, userphone};
-//        TextField[] textFields = new TextField[]{tf_r_userlname, tf_r_userpwd, tf_r_usermail, tf_r_userphone};
-//        Text[] texts = new Text[]{t_r_userlname_status, t_r_userpwd_status, t_r_usermail_status, t_r_userphone_status};
-//        String[] strings = new String[]{
-//                "用户名应由6-12个字母、数字或其组合而成\n正确示例:abc123 (√)\n错误示例:abc/*+ (×)",
-//                "密码应由6-16个字母、数字 . @ _ 或其组合而成\n正确示例:abc123.@_ (√)\n错误示例:abc/*+ (×)",
-//                "您填写的邮箱格式不正确\n正确示例:23333333@qq.com (√)\n错误示例:abc/*@1*.com (×)",
-//                "您填写的手机号不正确\n正确示例:12345678901 (11位)\n错误示例:23333 (×)"};
-//        for (int i = 0; i < patterns.length; i++) {
-//            matcher = patterns[i].matcher(textFields[i].getText().trim());
-//            if (!matcher.matches()) {
-//                isRight = false;
-//                texts[i].setVisibility(Component.VISIBLE);
-//                texts[i].setText(strings[i]);
-//                textFields[i].setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield_err));
-//                v_r_scrollView.fluentScrollTo(0, textFields[i].getTop());
-//            } else {
-//                texts[i].setVisibility(Component.HIDE);
-//                textFields[i].setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield));
-//            }
-//        }
-//        if (Integer.parseInt(tf_r_usermailCode.getText().trim()) != mailCode || tf_r_usermailCode.getText().length() == 0) {
-//            isRight = false;
-//            t_r_usermailCode_status.setText("验证码不正确，请检查！");
-//            t_r_usermailCode_status.setVisibility(Component.VISIBLE);
-//            tf_r_usermailCode.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield_err));
-//        } else if (Integer.parseInt(tf_r_usermailCode.getText().trim()) == mailCode) {
-//            tf_r_usermailCode.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield));
-//            t_r_usermailCode_status.setVisibility(Component.HIDE);
-//        }
+        Pattern[] patterns = new Pattern[]{userlname, userpwd, usermail, userphone};
+        TextField[] textFields = new TextField[]{tf_r_userlname, tf_r_userpwd, tf_r_usermail, tf_r_userphone};
+        Text[] texts = new Text[]{t_r_userlname_status, t_r_userpwd_status, t_r_usermail_status, t_r_userphone_status};
+        String[] strings = new String[]{
+                "用户名应由6-12个字母、数字或其组合而成\n正确示例:abc123 (√)\n错误示例:abc/*+ (×)",
+                "密码应由6-16个字母、数字 . @ _ 或其组合而成\n正确示例:abc123.@_ (√)\n错误示例:abc/*+ (×)",
+                "您填写的邮箱格式不正确\n正确示例:23333333@qq.com (√)\n错误示例:abc/*@1*.com (×)",
+                "您填写的手机号不正确\n正确示例:12345678901 (11位)\n错误示例:23333 (×)"};
+        for (int i = 0; i < patterns.length; i++) {
+            matcher = patterns[i].matcher(textFields[i].getText().trim());
+            if (!matcher.matches()) {
+                isRight = false;
+                texts[i].setVisibility(Component.VISIBLE);
+                texts[i].setText(strings[i]);
+                textFields[i].setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield_err));
+                v_r_scrollView.fluentScrollTo(0, textFields[i].getTop());
+            } else {
+                texts[i].setVisibility(Component.HIDE);
+                textFields[i].setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield));
+            }
+        }
+        if (Integer.parseInt(tf_r_usermailCode.getText().trim()) != mailCode || tf_r_usermailCode.getText().length() == 0) {
+            isRight = false;
+            t_r_usermailCode_status.setText("验证码不正确，请检查！");
+            t_r_usermailCode_status.setVisibility(Component.VISIBLE);
+            tf_r_usermailCode.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield_err));
+        } else if (Integer.parseInt(tf_r_usermailCode.getText().trim()) == mailCode) {
+            tf_r_usermailCode.setBackground(ElementScatter.getInstance(getContext()).parse(ResourceTable.Graphic_bg_rglg_textfield));
+            t_r_usermailCode_status.setVisibility(Component.HIDE);
+        }
 
         if (isRight) {
             //运行注册
@@ -476,69 +462,119 @@ public class RgLgAbilitySlice extends AbilitySlice {
             String sname = "用户" + util.getRandomSNAME();
             String secret = util.getSerect(lname, tf_r_userpwd.getText().trim());
             String rgtime = cl.get(Calendar.YEAR) + "-" + (cl.get(Calendar.MONTH) + 1) + "-" + (cl.get(Calendar.DAY_OF_MONTH));
-            final String url = "jdbc:mysql://" + CONNECT_HOST + "/" + CONNECT_DB + "?" + CONNECT_CONFIG;
-            final String SQL_user = "INSERT INTO USERINFO ("
-                    + CONNECT_DB_LNAME + ","
-                    + CONNECT_DB_SNAME + ","
-                    + CONNECT_DB_PWD + ","
-                    + CONNECT_DB_HEAD + ","
-                    + CONNECT_DB_FRIEND + ","
-                    + CONNECT_DB_PHONE + ","
-                    + CONNECT_DB_MAIL + ","
-                    + CONNECT_DB_RGTIME + ","
-                    + CONNECT_DB_ONLINE + ","
-                    + CONNECT_DB_HAS + ","
-                    + CONNECT_DB_VIP + ","
-                    + CONNECT_DB_VIPYU
-                    + ") VALUES ("
-                    + "'" + lname + "',"
-                    + "'" + sname + "',"
-                    + "'" + secret + "',"
-                    + "'" + Arrays.toString(util.pixelMap2byte(t_r_head.getPixelMap())) + "',"
-                    + "'" + "{\"count\":\"0\",\"friendlist\":{}}',"
-                    + "'" + phone + "',"
-                    + "'" + mail + "',"
-                    + "'" + util.getDateFromString(rgtime) + "',"
-                    + "'" + "0',"
-                    + "'" + "{\"count\":\"0\",\"medicinelist\":{}}',"
-                    + "'0',"
-                    + "'0'"
-                    + ");";
 
-            final String SQL_db = "create table " + lname + " (KEYID text not null, NAME text not null, IMAGE longblob not null, DESCRIPTION longtext not null, OUTDATE text not null, OTC text not null, BARCODE text not null, YU text not null, ELABEL text not null, LOVE int not null ,SHARE longtext not null,MUSE text not null, COMPANY text not null, DELECT tinyint)ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            ;
-            final String SQL_isHasLname = "SELECT LNAME FROM USERINFO WHERE LNAME = '" + lname + "'";
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    boolean successname = true, success = true;
+                    boolean successName = true, successLogin = true;
+                    Connection conn = null;
+                    PreparedStatement pps = null;
+                    java.sql.ResultSet resultSet = null;
                     try {
-                        //1、加载驱动
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        //3.连接成功，返回数据库对象
-                        Connection connection = DriverManager.getConnection(url, CONNECT_DB_USERNAME, CONNECT_DB_USERPWD);
-                        //4.执行SQL的对象
-                        Statement statement = connection.createStatement();
-                        //5.执行SQL的对象去执行SQL,可能存在结果，查看返回结果
-                        java.sql.ResultSet resultSet_isHasLname = statement.executeQuery(SQL_isHasLname);//返回的结果集,结果集中封装了我们全部的查询出来的结果
-                        if (resultSet_isHasLname.next()) {
-                            successname = false;
-                            success = false;
-                        } else if (successname) {
-                            //插入用户信息和药名表
-                            boolean resultSet_user = statement.execute(SQL_user);//返回的结果集,结果集中封装了我们全部的查询出来的结果
-                            boolean resultSet_db = statement.execute(SQL_db);
-                            System.out.println("输出了" + !resultSet_user + !resultSet_db);
-                            successname = true;
-                            success = true;
+                        conn = JdbcUtils.getConnection();
+                        //先找有没有账号
+                        pps = conn.prepareStatement("SELECT LNAME FROM USERINFO WHERE LNAME = ?");
+                        pps.setString(1, lname);
+                        resultSet = pps.executeQuery();
+                        if (resultSet.next()) {
+                            successName = false;
+                        } else {
+                            //插入用户数据
+                            final String SQL_user = "INSERT INTO USERINFO "
+                                    +"VALUES ("
+                                    +null+","
+                                    + "'" + lname + "',"
+                                    + "'" + sname + "',"
+                                    + "'" + secret + "',"
+                                    + "'" + Arrays.toString(util.pixelMap2byte(t_r_head.getPixelMap())) + "',"
+                                    + "'" + "{\"count\":\"0\",\"friendlist\":{}}',"
+                                    + "'" + phone + "',"
+                                    + "'" + mail + "',"
+                                    + "'" + util.getDateFromString(rgtime) + "',"
+                                    + "'" + "0',"
+                                    + "'" + "{\"count\":\"0\",\"medicinelist\":{}}',"
+                                    + "'0',"
+                                    + "'0'"
+                                    + ");";
+                            pps = conn.prepareStatement(SQL_user);
+                            int status1 = pps.executeUpdate();
+                            System.out.println("状态1"+status1);
+
+                            if (status1 > 0) {
+
+                                final String SQL_medicine = "CREATE TABLE `"+lname+"`  (" +
+                                        "  `KEYID` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL," +
+                                        "  `NAME` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL," +
+                                        "  `IMAGE` longblob NOT NULL," +
+                                        "  `DESCRIPTION` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL," +
+                                        "  `OUTDATE` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL," +
+                                        "  `OTC` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL," +
+                                        "  `BARCODE` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL," +
+                                        "  `YU` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL," +
+                                        "  `ELABEL` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL," +
+                                        "  `LOVE` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL," +
+                                        "  `SHARE` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL," +
+                                        "  `MUSE` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL," +
+                                        "  `COMPANY` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL," +
+                                        "  PRIMARY KEY (`KEYID`) USING BTREE" +
+                                        ") ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;";
+
+                                pps = conn.prepareStatement(SQL_medicine);
+                                int status2 = pps.executeUpdate();
+                                System.out.println("状态2"+status2);
+                                if (status2 >= 0) {
+                                    insertPerson("P-" + lname,
+                                            lname,
+                                            sname,
+                                            secret,
+                                            util.pixelMap2byte(t_r_head.getPixelMap()),
+                                            "{\"count\":\"0\",\"friendlist\":{}}",
+                                            phone,
+                                            mail,
+                                            String.valueOf(util.getDateFromString(rgtime)),
+                                            "0",
+                                            "{\"count\":\"0\",\"medicinelist\":{}}",
+                                            "0",
+                                            "0");
+
+                                }else {
+                                    new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                                            .dismissOnTouchOutside(false)
+                                            .dismissOnBackPressed(false)
+                                            .isDestroyOnDismiss(true)
+                                            .asConfirm("未知错误", "请尝试登录\n",
+                                                    " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
+                                            .show();
+                                }
+
+                            } else {
+                                successLogin = false;
+                            }
+                            System.out.println("注册事件完成");
                         }
-                        //6.释放连接
-                        //resultSet_getid.close();
-                        resultSet_isHasLname.close();
-                        statement.close();
-                        connection.close();
+                        if (!successName) {
+                            new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                                    .dismissOnTouchOutside(false)
+                                    .dismissOnBackPressed(false)
+                                    .isDestroyOnDismiss(true)
+                                    .asConfirm("注册失败", "用户名已存在\n",
+                                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
+                                    .show();
+                        }
+                        if (!successLogin) {
+                            new XPopup.Builder(getContext())
+//                        .setPopupCallback(new XPopupListener())
+                                    .dismissOnTouchOutside(false)
+                                    .dismissOnBackPressed(false)
+                                    .isDestroyOnDismiss(true)
+                                    .asConfirm("注册失败", "网络错误，请重试\n",
+                                            " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
+                                    .show();
+                        }
+
                     } catch (Exception e) {
-                        success = false;
                         e.printStackTrace();
                         new XPopup.Builder(getContext())
 //                        .setPopupCallback(new XPopupListener())
@@ -549,34 +585,10 @@ public class RgLgAbilitySlice extends AbilitySlice {
                                         " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                                 .show(); // 最后一个参数绑定已有布局
                         System.out.println("发生错误");
+                    } finally {
+                        JdbcUtils.closeConnection(conn, pps, resultSet);
                     }
-                    if (!successname) {
-                        new XPopup.Builder(getContext())
-//                        .setPopupCallback(new XPopupListener())
-                                .dismissOnTouchOutside(false)
-                                .dismissOnBackPressed(false)
-                                .isDestroyOnDismiss(true)
-                                .asConfirm("注册失败", "用户名已存在\n如遇注册BUG请尝试登录",
-                                        " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
-                                .show(); // 最后一个参数绑定已有布局
-                        System.out.println("发生错误");
-                    } else if (success) {
-                        insertPerson("P-" + lname,
-                                lname,
-                                sname,
-                                secret,
-                                util.pixelMap2byte(t_r_head.getPixelMap()),
-                                "{\"count\":\"0\",\"friendlist\":{}}",
-                                phone,
-                                mail,
-                                String.valueOf(util.getDateFromString(rgtime)),
-                                "0",
-                                "{\"count\":\"0\",\"medicinelist\":{}}",
-                                "0",
-                                "0");
-                        terminate();
 
-                    }
                 }
             }).start();
 
@@ -607,23 +619,22 @@ public class RgLgAbilitySlice extends AbilitySlice {
             System.out.println("可以登录");
             String lname = tf_l_userlname.getText().trim();
             String pwd = util.getSerect(lname, tf_l_userpwd.getText().trim());
-            final String url = "jdbc:mysql://" + CONNECT_HOST + "/" + CONNECT_DB + "?" + CONNECT_CONFIG;
-            //检测是否用户存在
-            final String SQL_Has = "SELECT * FROM USERINFO WHERE LNAME = '" + lname + "'";
+
+
+            //先检测是否用户存在
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    Connection conn = null;
+                    PreparedStatement pps = null;
+                    java.sql.ResultSet resultSet = null;
                     try {
-                        //1、加载驱动
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        //3.连接成功，返回数据库对象
-                        Connection connection = DriverManager.getConnection(url, CONNECT_DB_USERNAME, CONNECT_DB_USERPWD);
-                        //4.执行SQL的对象
-                        Statement statement = connection.createStatement();
-                        //5.执行SQL的对象去执行SQL,可能存在结果，查看返回结果
-                        java.sql.ResultSet resultSet_Has = statement.executeQuery(SQL_Has);//返回的结果集,结果集中封装了我们全部的查询出来的结果
-                        if (resultSet_Has.next()) {
-                            resultSet_Has.first();
+                        conn = JdbcUtils.getConnection();
+                        pps = conn.prepareStatement("SELECT * FROM USERINFO WHERE LNAME = ?");
+                        pps.setString(1, lname);
+                        resultSet = pps.executeQuery();
+                        if (resultSet.next()) {
+                            resultSet.first();
                             do {
                                 //异步处理UI
 //                                try {
@@ -641,22 +652,22 @@ public class RgLgAbilitySlice extends AbilitySlice {
 //                                    e.printStackTrace();
 //                                }
 
-                                if (pwd.equals(resultSet_Has.getString(CONNECT_DB_PWD))) {
+                                if (pwd.equals(resultSet.getString(CONNECT_DB_PWD))) {
                                     String id, lname, sname, pwd, friend, phone, mail, rgtime, online, has, vip, vipyu;
                                     byte[] head;
-                                    id = "P-" + resultSet_Has.getString(CONNECT_DB_LNAME);
-                                    lname = resultSet_Has.getString(CONNECT_DB_LNAME);
-                                    sname = resultSet_Has.getString(CONNECT_DB_SNAME);
-                                    pwd = resultSet_Has.getString(CONNECT_DB_PWD);
-                                    head = resultSet_Has.getBytes(CONNECT_DB_HEAD);
-                                    friend = resultSet_Has.getString(CONNECT_DB_FRIEND);
-                                    phone = resultSet_Has.getString(CONNECT_DB_PHONE);
-                                    mail = resultSet_Has.getString(CONNECT_DB_MAIL);
-                                    rgtime = resultSet_Has.getString(CONNECT_DB_RGTIME);
-                                    online = resultSet_Has.getString(CONNECT_DB_ONLINE);
-                                    has = resultSet_Has.getString(CONNECT_DB_HAS);
-                                    vip = resultSet_Has.getString(CONNECT_DB_VIP);
-                                    vipyu = resultSet_Has.getString(CONNECT_DB_VIPYU);
+                                    id = "P-" + resultSet.getString(CONNECT_DB_LNAME);
+                                    lname = resultSet.getString(CONNECT_DB_LNAME);
+                                    sname = resultSet.getString(CONNECT_DB_SNAME);
+                                    pwd = resultSet.getString(CONNECT_DB_PWD);
+                                    head = resultSet.getBytes(CONNECT_DB_HEAD);
+                                    friend = resultSet.getString(CONNECT_DB_FRIEND);
+                                    phone = resultSet.getString(CONNECT_DB_PHONE);
+                                    mail = resultSet.getString(CONNECT_DB_MAIL);
+                                    rgtime = resultSet.getString(CONNECT_DB_RGTIME);
+                                    online = resultSet.getString(CONNECT_DB_ONLINE);
+                                    has = resultSet.getString(CONNECT_DB_HAS);
+                                    vip = resultSet.getString(CONNECT_DB_VIP);
+                                    vipyu = resultSet.getString(CONNECT_DB_VIPYU);
                                     System.out.println("登录的" + Arrays.toString(head));
                                     insertPerson(id,
                                             lname,
@@ -685,7 +696,7 @@ public class RgLgAbilitySlice extends AbilitySlice {
 
 
                                 }
-                            } while (resultSet_Has.next());
+                            } while (resultSet.next());
                         } else {
                             new XPopup.Builder(getContext())
 //                        .setPopupCallback(new XPopupListener())
@@ -696,10 +707,7 @@ public class RgLgAbilitySlice extends AbilitySlice {
                                             " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                                     .show(); // 最后一个参数绑定已有布局
                         }
-                        //6.释放连接
-                        resultSet_Has.close();
-                        statement.close();
-                        connection.close();
+
                     } catch (Exception e) {
                         e.printStackTrace();
                         new XPopup.Builder(getContext())
@@ -710,31 +718,14 @@ public class RgLgAbilitySlice extends AbilitySlice {
                                 .asConfirm("登陆失败", "发生错误\n" + e.toString(),
                                         " ", "好", null, null, false, ResourceTable.Layout_popup_comfirm_without_cancel)
                                 .show(); // 最后一个参数绑定已有布局
+                    } finally {
+                        JdbcUtils.closeConnection(conn, pps, resultSet);
                     }
                 }
             }).start();
         }
     }
 
-    private void clearPerson() {
-        // 构造查询条件
-        DataAbilityPredicates predicates = new DataAbilityPredicates();
-        predicates.beginsWith(CONNECT_DB_ID, "P-");
-        try {
-            ResultSet resultSet = databaseHelper.query(Uri.parse(BASE_URI + DATA_PATH),
-                    columns, predicates);
-            if (resultSet == null || resultSet.getRowCount() == 0) {
-                return;
-            }
-            resultSet.goToFirstRow();
-            do {
-                databaseHelper.delete(Uri.parse(BASE_URI + DATA_PATH), predicates);
-            } while (resultSet.goToNextRow());
-        } catch (DataAbilityRemoteException | IllegalStateException exception) {
-            exception.printStackTrace();
-        }
-
-    }
 
     public void insertPerson(String id, String lname, String sname,
                              String pwd, byte[] head, String friend,

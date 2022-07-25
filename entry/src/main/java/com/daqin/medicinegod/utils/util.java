@@ -370,7 +370,7 @@ public class util extends AbilitySlice {
         ImageSource.DecodingOptions decodingOptions = new ImageSource.DecodingOptions();
         ImageSource.SourceOptions srcOpts = new ImageSource.SourceOptions();
 
-        srcOpts.formatHint = "image/jpeg";
+        srcOpts.formatHint = "image/png";
         decodingOptions.rotateDegrees = 0.0f;
         decodingOptions.desiredPixelFormat = PixelFormat.ARGB_8888;
 

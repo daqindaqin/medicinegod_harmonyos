@@ -3,9 +3,20 @@ apply plugin: 'com.huawei.ohos.app'
 
 //For instructions on signature configuration, see https://developer.harmonyos.com/cn/docs/documentation/doc-guides/ide_debug_device-0000001053822404#section1112183053510
 ohos {
-    compileSdkVersion 7
+//    signingConfigs {
+//        debug {
+//            storeFile file('C:\\Users\\wfgmq\\.ohos\\config\\auto_debug_medicinegod_10086000143730925.p12')
+//            storePassword '000000185DB2AF0BA55393EE1CCFA76CDAD50F0DBAE08EAF1C3B8C5FEEE309EA9B54F938B35460A4'
+//            keyAlias = 'debugKey'
+//            keyPassword '00000018A0A45F0E966AC1342B18562AEE3C86C411767DE93EFD12D5DB32873BAF4EEF23BFEE456E'
+//            signAlg = 'SHA256withECDSA'
+//            profile file('C:\\Users\\wfgmq\\.ohos\\config\\auto_debug_medicinegod_10086000143730925.p7b')
+//            certpath file('C:\\Users\\wfgmq\\.ohos\\config\\auto_debug_medicinegod_10086000143730925.cer')
+//        }
+//    }
+    compileSdkVersion 6
 }
-	
+
 buildscript {
     repositories {
         maven {
@@ -21,8 +32,8 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.huawei.ohos:hap:3.0.3.4'
-        classpath 'com.huawei.ohos:decctest:1.2.6.0'
+        classpath 'com.huawei.ohos:hap:3.0.5.11'
+        classpath 'com.huawei.ohos:decctest:1.2.7.9'
         //签名
         classpath 'com.huawei.agconnect:agcp-harmony:1.0.0.300'
     }
@@ -41,7 +52,7 @@ allprojects {
             url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
         }
         //阴影
-        maven{
+        maven {
             url 'https://s01.oss.sonatype.org/content/repositories/releases/'
         }
         mavenCentral()

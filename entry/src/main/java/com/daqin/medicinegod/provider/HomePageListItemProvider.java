@@ -28,6 +28,9 @@ public class HomePageListItemProvider extends BaseItemProvider {
 
 
     public HomePageListItemProvider(List<Map<String, Object>> list, AbilitySlice slice, int style) {
+        date_out = 0;
+        date_near = 0;
+        date_ok=0;
         this.list = list;
         this.slice = slice;
         this.style = style;
@@ -89,12 +92,8 @@ public class HomePageListItemProvider extends BaseItemProvider {
         Text textOtc;
         Text textOutdate;
         Image image;
-        String type ;
         Map<String, Object> map = list.get(position);//获取数据
-        type = (String) map.get("DELECT");
-        if (type.equals("1")){
-            return null;
-        }
+
         switch (style) {
             case 1:
                 textName = (Text) cpt.findComponentById(ResourceTable.Id_style_one_text_name);
@@ -180,14 +179,14 @@ public class HomePageListItemProvider extends BaseItemProvider {
                         textOutdate.setTextColor(new Color(Color.rgb(76, 175, 80)));
                         break;
                 }
-                byte[] img0 = (byte[]) map.get("img");
-                if (img0 == null) {
+
+                image.setScaleMode(Image.ScaleMode.STRETCH);
+                image.setCornerRadius(25);
+                try {
+                    image.setPixelMap(util.byte2PixelMap((byte[]) map.get("img")));
+                }catch (Exception e){
                     image.setPixelMap(ResourceTable.Media_add_imgdefault);
-                    image.setScaleMode(Image.ScaleMode.CENTER);
-                } else {
-                    image.setPixelMap(util.byte2PixelMap(img0));
-                    image.setScaleMode(Image.ScaleMode.STRETCH);
-                    image.setCornerRadius(25);
+                    e.printStackTrace();
                 }
                 break;
             case 0:
@@ -236,15 +235,15 @@ public class HomePageListItemProvider extends BaseItemProvider {
                         textUsage.setText(textUagesAll1[0] + textUagesAll1[1] + "/" + textUagesAll1[2] + textUagesAll1[3] + "/" + textUagesAll1[4] + textUagesAll1[5]);
                     }
                 }
-                byte[] img1 = (byte[]) map.get("img");
-                if (img1 == null) {
+                image.setScaleMode(Image.ScaleMode.STRETCH);
+                image.setCornerRadius(25);
+                try {
+                    image.setPixelMap(util.byte2PixelMap((byte[]) map.get("img")));
+                }catch (Exception e){
                     image.setPixelMap(ResourceTable.Media_add_imgdefault);
-                    image.setScaleMode(Image.ScaleMode.CENTER);
-                } else {
-                    image.setPixelMap(util.byte2PixelMap(img1));
-                    image.setScaleMode(Image.ScaleMode.STRETCH);
-                    image.setCornerRadius(55);
+                    e.printStackTrace();
                 }
+
                 //过期提醒
                 //示例：
                 //date0  1646064000000

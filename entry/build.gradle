@@ -1,33 +1,36 @@
 apply plugin: 'com.huawei.ohos.hap'
 apply plugin: 'com.huawei.ohos.decctest'
 //签名
-apply plugin: 'com.huawei.agconnect'
+//apply plugin: 'com.huawei.agconnect'
 //For instructions on signature configuration, see https://developer.harmonyos.com/cn/docs/documentation/doc-guides/ide_debug_device-0000001053822404#section1112183053510
 ohos {
-    signingConfigs {
-        debug {
-            storeFile file('C:\\Users\\wfgmq\\.ohos\\config\\auto_debug_medicinegod_10086000143730925.p12')
-            storePassword '00000018C4E1A7EF5EB34E32B989764D45169EA038513BFFDF4571D594915B96CC3E9952290F29EC'
-            keyAlias = 'debugKey'
-            keyPassword '00000018081ED367620B100944DF01E20DA67ACF392A159982D5F25C3462AD971B450E7B027A593C'
-            signAlg = 'SHA256withECDSA'
-            profile file('C:\\Users\\wfgmq\\.ohos\\config\\auto_debug_medicinegod_10086000143730925.p7b')
-            certpath file('C:\\Users\\wfgmq\\.ohos\\config\\auto_debug_medicinegod_10086000143730925.cer')
-        }
-    }
-    compileSdkVersion 7
+
+//    signingConfigs {
+//        debug {
+//            storeFile file('C:\\Users\\wfgmq\\.ohos\\config\\auto_debug_medicinegod_10086000143730925.p12')
+//            storePassword '00000018C4E1A7EF5EB34E32B989764D45169EA038513BFFDF4571D594915B96CC3E9952290F29EC'
+//            keyAlias = 'debugKey'
+//            keyPassword '00000018081ED367620B100944DF01E20DA67ACF392A159982D5F25C3462AD971B450E7B027A593C'
+//            signAlg = 'SHA256withECDSA'
+//            profile file('C:\\Users\\wfgmq\\.ohos\\config\\auto_debug_medicinegod_10086000143730925.p7b')
+//            certpath file('C:\\Users\\wfgmq\\.ohos\\config\\auto_debug_medicinegod_10086000143730925.cer')
+//        }
+//    }
+
+
+    compileSdkVersion 6
     defaultConfig {
-        compatibleSdkVersion 4
+        compatibleSdkVersion 6
     }
 
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.har'])
-    implementation files('src/main/lib/mysql-connector-java-5.1.49-bin.jar')
+
 
     testImplementation 'junit:junit:4.13.1'
-    ohosTestImplementation 'com.huawei.ohos.testkit:runner:1.0.0.200'
+    ohosTestImplementation 'com.huawei.ohos.testkit:runner:2.0.0.200'
     //底部导航栏
     implementation 'com.gitee.chinasoft_ohos:bubblenavigation:0.0.2-SNAPSHOT'
     //图像选择器
@@ -43,7 +46,7 @@ dependencies {
     implementation 'com.zzrv5.zzrhttp:ZZRHttp:1.0.1'
     implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.75'
     //签名
-    implementation 'com.huawei.agconnect:agconnect-core-harmony:1.0.0.300'
+//    implementation 'com.huawei.agconnect:agconnect-core-harmony:1.0.0.300'
     //阴影
     implementation('com.gitee.chinasoft_ohos:ShadowDrawable:1.0.0')
 
