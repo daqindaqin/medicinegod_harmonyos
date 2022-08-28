@@ -4,7 +4,7 @@
  Source Server         : 阿里云ubuntu
  Source Server Type    : MySQL
  Source Server Version : 50736
- Source Host           : 139.224.48.87:3306
+ Source Host           : ***.***.**.**:3306
  Source Schema         : mg
 
  Target Server Type    : MySQL
