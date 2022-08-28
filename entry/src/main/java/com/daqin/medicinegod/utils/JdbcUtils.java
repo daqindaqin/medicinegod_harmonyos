@@ -18,9 +18,7 @@ public class JdbcUtils {
     private static final String FromSecret = "邮箱授权码";*/
 
 
-    private static final String uRL = "jdbc:mysql://139.224.48.87:3306/mg?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC";
-    private static final String uNname = "mg";
-    private static final String uPwd = "Qhx010394Mg";
+
 
     // 静态代码块，类加载的时候只执行一次，以后再也不执行了
     static {
